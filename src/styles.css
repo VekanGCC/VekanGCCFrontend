@@ -1,0 +1,873 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* AG Grid Styles */
+@import 'ag-grid-community/styles/ag-grid.css';
+@import 'ag-grid-community/styles/ag-theme-alpine.css';
+
+/* Custom AG Grid styling */
+.ag-theme-alpine {
+  --ag-header-height: 50px;
+  --ag-header-foreground-color: #374151;
+  --ag-header-background-color: #f9fafb;
+  --ag-header-cell-hover-background-color: #f3f4f6;
+  --ag-header-cell-moving-background-color: #e5e7eb;
+  --ag-border-color: #e5e7eb;
+  --ag-row-hover-color: #f9fafb;
+  --ag-selected-row-background-color: #dbeafe;
+  --ag-font-size: 14px;
+  --ag-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.ag-theme-alpine .ag-header-cell {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 12px;
+}
+
+.ag-theme-alpine .ag-cell {
+  padding: 8px 12px;
+  line-height: 1.4;
+}
+
+.ag-theme-alpine .ag-row {
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.ag-theme-alpine .ag-row:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.ag-theme-alpine .ag-row:hover {
+  background-color: #f3f4f6;
+}
+
+/* Responsive AG Grid */
+@media (max-width: 768px) {
+  .ag-theme-alpine {
+    --ag-header-height: 40px;
+    --ag-font-size: 12px;
+  }
+  
+  .ag-theme-alpine .ag-header-cell {
+    font-size: 10px;
+  }
+  
+  .ag-theme-alpine .ag-cell {
+    padding: 6px 8px;
+  }
+}
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Custom focus styles */
+.focus-ring:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Custom animation for loading states */
+@keyframes pulse-slow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Custom transition for smooth hover effects */
+.transition-all {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Custom shadow for cards */
+.card-shadow {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.card-shadow-hover:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Custom gradient backgrounds */
+.gradient-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.gradient-secondary {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.gradient-success {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+/* Custom button styles */
+.btn-primary {
+  @apply bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200;
+}
+
+.btn-secondary {
+  @apply bg-gray-200 text-gray-900 px-4 py-2 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors duration-200;
+}
+
+.btn-success {
+  @apply bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors duration-200;
+}
+
+.btn-danger {
+  @apply bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors duration-200;
+}
+
+/* Custom form styles */
+.form-input {
+  @apply block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-gray-700 mb-1;
+}
+
+.form-error {
+  @apply mt-1 text-sm text-red-600;
+}
+
+/* Custom table styles */
+.table-container {
+  @apply bg-white rounded-lg shadow overflow-hidden;
+}
+
+.table-header {
+  @apply bg-gray-50 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+}
+
+.table-cell {
+  @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900;
+}
+
+.table-cell-secondary {
+  @apply px-6 py-4 whitespace-nowrap text-sm text-gray-500;
+}
+
+/* Custom modal styles */
+.modal-overlay {
+  @apply fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50;
+}
+
+.modal-container {
+  @apply relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white;
+}
+
+.modal-header {
+  @apply flex items-center justify-between mb-4;
+}
+
+.modal-title {
+  @apply text-lg font-medium text-gray-900;
+}
+
+.modal-close {
+  @apply text-gray-400 hover:text-gray-600 transition-colors duration-200;
+}
+
+/* Custom badge styles */
+.badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.badge-primary {
+  @apply bg-blue-100 text-blue-800;
+}
+
+.badge-success {
+  @apply bg-green-100 text-green-800;
+}
+
+.badge-warning {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+.badge-danger {
+  @apply bg-red-100 text-red-800;
+}
+
+.badge-gray {
+  @apply bg-gray-100 text-gray-800;
+}
+
+/* Custom responsive utilities */
+@media (max-width: 640px) {
+  .mobile-hidden {
+    display: none;
+  }
+  
+  .mobile-full {
+    width: 100%;
+  }
+  
+  .mobile-text-sm {
+    font-size: 0.875rem;
+  }
+  
+  .mobile-p-2 {
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .tablet-hidden {
+    display: none;
+  }
+}
+
+/* Custom loading spinner */
+.spinner {
+  @apply animate-spin rounded-full border-2 border-gray-300 border-t-blue-600;
+}
+
+.spinner-sm {
+  @apply w-4 h-4;
+}
+
+.spinner-md {
+  @apply w-6 h-6;
+}
+
+.spinner-lg {
+  @apply w-8 h-8;
+}
+
+/* Custom tooltip styles */
+.tooltip {
+  @apply relative;
+}
+
+.tooltip:hover .tooltip-text {
+  @apply visible opacity-100;
+}
+
+.tooltip-text {
+  @apply invisible absolute z-10 py-2 px-3 text-sm text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity duration-300;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+}
+
+.tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #111827 transparent transparent transparent;
+}
+
+/* Custom file upload styles */
+.file-upload-area {
+  @apply border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors duration-200;
+}
+
+.file-upload-area.dragover {
+  @apply border-blue-500 bg-blue-50;
+}
+
+.file-upload-input {
+  @apply hidden;
+}
+
+.file-upload-label {
+  @apply cursor-pointer;
+}
+
+/* Custom progress bar */
+.progress-bar {
+  @apply w-full bg-gray-200 rounded-full h-2;
+}
+
+.progress-bar-fill {
+  @apply bg-blue-600 h-2 rounded-full transition-all duration-300;
+}
+
+/* Custom notification styles */
+.notification {
+  @apply fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm;
+}
+
+.notification-success {
+  @apply bg-green-500 text-white;
+}
+
+.notification-error {
+  @apply bg-red-500 text-white;
+}
+
+.notification-warning {
+  @apply bg-yellow-500 text-white;
+}
+
+.notification-info {
+  @apply bg-blue-500 text-white;
+}
+
+/* Custom sidebar styles */
+.sidebar {
+  @apply fixed inset-y-0 left-0 z-40 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out;
+}
+
+.sidebar-open {
+  @apply translate-x-0;
+}
+
+.sidebar-closed {
+  @apply -translate-x-full;
+}
+
+.sidebar-overlay {
+  @apply fixed inset-0 bg-gray-600 bg-opacity-50 z-30 lg:hidden;
+}
+
+/* Custom mobile menu styles */
+.mobile-menu {
+  @apply fixed inset-0 z-40 lg:hidden;
+}
+
+.mobile-menu-overlay {
+  @apply fixed inset-0 bg-gray-600 bg-opacity-50;
+}
+
+.mobile-menu-panel {
+  @apply relative flex w-full max-w-xs flex-1 flex-col bg-white pb-4 pt-5;
+}
+
+.mobile-menu-close {
+  @apply absolute right-0 top-0 -mr-12 flex h-10 w-10 items-center justify-center rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white;
+}
+
+/* Custom navigation styles */
+.nav-item {
+  @apply flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors duration-200;
+}
+
+.nav-item-active {
+  @apply bg-gray-100 text-gray-900;
+}
+
+.nav-item-inactive {
+  @apply text-gray-600 hover:bg-gray-50 hover:text-gray-900;
+}
+
+.nav-item-mobile {
+  @apply flex items-center px-3 py-2 text-base font-medium rounded-md transition-colors duration-200;
+}
+
+.nav-item-mobile-active {
+  @apply bg-gray-100 text-gray-900;
+}
+
+.nav-item-mobile-inactive {
+  @apply text-gray-600 hover:bg-gray-50 hover:text-gray-900;
+}
+
+/* Custom dashboard card styles */
+.dashboard-card {
+  @apply bg-white overflow-hidden shadow rounded-lg;
+}
+
+.dashboard-card-header {
+  @apply px-4 py-5 sm:p-6;
+}
+
+.dashboard-card-content {
+  @apply px-4 py-5 sm:p-6;
+}
+
+.dashboard-stat {
+  @apply text-2xl font-bold text-gray-900;
+}
+
+.dashboard-stat-label {
+  @apply text-sm font-medium text-gray-500;
+}
+
+.dashboard-stat-change {
+  @apply text-sm;
+}
+
+.dashboard-stat-change-positive {
+  @apply text-green-600;
+}
+
+.dashboard-stat-change-negative {
+  @apply text-red-600;
+}
+
+/* Custom chart container styles */
+.chart-container {
+  @apply relative h-64 sm:h-80;
+}
+
+/* Custom filter styles */
+.filter-container {
+  @apply bg-white p-4 rounded-lg shadow-sm border border-gray-200;
+}
+
+.filter-group {
+  @apply space-y-4;
+}
+
+.filter-label {
+  @apply block text-sm font-medium text-gray-700;
+}
+
+.filter-select {
+  @apply mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md;
+}
+
+.filter-input {
+  @apply mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm;
+}
+
+/* Custom search styles */
+.search-container {
+  @apply relative;
+}
+
+.search-input {
+  @apply block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm;
+}
+
+.search-icon {
+  @apply absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none;
+}
+
+/* Custom pagination styles */
+.pagination-container {
+  @apply bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6;
+}
+
+.pagination-info {
+  @apply text-sm text-gray-700;
+}
+
+.pagination-controls {
+  @apply flex-1 flex justify-between sm:hidden;
+}
+
+.pagination-controls-desktop {
+  @apply hidden sm:flex-1 sm:flex sm:items-center sm:justify-between;
+}
+
+.pagination-button {
+  @apply relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50;
+}
+
+.pagination-button-disabled {
+  @apply relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-300 bg-white cursor-not-allowed;
+}
+
+.pagination-button-active {
+  @apply z-10 bg-blue-50 border-blue-500 text-blue-600;
+}
+
+/* Custom empty state styles */
+.empty-state {
+  @apply text-center py-12;
+}
+
+.empty-state-icon {
+  @apply mx-auto h-12 w-12 text-gray-400;
+}
+
+.empty-state-title {
+  @apply mt-2 text-sm font-medium text-gray-900;
+}
+
+.empty-state-description {
+  @apply mt-1 text-sm text-gray-500;
+}
+
+.empty-state-action {
+  @apply mt-6;
+}
+
+/* Custom file management styles */
+.file-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4;
+}
+
+.file-card {
+  @apply bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200;
+}
+
+.file-card-header {
+  @apply p-4;
+}
+
+.file-card-content {
+  @apply px-4 pb-4;
+}
+
+.file-icon {
+  @apply w-8 h-8 text-gray-400;
+}
+
+.file-name {
+  @apply text-sm font-medium text-gray-900 truncate;
+}
+
+.file-meta {
+  @apply text-xs text-gray-500 mt-1;
+}
+
+.file-actions {
+  @apply flex items-center justify-between mt-3;
+}
+
+.file-status {
+  @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+}
+
+.file-status-pending {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+.file-status-approved {
+  @apply bg-green-100 text-green-800;
+}
+
+.file-status-rejected {
+  @apply bg-red-100 text-red-800;
+}
+
+/* Custom responsive text utilities */
+.text-responsive-xs {
+  @apply text-xs sm:text-sm;
+}
+
+.text-responsive-sm {
+  @apply text-sm sm:text-base;
+}
+
+.text-responsive-base {
+  @apply text-base sm:text-lg;
+}
+
+.text-responsive-lg {
+  @apply text-lg sm:text-xl;
+}
+
+.text-responsive-xl {
+  @apply text-xl sm:text-2xl;
+}
+
+/* Custom responsive spacing utilities */
+.space-responsive-y-2 {
+  @apply space-y-2 sm:space-y-4;
+}
+
+.space-responsive-y-4 {
+  @apply space-y-4 sm:space-y-6;
+}
+
+.space-responsive-y-6 {
+  @apply space-y-6 sm:space-y-8;
+}
+
+.p-responsive-2 {
+  @apply p-2 sm:p-4;
+}
+
+.p-responsive-4 {
+  @apply p-4 sm:p-6;
+}
+
+.p-responsive-6 {
+  @apply p-6 sm:p-8;
+}
+
+/* Custom responsive grid utilities */
+.grid-responsive-1 {
+  @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3;
+}
+
+.grid-responsive-2 {
+  @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-4;
+}
+
+.grid-responsive-3 {
+  @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+}
+
+/* Custom responsive flex utilities */
+.flex-responsive-col {
+  @apply flex-col sm:flex-row;
+}
+
+.flex-responsive-wrap {
+  @apply flex-wrap sm:flex-nowrap;
+}
+
+/* Custom responsive visibility utilities */
+.visible-mobile {
+  @apply block sm:hidden;
+}
+
+.visible-desktop {
+  @apply hidden sm:block;
+}
+
+.visible-tablet {
+  @apply hidden md:block;
+}
+
+.hidden-mobile {
+  @apply hidden sm:block;
+}
+
+.hidden-desktop {
+  @apply block sm:hidden;
+}
+
+/* Custom responsive button sizes */
+.btn-responsive-sm {
+  @apply px-2 py-1 text-xs sm:px-3 sm:py-1.5 sm:text-sm;
+}
+
+.btn-responsive-md {
+  @apply px-3 py-2 text-sm sm:px-4 sm:py-2 sm:text-base;
+}
+
+.btn-responsive-lg {
+  @apply px-4 py-2 text-base sm:px-6 sm:py-3 sm:text-lg;
+}
+
+/* Custom responsive icon sizes */
+.icon-responsive-sm {
+  @apply w-3 h-3 sm:w-4 sm:h-4;
+}
+
+.icon-responsive-md {
+  @apply w-4 h-4 sm:w-5 sm:h-5;
+}
+
+.icon-responsive-lg {
+  @apply w-5 h-5 sm:w-6 sm:h-6;
+}
+
+/* Custom responsive table styles */
+.table-responsive {
+  @apply overflow-x-auto;
+}
+
+.table-responsive th,
+.table-responsive td {
+  @apply px-2 py-2 sm:px-4 sm:py-3;
+}
+
+.table-responsive th {
+  @apply text-xs sm:text-sm;
+}
+
+.table-responsive td {
+  @apply text-xs sm:text-sm;
+}
+
+/* Custom responsive modal styles */
+.modal-responsive {
+  @apply w-11/12 sm:w-96 md:w-1/2 lg:w-1/3;
+}
+
+.modal-responsive-lg {
+  @apply w-11/12 sm:w-3/4 md:w-2/3 lg:w-1/2;
+}
+
+/* Custom responsive sidebar styles */
+.sidebar-responsive {
+  @apply w-64 sm:w-72;
+}
+
+.sidebar-responsive-mobile {
+  @apply w-full sm:w-64;
+}
+
+/* Custom responsive navigation styles */
+.nav-responsive {
+  @apply space-y-1 sm:space-y-2;
+}
+
+.nav-item-responsive {
+  @apply px-2 py-2 sm:px-3 sm:py-2;
+}
+
+/* Custom responsive form styles */
+.form-responsive {
+  @apply space-y-4 sm:space-y-6;
+}
+
+.form-group-responsive {
+  @apply space-y-2 sm:space-y-3;
+}
+
+.form-label-responsive {
+  @apply text-sm sm:text-base;
+}
+
+.form-input-responsive {
+  @apply text-sm sm:text-base;
+}
+
+/* Custom responsive card styles */
+.card-responsive {
+  @apply p-4 sm:p-6;
+}
+
+.card-header-responsive {
+  @apply px-4 py-3 sm:px-6 sm:py-4;
+}
+
+.card-content-responsive {
+  @apply px-4 py-3 sm:px-6 sm:py-4;
+}
+
+/* Custom responsive list styles */
+.list-responsive {
+  @apply space-y-2 sm:space-y-3;
+}
+
+.list-item-responsive {
+  @apply p-2 sm:p-3;
+}
+
+/* Custom responsive badge styles */
+.badge-responsive {
+  @apply px-2 py-0.5 text-xs sm:px-2.5 sm:py-0.5 sm:text-sm;
+}
+
+/* Custom responsive tooltip styles */
+.tooltip-responsive {
+  @apply text-xs sm:text-sm;
+}
+
+/* Custom responsive progress bar styles */
+.progress-responsive {
+  @apply h-1 sm:h-2;
+}
+
+/* Custom responsive notification styles */
+.notification-responsive {
+  @apply p-3 sm:p-4;
+}
+
+/* Custom responsive chart styles */
+.chart-responsive {
+  @apply h-48 sm:h-64 md:h-80;
+}
+
+/* Custom responsive filter styles */
+.filter-responsive {
+  @apply p-3 sm:p-4;
+}
+
+.filter-group-responsive {
+  @apply space-y-3 sm:space-y-4;
+}
+
+/* Custom responsive search styles */
+.search-responsive {
+  @apply pl-8 sm:pl-10;
+}
+
+.search-icon-responsive {
+  @apply pl-2 sm:pl-3;
+}
+
+/* Custom responsive pagination styles */
+.pagination-responsive {
+  @apply px-3 py-2 sm:px-4 sm:py-3;
+}
+
+.pagination-button-responsive {
+  @apply px-2 py-1 text-xs sm:px-4 sm:py-2 sm:text-sm;
+}
+
+/* Custom responsive empty state styles */
+.empty-state-responsive {
+  @apply py-8 sm:py-12;
+}
+
+.empty-state-icon-responsive {
+  @apply h-8 w-8 sm:h-12 sm:w-12;
+}
+
+.empty-state-title-responsive {
+  @apply text-sm sm:text-base;
+}
+
+.empty-state-description-responsive {
+  @apply text-xs sm:text-sm;
+}
+
+/* Custom responsive file management styles */
+.file-grid-responsive {
+  @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+}
+
+.file-card-responsive {
+  @apply p-3 sm:p-4;
+}
+
+.file-card-header-responsive {
+  @apply p-3 sm:p-4;
+}
+
+.file-card-content-responsive {
+  @apply px-3 pb-3 sm:px-4 sm:pb-4;
+}
+
+.file-icon-responsive {
+  @apply w-6 h-6 sm:w-8 sm:h-8;
+}
+
+.file-name-responsive {
+  @apply text-xs sm:text-sm;
+}
+
+.file-meta-responsive {
+  @apply text-xs;
+}
+
+.file-actions-responsive {
+  @apply mt-2 sm:mt-3;
+}
+
+.file-status-responsive {
+  @apply px-1.5 py-0.5 text-xs sm:px-2 sm:py-0.5;
+}

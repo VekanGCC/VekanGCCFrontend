@@ -1,0 +1,64 @@
+<div class="space-y-6">
+  <!-- Resources Table -->
+  <div class="bg-white rounded-lg shadow">
+    <div class="p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-semibold text-gray-900">My Resources</h2>
+        <button 
+          (click)="onOpenResourceModal()"
+          class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          <span class="mr-2">+</span>
+          Add Resource
+        </button>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="flex justify-center items-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+
+      <!-- No Resources State -->
+      <div *ngIf="!isLoading && resources.length === 0" class="text-center py-8">
+        <img [src]="'assets/icons/lucide/lucide/users.svg'" class="h-12 w-12 text-gray-400 mx-auto mb-4" alt="users">
+        <h3 class="text-lg font-medium text-gray-900 mb-2">No Resources Found</h3>
+        <p class="text-gray-500 mb-4">Add your first resource to get started</p>
+      </div>
+
+      <!-- AG Grid -->
+      <div *ngIf="!isLoading && resources.length > 0" class="ag-grid-container">
+        <div class="overflow-x-auto">
+          <ag-grid-angular 
+            class="ag-theme-alpine w-full min-w-[1200px]"
+            [rowData]="resources" 
+            [columnDefs]="columnDefs"
+            [defaultColDef]="defaultColDef" 
+            [pagination]="false" 
+            [gridOptions]="gridOptions"
+            [domLayout]="'autoHeight'"
+            [rowSelection]="'single'"
+            [animateRows]="true"
+            [enableCellTextSelection]="true"
+            [overlayNoRowsTemplate]="'<span>No resources found</span>'"
+            (gridReady)="onGridReady($event)">
+          </ag-grid-angular>
+        </div>
+      </div>
+
+      <!-- Custom Pagination -->
+      <div *ngIf="!isLoading && resources.length > 0 && paginationState.totalPages > 1" class="mt-4">
+        <app-pagination 
+          [paginationState]="paginationState"
+          (pageChange)="onPageChange($event)">
+        </app-pagination>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Resource Modal -->
+<app-resource-modal 
+  *ngIf="showResourceModal"
+  [resourceToEdit]="resourceToEdit"
+  (close)="onCloseResourceModal()">
+</app-resource-modal> 

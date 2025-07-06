@@ -1,0 +1,44 @@
+<div class="bg-white rounded-xl shadow-sm border border-gray-100">
+  <div class="p-6">
+    <div class="space-y-4">
+      <div *ngFor="let application of applications; trackBy: trackById" 
+           class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+        <div class="flex-1">
+          <p class="font-medium text-gray-900">
+            {{ getApplicationTitle(application) }}
+          </p>
+          <p class="text-sm text-gray-600">
+            {{ getApplicationCreator(application) }}
+          </p>
+          <p class="text-sm text-gray-500 mt-1">Status: {{application.status}}</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + getStatusClass(application.status)">
+            {{application.status}}
+          </span>
+          <span class="text-sm text-gray-500">
+            {{application.createdAt | date:'medium'}}
+          </span>
+          
+          <!-- Action Buttons -->
+          <div class="flex gap-2" *ngIf="getAvailableActions(application).length > 0">
+            <button 
+              *ngFor="let action of getAvailableActions(application)"
+              (click)="onActionClick(application._id, action.action)"
+              [class]="'px-3 py-1 rounded-lg text-xs font-medium transition-colors ' + action.color + ' hover:opacity-80'">
+              {{action.label}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p *ngIf="applications.length === 0" class="text-gray-500 text-center py-8">No applications found</p>
+    
+    <!-- Pagination -->
+    <app-pagination
+      *ngIf="!paginationState.isLoading && applications.length > 0"
+      [paginationState]="paginationState"
+      (pageChange)="onPageChange($event)">
+    </app-pagination>
+  </div>
+</div> 

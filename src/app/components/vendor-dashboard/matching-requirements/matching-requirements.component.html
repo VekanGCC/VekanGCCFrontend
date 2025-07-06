@@ -1,0 +1,114 @@
+<div class="bg-white rounded-lg shadow-sm border border-gray-200">
+  <!-- Header -->
+  <div class="px-6 py-4 border-b border-gray-200">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <button 
+          (click)="onBackClick()"
+          class="inline-flex items-center p-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          <img src="assets/icons/lucide/lucide/arrow-left.svg" alt="back" class="h-4 w-4" />
+        </button>
+        <div>
+          <h2 class="text-lg font-semibold text-gray-900">Matching Requirements</h2>
+          <p class="text-sm text-gray-500" *ngIf="resource">
+            Showing requirements that match your resource: <span class="font-medium">{{ resource.name }}</span>
+          </p>
+        </div>
+      </div>
+      
+      <div class="flex items-center space-x-4" *ngIf="matchingCriteria">
+        <div class="text-sm text-gray-500">
+          <span class="font-medium">Matching Criteria:</span>
+          Min {{ matchingCriteria.minSkillsToMatch }} skills required
+          <span *ngIf="matchingCriteria.maxBudget"> • Max ${{ matchingCriteria.maxBudget }}/hr</span>
+          <span *ngIf="matchingCriteria.minExperienceYears"> • Min {{ matchingCriteria.minExperienceYears }} years</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex items-center justify-center py-12">
+    <div class="flex items-center space-x-2">
+      <div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+      <span class="text-gray-600">Loading matching requirements...</span>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!isLoading" class="p-6">
+    <!-- Resource Details Card -->
+    <div *ngIf="resource" class="mb-6 bg-gray-50 rounded-lg p-4">
+      <h3 class="text-md font-medium text-gray-900 mb-3">Your Resource Details</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <span class="text-sm font-medium text-gray-500">Name:</span>
+          <p class="text-sm text-gray-900">{{ resource.name }}</p>
+        </div>
+        <div>
+          <span class="text-sm font-medium text-gray-500">Category:</span>
+          <p class="text-sm text-gray-900">{{ resource.category?.name || 'N/A' }}</p>
+        </div>
+        <div>
+          <span class="text-sm font-medium text-gray-500">Experience:</span>
+          <p class="text-sm text-gray-900">{{ resource.experience?.years || 0 }} years ({{ resource.experience?.level || 'N/A' }})</p>
+        </div>
+        <div>
+          <span class="text-sm font-medium text-gray-500">Rate:</span>
+          <p class="text-sm text-gray-900">${{ resource.rate?.hourly || 0 }}/hr ({{ resource.rate?.currency || 'USD' }})</p>
+        </div>
+        <div>
+          <span class="text-sm font-medium text-gray-500">Skills:</span>
+          <div class="flex flex-wrap gap-1 mt-1">
+            <span 
+              *ngFor="let skill of resource.skills" 
+              class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+              {{ skill.name }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Summary -->
+    <div class="mb-4 flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <h3 class="text-lg font-medium text-gray-900">
+          Matching Requirements ({{ totalCount }})
+        </h3>
+        <span class="text-sm text-gray-500">
+          Showing {{ matchingRequirements.length }} of {{ totalCount }} results
+        </span>
+      </div>
+    </div>
+
+    <!-- No Results -->
+    <div *ngIf="matchingRequirements.length === 0 && !isLoading" class="text-center py-12">
+      <img src="assets/icons/lucide/lucide/search.svg" alt="search" class="mx-auto h-12 w-12 text-gray-400" />
+      <h3 class="mt-2 text-sm font-medium text-gray-900">No matching requirements found</h3>
+      <p class="mt-1 text-sm text-gray-500">
+        No requirements currently match your resource criteria. Try updating your resource skills or check back later.
+      </p>
+    </div>
+
+    <!-- AG Grid -->
+    <div *ngIf="matchingRequirements.length > 0" class="ag-theme-alpine w-full" style="height: 600px;">
+      <ag-grid-angular
+        [rowData]="matchingRequirements"
+        [columnDefs]="columnDefs"
+        [defaultColDef]="defaultColDef"
+        [gridOptions]="gridOptions"
+        [domLayout]="'autoHeight'"
+        class="w-full">
+      </ag-grid-angular>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="matchingRequirements.length > 0" class="mt-6">
+      <app-pagination
+        [paginationState]="paginationState"
+        (pageChange)="onPageChange($event)">
+      </app-pagination>
+    </div>
+  </div>
+</div> 

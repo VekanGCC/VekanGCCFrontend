@@ -1,0 +1,1781 @@
+﻿
+> angular-staff-augmentation-platform@17.0.0 build
+> ng build
+
+npm : - Building...
+At line:1 char:1
++ npm run build 2>&1 | Out-File -FilePath 
+"src/build-errors.txt" -Encod ...
++ ~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (- Building. 
+   ..:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+Initial chunk files   | Names         | Raw size | Estimated transfer size
+main-YE75SPPT.js      | main          |  2.18 MB |               419.43 kB
+styles-QT33YWGX.css   | styles        | 86.09 kB |                 9.42 kB
+polyfills-FFHMD2TL.js | polyfills     | 33.71 kB |                11.02 kB
+
+                      | Initial total |  2.30 MB |               439.87 kB
+
+Application bundle generation failed. [16.693 seconds]
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/admin-dashboard/skill-approvals/sk
+ill-approvals.component.html:20:67:
+      20 Γöé ...um 
+text-gray-900">{{approval.skill?.skill?.name || 
+'Unknown'}}</p>
+         Γò╡                                        ~~~~~
+
+  Error occurs in the template of component 
+SkillApprovalsComponent.
+
+    src/app/components/admin-dashboard/skill-approvals/sk
+ill-approvals.component.ts:13:15:
+      13 Γöé   templateUrl: 
+'./skill-approvals.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/admin-dashboard/users-management/u
+sers-management.component.html:38:40:
+      38 Γöé ...           
+{{user.firstName?.charAt(0)}}{{user.lastName?.charAt...
+         Γò╡                                 ~~~~~~
+
+  Error occurs in the template of component 
+UsersManagementComponent.
+
+    src/app/components/admin-dashboard/users-management/u
+sers-management.component.ts:11:15:
+      11 Γöé   templateUrl: 
+'./users-management.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/admin-dashboard/users-management/u
+sers-management.component.html:38:68:
+      38 Γöé ...         
+{{user.firstName?.charAt(0)}}{{user.lastName?.charAt(0)}}
+         Γò╡                                             
+              ~~~~~~
+
+  Error occurs in the template of component 
+UsersManagementComponent.
+
+    src/app/components/admin-dashboard/users-management/u
+sers-management.component.ts:11:15:
+      11 Γöé   templateUrl: 
+'./users-management.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/client-dashboard/apply-resources-p
+age/apply-resources-page.component.html:70:42:
+      70 Γöé                     {{ 
+resource.category?.name || 'No Category' }}
+         Γò╡                                           
+~~~~
+
+  Error occurs in the template of component 
+ApplyResourcesPageComponent.
+
+    src/app/components/client-dashboard/apply-resources-p
+age/apply-resources-page.component.ts:17:15:
+      17 Γöé   templateUrl: 
+'./apply-resources-page.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/client-dashboard/apply-resources-p
+age/apply-resources-page.component.html:254:74:
+      254 Γöé ... class="budget-amount">Γé╣{{ 
+requirement.budget?.charge }}</span>
+          Γò╡                                            
+     ~~~~~~
+
+  Error occurs in the template of component 
+ApplyResourcesPageComponent.
+
+    src/app/components/client-dashboard/apply-resources-p
+age/apply-resources-page.component.ts:17:15:
+      17 Γöé   templateUrl: 
+'./apply-resources-page.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/client-dashboard/apply-resources-p
+age/apply-resources-page.component.html:255:71:
+      255 Γöé ...  <span class="budget-type">{{ 
+requirement.budget?.type }}</span>
+          Γò╡                                            
+           ~~~~
+
+  Error occurs in the template of component 
+ApplyResourcesPageComponent.
+
+    src/app/components/client-dashboard/apply-resources-p
+age/apply-resources-page.component.ts:17:15:
+      17 Γöé   templateUrl: 
+'./apply-resources-page.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/client-dashboard/apply-resources-p
+age/apply-resources-page.component.html:259:82:
+      259 Γöé ...ent-experience">{{ 
+requirement.experience?.minYears }} years</td>
+          Γò╡                                            
+   ~~~~~~~~
+
+  Error occurs in the template of component 
+ApplyResourcesPageComponent.
+
+    src/app/components/client-dashboard/apply-resources-p
+age/apply-resources-page.component.ts:17:15:
+      17 Γöé   templateUrl: 
+'./apply-resources-page.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/client-dashboard/apply-resources-p
+age/apply-resources-page.component.html:268:51:
+      268 Γöé ...                     +{{ 
+(requirement.skills?.length || 0) - 3 }}
+          Γò╡                                            
+      ~~~~~~
+
+  Error occurs in the template of component 
+ApplyResourcesPageComponent.
+
+    src/app/components/client-dashboard/apply-resources-p
+age/apply-resources-page.component.ts:17:15:
+      17 Γöé   templateUrl: 
+'./apply-resources-page.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/client-dashboard/apply-resources-p
+age/apply-resources-page.component.html:297:46:
+      297 Γöé ...<td>Γé╣{{ requirement.budget?.charge }} 
+({{ requirement.budget...
+          Γò╡                              ~~~~~~
+
+  Error occurs in the template of component 
+ApplyResourcesPageComponent.
+
+    src/app/components/client-dashboard/apply-resources-p
+age/apply-resources-page.component.ts:17:15:
+      17 Γöé   templateUrl: 
+'./apply-resources-page.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/client-dashboard/apply-resources-p
+age/apply-resources-page.component.html:297:80:
+      297 Γöé ...quirement.budget?.charge }} ({{ 
+requirement.budget?.type }})</td>
+          Γò╡                                            
+          ~~~~
+
+  Error occurs in the template of component 
+ApplyResourcesPageComponent.
+
+    src/app/components/client-dashboard/apply-resources-p
+age/apply-resources-page.component.ts:17:15:
+      17 Γöé   templateUrl: 
+'./apply-resources-page.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/client-dashboard/client-user-manag
+ement/client-user-management.component.html:51:40:
+      51 Γöé ...           
+{{user.firstName?.charAt(0)}}{{user.lastName?.charAt...
+         Γò╡                                 ~~~~~~
+
+  Error occurs in the template of component 
+ClientUserManagementComponent.
+
+    src/app/components/client-dashboard/client-user-manag
+ement/client-user-management.component.ts:9:15:
+      9 Γöé   templateUrl: 
+'./client-user-management.component.html',
+        Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/client-dashboard/client-user-manag
+ement/client-user-management.component.html:51:68:
+      51 Γöé ...         
+{{user.firstName?.charAt(0)}}{{user.lastName?.charAt(0)}}
+         Γò╡                                             
+              ~~~~~~
+
+  Error occurs in the template of component 
+ClientUserManagementComponent.
+
+    src/app/components/client-dashboard/client-user-manag
+ement/client-user-management.component.ts:9:15:
+      9 Γöé   templateUrl: 
+'./client-user-management.component.html',
+        Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/modals/apply-requirement-modal/app
+ly-requirement-modal.component.html:83:43:
+      83 Γöé ...     {{ requirement.budget?.currency || 
+'USD' }}{{ requirement....
+         Γò╡                                ~~~~~~~~
+
+  Error occurs in the template of component 
+ApplyRequirementModalComponent.
+
+    src/app/components/modals/apply-requirement-modal/app
+ly-requirement-modal.component.ts:17:15:
+      17 Γöé   templateUrl: 
+'./apply-requirement-modal.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/modals/apply-requirement-modal/app
+ly-requirement-modal.component.html:83:86:
+      83 Γöé ...dget?.currency || 'USD' }}{{ 
+requirement.budget?.charge || 0 }}/hr
+         Γò╡                                             
+        ~~~~~~
+
+  Error occurs in the template of component 
+ApplyRequirementModalComponent.
+
+    src/app/components/modals/apply-requirement-modal/app
+ly-requirement-modal.component.ts:17:15:
+      17 Γöé   templateUrl: 
+'./apply-requirement-modal.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/modals/apply-requirement-modal/app
+ly-requirement-modal.component.html:85:74:
+      85 Γöé ...xt-gray-500">{{ requirement.budget?.type 
+|| 'Not specified' }}</p>
+         Γò╡                                        ~~~~
+
+  Error occurs in the template of component 
+ApplyRequirementModalComponent.
+
+    src/app/components/modals/apply-requirement-modal/app
+ly-requirement-modal.component.ts:17:15:
+      17 Γöé   templateUrl: 
+'./apply-requirement-modal.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/modals/apply-requirement-modal/app
+ly-requirement-modal.component.html:124:47:
+      124 Γöé ...                {{ 
+requirement.experience?.minYears || 0 }} years
+          Γò╡                                            
+   ~~~~~~~~
+
+  Error occurs in the template of component 
+ApplyRequirementModalComponent.
+
+    src/app/components/modals/apply-requirement-modal/app
+ly-requirement-modal.component.ts:17:15:
+      17 Γöé   templateUrl: 
+'./apply-requirement-modal.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/modals/apply-requirement-modal/app
+ly-requirement-modal.component.html:126:78:
+      126 Γöé ...y-500">{{ requirement.experience?.level 
+|| 'Not specified' }}</p>
+          Γò╡                                      ~~~~~
+
+  Error occurs in the template of component 
+ApplyRequirementModalComponent.
+
+    src/app/components/modals/apply-requirement-modal/app
+ly-requirement-modal.component.ts:17:15:
+      17 Γöé   templateUrl: 
+'./apply-requirement-modal.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:136:34:
+      136 Γöé ...               
+(profileData?.user?.approvalStatus === 'approve...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:137:34:
+      137 Γöé ...                
+profileData?.user?.approvalStatus === 'pending...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:139:45:
+      139 Γöé ...    <img 
+[src]="profileData?.user?.approvalStatus === 'approve...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:140:44:
+      140 Γöé ...                
+profileData?.user?.approvalStatus === 'pending...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:142:66:
+      142 Γöé ...  class="w-4 h-4 mr-2" 
+[alt]="profileData?.user?.approvalStatus">
+          Γò╡                                            
+   ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:143:35:
+      143 Γöé ...              
+{{profileData?.user?.approvalStatus === 'approve...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:144:35:
+      144 Γöé ...                
+profileData?.user?.approvalStatus === 'pending...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:238:34:
+      238 Γöé ...               
+(profileData?.user?.approvalStatus === 'approve...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:239:34:
+      239 Γöé ...                
+profileData?.user?.approvalStatus === 'pending...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:241:45:
+      241 Γöé ...    <img 
+[src]="profileData?.user?.approvalStatus === 'approve...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:242:44:
+      242 Γöé ...                
+profileData?.user?.approvalStatus === 'pending...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:244:66:
+      244 Γöé ...  class="w-4 h-4 mr-2" 
+[alt]="profileData?.user?.approvalStatus">
+          Γò╡                                            
+   ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:245:35:
+      245 Γöé ...              
+{{profileData?.user?.approvalStatus === 'approve...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:246:35:
+      246 Γöé ...                
+profileData?.user?.approvalStatus === 'pending...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:305:34:
+      305 Γöé ...               
+(profileData?.user?.approvalStatus === 'approve...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:306:34:
+      306 Γöé ...                
+profileData?.user?.approvalStatus === 'pending...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:308:45:
+      308 Γöé ...    <img 
+[src]="profileData?.user?.approvalStatus === 'approve...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:309:44:
+      309 Γöé ...                
+profileData?.user?.approvalStatus === 'pending...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:311:66:
+      311 Γöé ...  class="w-4 h-4 mr-2" 
+[alt]="profileData?.user?.approvalStatus">
+          Γò╡                                            
+   ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:312:35:
+      312 Γöé ...              
+{{profileData?.user?.approvalStatus === 'approve...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:313:35:
+      313 Γöé ...                
+profileData?.user?.approvalStatus === 'pending...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:385:34:
+      385 Γöé ...               
+(profileData?.user?.approvalStatus === 'approve...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:386:34:
+      386 Γöé ...                
+profileData?.user?.approvalStatus === 'pending...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:388:45:
+      388 Γöé ...    <img 
+[src]="profileData?.user?.approvalStatus === 'approve...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:389:44:
+      389 Γöé ...                
+profileData?.user?.approvalStatus === 'pending...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:391:66:
+      391 Γöé ...  class="w-4 h-4 mr-2" 
+[alt]="profileData?.user?.approvalStatus">
+          Γò╡                                            
+   ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:392:35:
+      392 Γöé ...              
+{{profileData?.user?.approvalStatus === 'approve...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/profile/profile-dashboard.componen
+t.html:393:35:
+      393 Γöé ...                
+profileData?.user?.approvalStatus === 'pending...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+ProfileDashboardComponent.
+
+    src/app/components/profile/profile-dashboard.componen
+t.ts:18:15:
+      18 Γöé   templateUrl: 
+'./profile-dashboard.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.html:94:41:
+      94 Γöé ...     {{ requirement.budget?.currency || 
+'USD' }}{{ requirement....
+         Γò╡                                ~~~~~~~~
+
+  Error occurs in the template of component 
+BrowseRequirementsPageComponent.
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.ts:18:15:
+      18 Γöé   templateUrl: 
+'./browse-requirements-page.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.html:94:84:
+      94 Γöé ...dget?.currency || 'USD' }}{{ 
+requirement.budget?.charge || 0 }}/hr
+         Γò╡                                             
+        ~~~~~~
+
+  Error occurs in the template of component 
+BrowseRequirementsPageComponent.
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.ts:18:15:
+      18 Γöé   templateUrl: 
+'./browse-requirements-page.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.html:96:72:
+      96 Γöé ...xt-gray-500">{{ requirement.budget?.type 
+|| 'Not specified' }}</p>
+         Γò╡                                        ~~~~
+
+  Error occurs in the template of component 
+BrowseRequirementsPageComponent.
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.ts:18:15:
+      18 Γöé   templateUrl: 
+'./browse-requirements-page.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.html:135:45:
+      135 Γöé                   {{ 
+requirement.experience?.minYears || 0 }} years
+          Γò╡                                            
+  ~~~~~~~~
+
+  Error occurs in the template of component 
+BrowseRequirementsPageComponent.
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.ts:18:15:
+      18 Γöé   templateUrl: 
+'./browse-requirements-page.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.html:137:76:
+      137 Γöé ...y-500">{{ requirement.experience?.level 
+|| 'Not specified' }}</p>
+          Γò╡                                      ~~~~~
+
+  Error occurs in the template of component 
+BrowseRequirementsPageComponent.
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.ts:18:15:
+      18 Γöé   templateUrl: 
+'./browse-requirements-page.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.html:260:78:
+      260 Γöé ..."resource-experience">{{ 
+resource.experience?.years }} years</td>
+          Γò╡                                            
+      ~~~~~
+
+  Error occurs in the template of component 
+BrowseRequirementsPageComponent.
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.ts:18:15:
+      18 Γöé   templateUrl: 
+'./browse-requirements-page.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.html:261:67:
+      261 Γöé ... <td class="resource-rate">Γé╣{{ 
+resource.rate?.hourly }}/hr</td>
+          Γò╡                                            
+    ~~~~~~
+
+  Error occurs in the template of component 
+BrowseRequirementsPageComponent.
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.ts:18:15:
+      18 Γöé   templateUrl: 
+'./browse-requirements-page.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.html:262:74:
+      262 Γöé ...ation">{{ resource.location?.city }}, 
+{{ resource.location?.st...
+          Γò╡                                 ~~~~
+
+  Error occurs in the template of component 
+BrowseRequirementsPageComponent.
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.ts:18:15:
+      18 Γöé   templateUrl: 
+'./browse-requirements-page.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.html:262:105:
+      262 Γöé ...{ resource.location?.city }}, {{ 
+resource.location?.state }}</td>
+          Γò╡                                            
+            ~~~~~
+
+  Error occurs in the template of component 
+BrowseRequirementsPageComponent.
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.ts:18:15:
+      18 Γöé   templateUrl: 
+'./browse-requirements-page.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.html:264:84:
+      264 Γöé ...="availability-status">{{ 
+resource.availability?.status }}</span>
+          Γò╡                                            
+         ~~~~~~
+
+  Error occurs in the template of component 
+BrowseRequirementsPageComponent.
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.ts:18:15:
+      18 Γöé   templateUrl: 
+'./browse-requirements-page.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.html:298:48:
+      298 Γöé                     <td>{{ 
+resource.experience?.years }} years</td>
+          Γò╡                                            
+     ~~~~~
+
+  Error occurs in the template of component 
+BrowseRequirementsPageComponent.
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.ts:18:15:
+      18 Γöé   templateUrl: 
+'./browse-requirements-page.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.html:299:43:
+      299 Γöé                     <td>Γé╣{{ 
+resource.rate?.hourly }}/hr</td>
+          Γò╡                                          
+~~~~~~
+
+  Error occurs in the template of component 
+BrowseRequirementsPageComponent.
+
+    src/app/components/vendor-dashboard/browse-requiremen
+ts-page/browse-requirements-page.component.ts:18:15:
+      18 Γöé   templateUrl: 
+'./browse-requirements-page.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/invoice-managemen
+t/invoice-management.component.html:289:107:
+      289 Γöé ...electedInvoice.paymentDetails.paidAmount
+?.toLocaleString() }}</p>
+          Γò╡                                            
+  ~~~~~~~~~~~~~~
+
+  Error occurs in the template of component 
+InvoiceManagementComponent.
+
+    src/app/components/vendor-dashboard/invoice-managemen
+t/invoice-management.component.ts:26:15:
+      26 Γöé   templateUrl: 
+'./invoice-management.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/po-approvals/po-a
+pprovals.component.html:122:41:
+      122 Γöé ...{{ selectedPO.totalAmount?.currency }} 
+{{ selectedPO.totalAmou...
+          Γò╡                               ~~~~~~~~
+
+  Error occurs in the template of component 
+POApprovalsComponent.
+
+    src/app/components/vendor-dashboard/po-approvals/po-a
+pprovals.component.ts:27:15:
+      27 Γöé   templateUrl: 
+'./po-approvals.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/po-approvals/po-a
+pprovals.component.html:122:80:
+      122 Γöé ...urrency }} {{ 
+selectedPO.totalAmount?.amount?.toLocaleString() }}
+          Γò╡                                          
+~~~~~~
+
+  Error occurs in the template of component 
+POApprovalsComponent.
+
+    src/app/components/vendor-dashboard/po-approvals/po-a
+pprovals.component.ts:27:15:
+      27 Γöé   templateUrl: 
+'./po-approvals.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/po-approvals/po-a
+pprovals.component.html:216:69:
+      216 Γöé ...ss="text-sm text-gray-900">#{{ 
+selectedPO.sowId?.slice(-6) }}</p>
+          Γò╡                                            
+         ~~~~~
+
+  Error occurs in the template of component 
+POApprovalsComponent.
+
+    src/app/components/vendor-dashboard/po-approvals/po-a
+pprovals.component.ts:27:15:
+      27 Γöé   templateUrl: 
+'./po-approvals.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/po-approvals/po-a
+pprovals.component.html:239:43:
+      239 Γöé ...{{ selectedPO.totalAmount?.currency }} 
+{{ selectedPO.totalAmou...
+          Γò╡                               ~~~~~~~~
+
+  Error occurs in the template of component 
+POApprovalsComponent.
+
+    src/app/components/vendor-dashboard/po-approvals/po-a
+pprovals.component.ts:27:15:
+      27 Γöé   templateUrl: 
+'./po-approvals.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/po-approvals/po-a
+pprovals.component.html:239:82:
+      239 Γöé ...urrency }} {{ 
+selectedPO.totalAmount?.amount?.toLocaleString() }}
+          Γò╡                                          
+~~~~~~
+
+  Error occurs in the template of component 
+POApprovalsComponent.
+
+    src/app/components/vendor-dashboard/po-approvals/po-a
+pprovals.component.ts:27:15:
+      27 Γöé   templateUrl: 
+'./po-approvals.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/po-approvals/po-a
+pprovals.component.html:268:54:
+      268 Γöé ...           {{ 
+selectedPO.financeApproval.status?.toUpperCase() }}
+          Γò╡                                            
+         ~~~~~~~~~~~
+
+  Error occurs in the template of component 
+POApprovalsComponent.
+
+    src/app/components/vendor-dashboard/po-approvals/po-a
+pprovals.component.ts:27:15:
+      27 Γöé   templateUrl: 
+'./po-approvals.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/po-approvals/po-a
+pprovals.component.html:293:53:
+      293 Γöé ...            {{ 
+selectedPO.vendorResponse.status?.toUpperCase() }}
+          Γò╡                                            
+         ~~~~~~~~~~~
+
+  Error occurs in the template of component 
+POApprovalsComponent.
+
+    src/app/components/vendor-dashboard/po-approvals/po-a
+pprovals.component.ts:27:15:
+      27 Γöé   templateUrl: 
+'./po-approvals.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/sow-approvals/sow
+-approvals.component.html:122:44:
+      122 Γöé ...selectedSOW.estimatedCost?.currency }} 
+{{ selectedSOW.estimate...
+          Γò╡                               ~~~~~~~~
+
+  Error occurs in the template of component 
+SOWApprovalsComponent.
+
+    src/app/components/vendor-dashboard/sow-approvals/sow
+-approvals.component.ts:27:15:
+      27 Γöé   templateUrl: 
+'./sow-approvals.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/sow-approvals/sow
+-approvals.component.html:122:86:
+      122 Γöé ...ency }} {{ 
+selectedSOW.estimatedCost?.amount?.toLocaleString() }}
+          Γò╡                                          
+~~~~~~
+
+  Error occurs in the template of component 
+SOWApprovalsComponent.
+
+    src/app/components/vendor-dashboard/sow-approvals/sow
+-approvals.component.ts:27:15:
+      27 Γöé   templateUrl: 
+'./sow-approvals.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/sow-approvals/sow
+-approvals.component.html:222:68:
+      222 Γöé ...ass="text-sm text-gray-900">#{{ 
+selectedSOW._id?.slice(-6) }}</p>
+          Γò╡                                            
+         ~~~~~
+
+  Error occurs in the template of component 
+SOWApprovalsComponent.
+
+    src/app/components/vendor-dashboard/sow-approvals/sow
+-approvals.component.ts:27:15:
+      27 Γöé   templateUrl: 
+'./sow-approvals.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/sow-approvals/sow
+-approvals.component.html:247:46:
+      247 Γöé ...selectedSOW.estimatedCost?.currency }} 
+{{ selectedSOW.estimate...
+          Γò╡                               ~~~~~~~~
+
+  Error occurs in the template of component 
+SOWApprovalsComponent.
+
+    src/app/components/vendor-dashboard/sow-approvals/sow
+-approvals.component.ts:27:15:
+      27 Γöé   templateUrl: 
+'./sow-approvals.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/sow-approvals/sow
+-approvals.component.html:247:88:
+      247 Γöé ...ency }} {{ 
+selectedSOW.estimatedCost?.amount?.toLocaleString() }}
+          Γò╡                                          
+~~~~~~
+
+  Error occurs in the template of component 
+SOWApprovalsComponent.
+
+    src/app/components/vendor-dashboard/sow-approvals/sow
+-approvals.component.ts:27:15:
+      27 Γöé   templateUrl: 
+'./sow-approvals.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/sow-approvals/sow
+-approvals.component.html:276:54:
+      276 Γöé ...           {{ 
+selectedSOW.vendorResponse.status?.toUpperCase() }}
+          Γò╡                                            
+         ~~~~~~~~~~~
+
+  Error occurs in the template of component 
+SOWApprovalsComponent.
+
+    src/app/components/vendor-dashboard/sow-approvals/sow
+-approvals.component.ts:27:15:
+      27 Γöé   templateUrl: 
+'./sow-approvals.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] NG8107: The left side of this optional 
+chain operation does not include 'null' or 'undefined' 
+in its type, therefore the '?.' operator can be replaced 
+with the '.' operator. [plugin angular-compiler]
+
+    src/app/components/vendor-dashboard/sow-approvals/sow
+-approvals.component.html:302:60:
+      302 Γöé ... ≡ƒôï Audit Trail - SOW #{{ 
+selectedSOWForAudit._id?.slice(-6) }}
+          Γò╡                                            
+        ~~~~~
+
+  Error occurs in the template of component 
+SOWApprovalsComponent.
+
+    src/app/components/vendor-dashboard/sow-approvals/sow
+-approvals.component.ts:27:15:
+      27 Γöé   templateUrl: 
+'./sow-approvals.component.html',
+         Γò╡                
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Γû▓ [WARNING] All "@import" rules must come first 
+[invalid-@import]
+
+    src/styles.css:1924:0:
+      1924 Γöé @import 
+'ag-grid-community/styles/ag-grid.css';
+           Γò╡ ~~~~~~~
+
+  This rule cannot come before an "@import" rule
+
+    src/styles.css:2:0:
+      2 Γöé *, ::before, ::after {
+        Γò╡ ^
+
+
+Γû▓ [WARNING] All "@import" rules must come first 
+[invalid-@import]
+
+    src/styles.css:1925:0:
+      1925 Γöé @import 
+'ag-grid-community/styles/ag-theme-alpine.css';
+           Γò╡ ~~~~~~~
+
+  This rule cannot come before an "@import" rule
+
+    src/styles.css:2:0:
+      2 Γöé *, ::before, ::after {
+        Γò╡ ^
+
+
+Γû▓ [WARNING] bundle initial exceeded maximum budget. 
+Budget 500.00 kB was not met by 1.81 MB with a total of 
+2.30 MB.
+
+
+Γû▓ [WARNING] angular:styles/component:css;b1db25b60e1d6b
+0920bf17f6109daa36ad2739cdc2316b53fbdb7def5339aa96;C:/Use
+rs/gandh/OneDrive/Documents/Angular17GCCVendor-main/front
+end/src/app/components/modals/application-history-modal/a
+pplication-history-modal.component.ts exceeded maximum 
+budget. Budget 2.00 kB was not met by 2.26 kB with a 
+total of 4.26 kB.
+
+
+Γû▓ [WARNING] src/app/components/modals/application-actio
+n-modal/application-action-modal.component.scss exceeded 
+maximum budget. Budget 2.00 kB was not met by 238 bytes 
+with a total of 2.23 kB.
+
+
+Γû▓ [WARNING] src/app/components/vendor-dashboard/sow-app
+rovals/sow-approvals.component.scss exceeded maximum 
+budget. Budget 2.00 kB was not met by 1.44 kB with a 
+total of 3.44 kB.
+
+
+Γû▓ [WARNING] src/app/components/client-dashboard/apply-r
+esources-page/apply-resources-page.component.scss 
+exceeded maximum budget. Budget 2.00 kB was not met by 
+2.31 kB with a total of 4.31 kB.
+
+
+Γû▓ [WARNING] src/app/components/vendor-dashboard/po-appr
+ovals/po-approvals.component.scss exceeded maximum 
+budget. Budget 2.00 kB was not met by 1.40 kB with a 
+total of 3.40 kB.
+
+
+Γû▓ [WARNING] src/app/components/client-dashboard/sow-man
+agement/sow-management.component.scss exceeded maximum 
+budget. Budget 2.00 kB was not met by 926 bytes with a 
+total of 2.90 kB.
+
+
+Γû▓ [WARNING] src/app/components/vendor-dashboard/invoice
+-management/invoice-management.component.scss exceeded 
+maximum budget. Budget 2.00 kB was not met by 3.52 kB 
+with a total of 5.52 kB.
+
+
+Γû▓ [WARNING] 
+src/app/components/landing/landing.component.scss 
+exceeded maximum budget. Budget 2.00 kB was not met by 
+18.42 kB with a total of 20.42 kB.
+
+
+Γû▓ [WARNING] src/app/components/client-dashboard/po-mana
+gement/po-management.component.scss exceeded maximum 
+budget. Budget 2.00 kB was not met by 893 bytes with a 
+total of 2.87 kB.
+
+
+Γû▓ [WARNING] src/app/components/shared/audit-trail/audit
+-trail.component.scss exceeded maximum budget. Budget 
+2.00 kB was not met by 490 bytes with a total of 2.48 kB.
+
+
+Γû▓ [WARNING] src/app/components/vendor-dashboard/browse-
+requirements-page/browse-requirements-page.component.scss
+ exceeded maximum budget. Budget 2.00 kB was not met by 
+2.14 kB with a total of 4.14 kB.
+
+
+X [ERROR] bundle initial exceeded maximum budget. Budget 
+1.00 MB was not met by 1.30 MB with a total of 2.30 MB.
+
+
+X [ERROR] angular:styles/component:css;b1db25b60e1d6b0920
+bf17f6109daa36ad2739cdc2316b53fbdb7def5339aa96;C:/Users/g
+andh/OneDrive/Documents/Angular17GCCVendor-main/frontend/
+src/app/components/modals/application-history-modal/appli
+cation-history-modal.component.ts exceeded maximum 
+budget. Budget 4.00 kB was not met by 265 bytes with a 
+total of 4.26 kB.
+
+
+X [ERROR] src/app/components/client-dashboard/apply-resou
+rces-page/apply-resources-page.component.scss exceeded 
+maximum budget. Budget 4.00 kB was not met by 318 bytes 
+with a total of 4.31 kB.
+
+
+X [ERROR] src/app/components/vendor-dashboard/invoice-man
+agement/invoice-management.component.scss exceeded 
+maximum budget. Budget 4.00 kB was not met by 1.52 kB 
+with a total of 5.52 kB.
+
+
+X [ERROR] 
+src/app/components/landing/landing.component.scss 
+exceeded maximum budget. Budget 4.00 kB was not met by 
+16.42 kB with a total of 20.42 kB.
+
+
+X [ERROR] src/app/components/vendor-dashboard/browse-requ
+irements-page/browse-requirements-page.component.scss 
+exceeded maximum budget. Budget 4.00 kB was not met by 
+140 bytes with a total of 4.14 kB.
+
+

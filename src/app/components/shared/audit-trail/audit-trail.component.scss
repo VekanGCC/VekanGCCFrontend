@@ -1,0 +1,185 @@
+.audit-trail-container {
+  .audit-log-item {
+    transition: all 0.2s ease-in-out;
+    
+    &:hover {
+      background-color: #f9fafb;
+    }
+  }
+
+  .action-icon {
+    transition: transform 0.2s ease-in-out;
+    
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  .status-badge {
+    transition: all 0.2s ease-in-out;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .filter-section {
+    transition: all 0.3s ease-in-out;
+  }
+
+  .export-button {
+    transition: all 0.2s ease-in-out;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .changes-section {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .metadata-section {
+    animation: slideIn 0.3s ease-in-out;
+  }
+
+  .related-entities {
+    animation: bounceIn 0.3s ease-in-out;
+  }
+
+  .loading-spinner {
+    animation: spin 1s linear infinite;
+  }
+
+  .empty-state {
+    animation: fadeInUp 0.5s ease-in-out;
+  }
+
+  // Responsive design
+  @media (max-width: 768px) {
+    .filter-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .summary-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    
+    .audit-log-content {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .action-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .summary-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .export-buttons {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes bounceIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Custom scrollbar for audit logs
+.audit-logs-container {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+    
+    &:hover {
+      background: #a8a8a8;
+    }
+  }
+}
+
+// Print styles
+@media print {
+  .audit-trail-container {
+    .filter-section,
+    .export-buttons,
+    .pagination {
+      display: none !important;
+    }
+    
+    .audit-log-item {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+  }
+} 

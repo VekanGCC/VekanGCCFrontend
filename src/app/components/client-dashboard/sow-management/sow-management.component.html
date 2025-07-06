@@ -1,0 +1,425 @@
+<div class="sow-management p-6">
+  <!-- Header -->
+  <div class="header-section mb-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">SOW Management</h1>
+        <p class="text-gray-600 mt-1">Review and manage Statements of Work</p>
+        <p class="text-sm text-gray-500 mt-2">
+          💡 <strong>Actions:</strong> 👁️ View | 📋 Submit for PM Approval | ✅ Approve | ❌ Reject | 📧 Send to Vendor
+        </p>
+      </div>
+      <button 
+        (click)="onCreateSOW()"
+        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
+        <span class="mr-2">➕</span>
+        Create SOW
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-section mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="bg-white p-4 rounded-lg shadow border">
+        <div class="flex items-center">
+          <div class="p-2 bg-blue-100 rounded-lg">
+            <span class="text-blue-600 text-xl">📄</span>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-600">Total SOWs</p>
+            <p class="text-2xl font-bold text-gray-900">{{ totalSOWs }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white p-4 rounded-lg shadow border">
+        <div class="flex items-center">
+          <div class="p-2 bg-yellow-100 rounded-lg">
+            <span class="text-yellow-600 text-xl">⏳</span>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-600">Pending Review</p>
+            <p class="text-2xl font-bold text-gray-900">{{ pendingSOWsCount }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white p-4 rounded-lg shadow border">
+        <div class="flex items-center">
+          <div class="p-2 bg-green-100 rounded-lg">
+            <span class="text-green-600 text-xl">✅</span>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-600">Approved</p>
+            <p class="text-2xl font-bold text-gray-900">{{ approvedSOWsCount }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white p-4 rounded-lg shadow border">
+        <div class="flex items-center">
+          <div class="p-2 bg-purple-100 rounded-lg">
+            <span class="text-purple-600 text-xl">💰</span>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-600">Pending Amount</p>
+            <p class="text-2xl font-bold text-gray-900">${{ totalAmountPending.toLocaleString() }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Grid -->
+  <div class="data-grid-section">
+    <div class="bg-white rounded-lg shadow border">
+      <div class="p-4 border-b border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-900">SOWs</h2>
+      </div>
+      
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="flex justify-center items-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+
+      <!-- No SOWs State -->
+      <div *ngIf="!isLoading && sows.length === 0" class="text-center py-8">
+        <div class="h-12 w-12 text-gray-400 mx-auto mb-4 text-4xl">📄</div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">No SOWs Found</h3>
+        <p class="text-gray-500 mb-4">No Statements of Work have been created yet</p>
+      </div>
+      
+      <!-- AG Grid -->
+      <div *ngIf="!isLoading && sows.length > 0" class="ag-grid-container">
+        <ag-grid-angular
+          class="ag-theme-alpine w-full"
+          [columnDefs]="columnDefs"
+          [defaultColDef]="defaultColDef"
+          [gridOptions]="gridOptions"
+          [rowData]="sows"
+          [domLayout]="'autoHeight'"
+          [rowSelection]="'single'"
+          [animateRows]="true"
+          [enableCellTextSelection]="true"
+        >
+        </ag-grid-angular>
+      </div>
+      
+      <!-- Custom Pagination -->
+      <div *ngIf="!isLoading && sows.length > 0" class="p-4 border-t border-gray-200">
+        <app-pagination
+          [paginationState]="paginationState"
+          (pageChange)="onPageChange($event)">
+        </app-pagination>
+      </div>
+    </div>
+  </div>
+
+  <!-- View SOW Modal -->
+  <div *ngIf="showViewModal && selectedSOW" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">SOW Details</h3>
+        <button 
+          (click)="onCloseModal()"
+          class="text-gray-400 hover:text-gray-600">
+          <span class="text-xl">×</span>
+        </button>
+      </div>
+      
+      <div class="space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-600">SOW ID</label>
+            <p class="text-sm text-gray-900">#{{ selectedSOW._id.slice(-6) }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600">Status</label>
+            <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + getStatusClass(selectedSOW.status)">
+              {{ formatStatus(selectedSOW.status) }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-600">Title</label>
+            <p class="text-sm text-gray-900">{{ selectedSOW.title }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600">Vendor</label>
+            <p class="text-sm text-gray-900">
+              {{ getVendorDisplayName(selectedSOW.vendorId) }}
+            </p>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-600">Amount</label>
+            <p class="text-sm text-gray-900">
+              {{ getAmountDisplay(selectedSOW.estimatedCost) }}
+            </p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600">Start Date</label>
+            <p class="text-sm text-gray-900">{{ selectedSOW.startDate | date }}</p>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-600">End Date</label>
+            <p class="text-sm text-gray-900">{{ selectedSOW.endDate | date }}</p>
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-600">Description</label>
+          <p class="text-sm text-gray-900">{{ selectedSOW.description || 'No description provided' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Modal -->
+  <div *ngIf="showActionModal && selectedSOW" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">
+          {{ actionType === 'approve' ? 'Approve' : 'Reject' }} SOW
+        </h3>
+        <button 
+          (click)="onCloseModal()"
+          class="text-gray-400 hover:text-gray-600">
+          <span class="text-xl">×</span>
+        </button>
+      </div>
+      
+      <div class="mb-4 p-3 bg-gray-50 rounded-lg">
+        <p class="text-sm text-gray-600">SOW: #{{ selectedSOW._id.slice(-6) }}</p>
+        <p class="text-sm font-medium text-gray-900">
+          {{ getAmountDisplay(selectedSOW.estimatedCost) }}
+        </p>
+      </div>
+      
+      <form [formGroup]="actionForm" (ngSubmit)="onActionSubmit()" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Comments</label>
+          <textarea 
+            formControlName="comments"
+            rows="3"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Add comments for this action">
+          </textarea>
+        </div>
+        
+        <div class="flex justify-end space-x-3 pt-4">
+          <button 
+            type="button"
+            (click)="onCloseModal()"
+            class="px-4 py-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
+            Cancel
+          </button>
+          <button 
+            type="submit"
+            [disabled]="isLoading"
+            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50">
+            {{ isLoading ? 'Processing...' : (actionType === 'approve' ? 'Approve SOW' : 'Reject SOW') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- PM Approval Modal -->
+  <div *ngIf="showPMApprovalModal && selectedSOW" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">Submit for PM Approval</h3>
+        <button 
+          (click)="onCloseModal()"
+          class="text-gray-400 hover:text-gray-600">
+          <span class="text-xl">×</span>
+        </button>
+      </div>
+      
+      <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+        <p class="text-sm text-blue-800 font-medium mb-2">SOW Details</p>
+        <p class="text-sm text-blue-700">SOW: #{{ selectedSOW._id.slice(-6) }}</p>
+        <p class="text-sm text-blue-700">{{ selectedSOW.title }}</p>
+        <p class="text-sm text-blue-700">
+          Amount: {{ getAmountDisplay(selectedSOW.estimatedCost) }}
+        </p>
+      </div>
+      
+      <form [formGroup]="pmApprovalForm" (ngSubmit)="onPMApprovalSubmit()" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Comments for PM *</label>
+          <textarea 
+            formControlName="comments"
+            (input)="onCommentsInput()"
+            rows="4"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Add comments for the Project Manager (required)">
+          </textarea>
+          <div *ngIf="pmApprovalForm.get('comments')?.invalid && pmApprovalForm.get('comments')?.touched" class="text-red-500 text-sm mt-1">
+            <span *ngIf="pmApprovalForm.get('comments')?.errors?.['required']">Comments are required for PM approval</span>
+            <span *ngIf="pmApprovalForm.get('comments')?.errors?.['whitespaceOnly']">Comments cannot be empty or just whitespace</span>
+          </div>
+        </div>
+        
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <span class="text-yellow-600 text-lg">⚠️</span>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm text-yellow-800">
+                This will submit the SOW to the Project Manager for review and approval. 
+                The SOW status will change to "Submitted for PM Approval".
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="flex justify-end space-x-3 pt-4">
+          <button 
+            type="button"
+            (click)="onCloseModal()"
+            class="px-4 py-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
+            Cancel
+          </button>
+          <button 
+            type="submit"
+            [disabled]="isLoading || !pmApprovalForm.valid || !pmApprovalForm.get('comments')?.value?.trim()"
+            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50">
+            {{ isLoading ? 'Submitting...' : 'Submit for PM Approval' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Create SOW Modal -->
+  <div *ngIf="showCreateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">Create New SOW</h3>
+        <button 
+          (click)="onCloseModal()"
+          class="text-gray-400 hover:text-gray-600">
+          <span class="text-xl">×</span>
+        </button>
+      </div>
+      
+      <form [formGroup]="sowForm" (ngSubmit)="onSubmitSOW()" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Title *</label>
+          <input 
+            type="text" 
+            formControlName="title"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Enter SOW title">
+          <div *ngIf="sowForm.get('title')?.invalid && sowForm.get('title')?.touched" class="text-red-500 text-sm mt-1">
+            Title is required and must be at least 5 characters
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Vendor *</label>
+          <select 
+            formControlName="vendorId"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <option value="">Select Vendor</option>
+            <option *ngFor="let vendor of vendorDisplayOptions" [value]="vendor.id">
+              {{ vendor.display }}
+            </option>
+          </select>
+          <div *ngIf="sowForm.get('vendorId')?.invalid && sowForm.get('vendorId')?.touched" class="text-red-500 text-sm mt-1">
+            Vendor is required
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Description *</label>
+          <textarea 
+            formControlName="description"
+            rows="4"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Enter detailed description of the work">
+          </textarea>
+          <div *ngIf="sowForm.get('description')?.invalid && sowForm.get('description')?.touched" class="text-red-500 text-sm mt-1">
+            Description is required and must be at least 20 characters
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Start Date *</label>
+            <input 
+              type="date" 
+              formControlName="startDate"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <div *ngIf="sowForm.get('startDate')?.invalid && sowForm.get('startDate')?.touched" class="text-red-500 text-sm mt-1">
+              Start date is required
+            </div>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">End Date *</label>
+            <input 
+              type="date" 
+              formControlName="endDate"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <div *ngIf="sowForm.get('endDate')?.invalid && sowForm.get('endDate')?.touched" class="text-red-500 text-sm mt-1">
+              End date is required
+            </div>
+          </div>
+        </div>
+        
+        <div formGroupName="estimatedCost" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Amount *</label>
+            <input 
+              type="number" 
+              formControlName="amount"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="0.00">
+            <div *ngIf="sowForm.get('estimatedCost.amount')?.invalid && sowForm.get('estimatedCost.amount')?.touched" class="text-red-500 text-sm mt-1">
+              Amount is required and must be positive
+            </div>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Currency *</label>
+            <select 
+              formControlName="currency"
+              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <option value="USD">USD</option>
+              <option value="EUR">EUR</option>
+              <option value="GBP">GBP</option>
+              <option value="INR">INR</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="flex justify-end space-x-3 pt-4">
+          <button 
+            type="button"
+            (click)="onCloseModal()"
+            class="px-4 py-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
+            Cancel
+          </button>
+          <button 
+            type="submit"
+            [disabled]="isLoading || sowForm.invalid"
+            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50">
+            {{ isLoading ? 'Creating...' : 'Create SOW' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> 

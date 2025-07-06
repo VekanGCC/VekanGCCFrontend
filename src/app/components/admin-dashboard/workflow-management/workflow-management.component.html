@@ -1,0 +1,577 @@
+<div class="workflow-management">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex items-center justify-center py-8">
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+    <span class="ml-3 text-gray-600">Loading workflows...</span>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+    <div class="flex items-center">
+      <img src="assets/icons/lucide/lucide/alert-circle.svg" alt="error" class="w-5 h-5 text-red-600 mr-3" />
+      <span class="text-red-800">{{ error }}</span>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!isLoading && !error">
+    <!-- Header with Tabs -->
+    <div class="mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="text-xl font-semibold text-gray-900">Workflow Management</h3>
+        <button
+          *ngIf="activeTab === 'configurations' && canEditWorkflow()"
+          (click)="onCreateWorkflow()"
+          class="bg-gradient-to-r from-red-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:from-red-700 hover:to-pink-700 transition-all duration-200 flex items-center">
+          <img src="assets/icons/lucide/lucide/plus.svg" alt="add" class="w-4 h-4 mr-2" />
+          Create Workflow
+        </button>
+      </div>
+
+      <!-- Tab Navigation -->
+      <div class="border-b border-gray-200">
+        <nav class="-mb-px flex space-x-8">
+          <button
+            (click)="switchTab('configurations')"
+            [class]="'py-2 px-1 border-b-2 font-medium text-sm ' + 
+              (activeTab === 'configurations' 
+                ? 'border-red-500 text-red-600' 
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300')">
+            Workflow Configurations
+          </button>
+          <button
+            (click)="switchTab('instances')"
+            [class]="'py-2 px-1 border-b-2 font-medium text-sm ' + 
+              (activeTab === 'instances' 
+                ? 'border-red-500 text-red-600' 
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300')">
+            Workflow Instances
+          </button>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Configurations Tab -->
+    <div *ngIf="activeTab === 'configurations'">
+      <!-- Workflow List -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="p-6">
+          <div *ngIf="workflows.length === 0" class="text-center py-8">
+            <img src="assets/icons/lucide/lucide/git-branch.svg" alt="workflow" class="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No Workflows Found</h3>
+            <p class="text-gray-600 mb-4">Create your first workflow configuration to get started.</p>
+            <button
+              *ngIf="canEditWorkflow()"
+              (click)="onCreateWorkflow()"
+              class="bg-gradient-to-r from-red-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:from-red-700 hover:to-pink-700 transition-all duration-200">
+              Create First Workflow
+            </button>
+          </div>
+
+          <div *ngIf="workflows.length > 0" class="space-y-4">
+            <div *ngFor="let workflow of workflows" class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <div class="flex items-center mb-2">
+                    <h4 class="text-lg font-medium text-gray-900">{{ workflow.name }}</h4>
+                    <span *ngIf="workflow.isDefault" 
+                          class="ml-2 bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
+                      Default
+                    </span>
+                    <span [class]="'ml-2 px-2 py-1 rounded-full text-xs ' + getStatusBadgeClass(workflow.isActive ? 'active' : 'inactive')">
+                      {{ workflow.isActive ? 'Active' : 'Inactive' }}
+                    </span>
+                  </div>
+                  
+                  <p *ngIf="workflow.description" class="text-gray-600 mb-3">{{ workflow.description }}</p>
+                  
+                  <div class="flex items-center text-sm text-gray-500 mb-3">
+                    <span class="mr-4">
+                      <strong>Application Types:</strong> {{ getApplicationTypesDisplay(workflow.applicationTypes) }}
+                    </span>
+                    <span class="mr-4">
+                      <strong>Steps:</strong> {{ workflow.steps?.length || 0 }}
+                    </span>
+                    <span>
+                      <strong>Created:</strong> {{ workflow.createdAt | date:'short' }}
+                    </span>
+                  </div>
+
+                  <div class="flex items-center space-x-2">
+                    <button
+                      (click)="onEditWorkflow(workflow)"
+                      *ngIf="canEditWorkflow()"
+                      class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                      Edit
+                    </button>
+                    <button
+                      (click)="onToggleWorkflowStatus(workflow)"
+                      *ngIf="canEditWorkflow()"
+                      [class]="'text-sm font-medium ' + (workflow.isActive ? 'text-orange-600 hover:text-orange-800' : 'text-green-600 hover:text-green-800')">
+                      {{ workflow.isActive ? 'Deactivate' : 'Activate' }}
+                    </button>
+                    <button
+                      (click)="onDeleteWorkflow(workflow)"
+                      *ngIf="canDeleteWorkflow(workflow)"
+                      class="text-red-600 hover:text-red-800 text-sm font-medium">
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div *ngIf="workflows.length > 0" class="mt-6">
+        <app-pagination
+          [paginationState]="workflowPagination"
+          (pageChange)="onWorkflowPageChange($event)">
+        </app-pagination>
+      </div>
+    </div>
+
+    <!-- Instances Tab -->
+    <div *ngIf="activeTab === 'instances'">
+      <!-- Instance List -->
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="p-6">
+          <div *ngIf="workflowInstances.length === 0" class="text-center py-8">
+            <img src="assets/icons/lucide/lucide/activity.svg" alt="instances" class="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No Workflow Instances</h3>
+            <p class="text-gray-600">Workflow instances will appear here when applications are processed.</p>
+          </div>
+
+          <div *ngIf="workflowInstances.length > 0" class="space-y-4">
+            <div *ngFor="let instance of workflowInstances" class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <div class="flex items-center mb-2">
+                    <h4 class="text-lg font-medium text-gray-900">
+                      Workflow: {{ instance.workflowConfigurationId?.name || 'Unknown' }}
+                    </h4>
+                    <span [class]="'ml-2 px-2 py-1 rounded-full text-xs ' + getStatusBadgeClass(instance.status)">
+                      {{ instance.status }}
+                    </span>
+                  </div>
+                  
+                  <div class="flex items-center text-sm text-gray-500 mb-3">
+                    <span class="mr-4">
+                      <strong>Application:</strong> {{ instance.applicationId?._id || 'Unknown' }}
+                    </span>
+                    <span class="mr-4">
+                      <strong>Current Step:</strong> {{ instance.currentStep || 0 }} / {{ instance.steps?.length || 0 }}
+                    </span>
+                    <span>
+                      <strong>Started:</strong> {{ instance.createdAt | date:'short' }}
+                    </span>
+                  </div>
+
+                  <div class="flex items-center space-x-2">
+                    <button
+                      (click)="onViewInstance(instance)"
+                      class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                      View Details
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div *ngIf="workflowInstances.length > 0" class="mt-6">
+        <app-pagination
+          [paginationState]="instancePagination"
+          (pageChange)="onInstancePageChange($event)">
+        </app-pagination>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create/Edit Workflow Modal -->
+  <div *ngIf="showCreateModal || showEditModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between p-6 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">
+          {{ showCreateModal ? 'Create Workflow' : 'Edit Workflow' }}
+        </h3>
+        <button (click)="onCloseModal()" class="text-gray-400 hover:text-gray-600">
+          <img src="assets/icons/lucide/lucide/x.svg" alt="close" class="w-5 h-5" />
+        </button>
+      </div>
+      
+      <form [formGroup]="workflowForm" (ngSubmit)="onSaveWorkflow()" class="p-6">
+        <div class="space-y-4">
+          <!-- Name -->
+          <div>
+            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Workflow Name *</label>
+            <input
+              type="text"
+              id="name"
+              formControlName="name"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              placeholder="Enter workflow name">
+            <div *ngIf="workflowForm.get('name')?.invalid && workflowForm.get('name')?.touched" 
+                 class="text-red-600 text-sm mt-1">
+              Workflow name is required
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <textarea
+              id="description"
+              formControlName="description"
+              rows="3"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              placeholder="Enter workflow description"></textarea>
+          </div>
+
+          <!-- Application Types -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Application Types *</label>
+            <div class="space-y-2">
+              <div *ngFor="let type of applicationTypes" class="flex items-center">
+                <input
+                  type="checkbox"
+                  [value]="type.value"
+                  [checked]="workflowForm.get('applicationTypes')?.value?.includes(type.value)"
+                  (change)="onApplicationTypeChange($event, type.value)"
+                  class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                <label class="ml-2 text-sm text-gray-700">{{ type.label }}</label>
+              </div>
+            </div>
+            <div *ngIf="workflowForm.get('applicationTypes')?.invalid && workflowForm.get('applicationTypes')?.touched" 
+                 class="text-red-600 text-sm mt-1">
+              At least one application type is required
+            </div>
+          </div>
+
+          <!-- Is Default -->
+          <div class="flex items-center">
+            <input
+              type="checkbox"
+              id="isDefault"
+              formControlName="isDefault"
+              class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+            <label for="isDefault" class="ml-2 text-sm text-gray-700">Set as default workflow</label>
+          </div>
+
+          <!-- Settings -->
+          <div formGroupName="settings" class="border border-gray-200 rounded-lg p-4">
+            <h4 class="text-sm font-medium text-gray-900 mb-3">Workflow Settings</h4>
+            
+            <div class="space-y-4">
+              <!-- Allow Parallel Processing -->
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  id="allowParallelProcessing"
+                  formControlName="allowParallelProcessing"
+                  class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                <label for="allowParallelProcessing" class="ml-2 text-sm text-gray-700">Allow parallel processing</label>
+              </div>
+
+              <!-- Max Processing Time -->
+              <div>
+                <label for="maxProcessingTime" class="block text-sm font-medium text-gray-700 mb-1">Max Processing Time (hours)</label>
+                <input
+                  type="number"
+                  id="maxProcessingTime"
+                  formControlName="maxProcessingTime"
+                  min="1"
+                  max="720"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+              </div>
+
+              <!-- Auto Escalate After -->
+              <div>
+                <label for="autoEscalateAfter" class="block text-sm font-medium text-gray-700 mb-1">Auto Escalate After (hours)</label>
+                <input
+                  type="number"
+                  id="autoEscalateAfter"
+                  formControlName="autoEscalateAfter"
+                  min="1"
+                  max="168"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+              </div>
+
+                        <!-- Require Comments -->
+          <div class="flex items-center">
+            <input
+              type="checkbox"
+              id="requireComments"
+              formControlName="requireComments"
+              class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+            <label for="requireComments" class="ml-2 text-sm text-gray-700">Require comments for actions</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Workflow Steps -->
+      <div class="border border-gray-200 rounded-lg p-4">
+        <div class="flex items-center justify-between mb-4">
+          <h4 class="text-sm font-medium text-gray-900">Workflow Steps</h4>
+          <button
+            type="button"
+            (click)="onAddStep()"
+            class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700 transition-colors">
+            Add Step
+          </button>
+        </div>
+
+        <!-- Steps List -->
+        <div *ngIf="workflowSteps.length === 0" class="text-center py-4 text-gray-500">
+          No steps defined. Add at least one step to create the workflow.
+        </div>
+
+        <div *ngIf="workflowSteps.length > 0" class="space-y-3">
+          <div *ngFor="let step of workflowSteps; let i = index" 
+               class="border border-gray-200 rounded-lg p-3 bg-gray-50">
+            <div class="flex items-center justify-between">
+              <div class="flex-1">
+                <div class="flex items-center mb-2">
+                  <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full mr-2">
+                    Step {{ step.order }}
+                  </span>
+                  <h5 class="font-medium text-gray-900">{{ step.name }}</h5>
+                </div>
+                <div class="text-sm text-gray-600 space-y-1">
+                  <div><strong>Role:</strong> {{ step.role }}</div>
+                  <div><strong>Action:</strong> {{ step.action }}</div>
+                  <div *ngIf="step.description"><strong>Description:</strong> {{ step.description }}</div>
+                  <div class="flex items-center space-x-4">
+                    <span class="flex items-center">
+                      <input type="checkbox" [checked]="step.required" disabled class="mr-1">
+                      <span class="text-xs">Required</span>
+                    </span>
+                    <span class="flex items-center">
+                      <input type="checkbox" [checked]="step.autoAdvance" disabled class="mr-1">
+                      <span class="text-xs">Auto Advance</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center space-x-2 ml-4">
+                <button
+                  type="button"
+                  (click)="onEditStep(i)"
+                  class="text-blue-600 hover:text-blue-800 text-sm">
+                  Edit
+                </button>
+                <button
+                  type="button"
+                  (click)="onDeleteStep(i)"
+                  class="text-red-600 hover:text-red-800 text-sm">
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="flex items-center justify-end space-x-3 mt-6 pt-6 border-t border-gray-200">
+          <button
+            type="button"
+            (click)="onCloseModal()"
+            class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+            Cancel
+          </button>
+          <button
+            type="submit"
+            [disabled]="workflowForm.invalid || isLoading"
+            class="px-4 py-2 bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-lg hover:from-red-700 hover:to-pink-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+            {{ showCreateModal ? 'Create Workflow' : 'Update Workflow' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- View Instance Modal -->
+  <div *ngIf="showInstanceModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between p-6 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">Workflow Instance Details</h3>
+        <button (click)="onCloseModal()" class="text-gray-400 hover:text-gray-600">
+          <img src="assets/icons/lucide/lucide/x.svg" alt="close" class="w-5 h-5" />
+        </button>
+      </div>
+      
+      <div *ngIf="selectedInstance" class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Instance Info -->
+          <div>
+            <h4 class="text-sm font-medium text-gray-900 mb-3">Instance Information</h4>
+            <div class="space-y-2 text-sm">
+              <div><strong>Status:</strong> {{ selectedInstance.status }}</div>
+              <div><strong>Current Step:</strong> {{ selectedInstance.currentStep }} / {{ selectedInstance.steps?.length || 0 }}</div>
+              <div><strong>Started:</strong> {{ selectedInstance.createdAt | date:'short' }}</div>
+              <div *ngIf="selectedInstance.completedAt">
+                <strong>Completed:</strong> {{ selectedInstance.completedAt | date:'short' }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Application Info -->
+          <div>
+            <h4 class="text-sm font-medium text-gray-900 mb-3">Application Information</h4>
+            <div class="space-y-2 text-sm">
+              <div><strong>Application ID:</strong> {{ selectedInstance.applicationId?._id || 'Unknown' }}</div>
+              <div><strong>Application Status:</strong> {{ selectedInstance.applicationId?.status || 'Unknown' }}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Steps -->
+        <div class="mt-6">
+          <h4 class="text-sm font-medium text-gray-900 mb-3">Workflow Steps</h4>
+          <div class="space-y-3">
+            <div *ngFor="let step of selectedInstance.steps; let i = index" 
+                 class="border border-gray-200 rounded-lg p-4">
+              <div class="flex items-center justify-between mb-2">
+                <h5 class="font-medium text-gray-900">Step {{ i + 1 }}: {{ step.stepName }}</h5>
+                <span [class]="'px-2 py-1 rounded-full text-xs ' + getStatusBadgeClass(step.status)">
+                  {{ step.status }}
+                </span>
+              </div>
+              <div class="text-sm text-gray-600 space-y-1">
+                <div><strong>Role:</strong> {{ step.role }}</div>
+                <div><strong>Action:</strong> {{ step.action }}</div>
+                <div *ngIf="step.assignedTo">
+                  <strong>Assigned To:</strong> {{ step.assignedTo?.firstName }} {{ step.assignedTo?.lastName }}
+                </div>
+                <div *ngIf="step.completedAt">
+                  <strong>Completed:</strong> {{ step.completedAt | date:'short' }}
+                </div>
+                <div *ngIf="step.comments">
+                  <strong>Comments:</strong> {{ step.comments }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step Modal -->
+  <div *ngIf="showStepModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-lg w-full">
+      <div class="flex items-center justify-between p-6 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">
+          {{ editingStepIndex !== null ? 'Edit Step' : 'Add Step' }}
+        </h3>
+        <button (click)="onCloseStepModal()" class="text-gray-400 hover:text-gray-600">
+          <img src="assets/icons/lucide/lucide/x.svg" alt="close" class="w-5 h-5" />
+        </button>
+      </div>
+      
+      <form [formGroup]="stepForm" (ngSubmit)="onSaveStep()" class="p-6">
+        <div class="space-y-4">
+          <!-- Step Name -->
+          <div>
+            <label for="stepName" class="block text-sm font-medium text-gray-700 mb-1">Step Name *</label>
+            <input
+              type="text"
+              id="stepName"
+              formControlName="name"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              placeholder="Enter step name">
+          </div>
+
+          <!-- Step Order -->
+          <div>
+            <label for="stepOrder" class="block text-sm font-medium text-gray-700 mb-1">Order *</label>
+            <input
+              type="number"
+              id="stepOrder"
+              formControlName="order"
+              min="1"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+          </div>
+
+          <!-- Role -->
+          <div>
+            <label for="stepRole" class="block text-sm font-medium text-gray-700 mb-1">Role *</label>
+            <select
+              id="stepRole"
+              formControlName="role"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+              <option value="">Select role</option>
+              <option *ngFor="let role of roleOptions" [value]="role.value">{{ role.label }}</option>
+            </select>
+          </div>
+
+          <!-- Action -->
+          <div>
+            <label for="stepAction" class="block text-sm font-medium text-gray-700 mb-1">Action *</label>
+            <select
+              id="stepAction"
+              formControlName="action"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+              <option value="">Select action</option>
+              <option *ngFor="let action of actionOptions" [value]="action.value">{{ action.label }}</option>
+            </select>
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label for="stepDescription" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <textarea
+              id="stepDescription"
+              formControlName="description"
+              rows="3"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+              placeholder="Enter step description"></textarea>
+          </div>
+
+          <!-- Required -->
+          <div class="flex items-center">
+            <input
+              type="checkbox"
+              id="stepRequired"
+              formControlName="required"
+              class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+            <label for="stepRequired" class="ml-2 text-sm text-gray-700">Required step</label>
+          </div>
+
+          <!-- Auto Advance -->
+          <div class="flex items-center">
+            <input
+              type="checkbox"
+              id="stepAutoAdvance"
+              formControlName="autoAdvance"
+              class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+            <label for="stepAutoAdvance" class="ml-2 text-sm text-gray-700">Auto advance to next step</label>
+          </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="flex items-center justify-end space-x-3 mt-6 pt-6 border-t border-gray-200">
+          <button
+            type="button"
+            (click)="onCloseStepModal()"
+            class="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+            Cancel
+          </button>
+          <button
+            type="submit"
+            [disabled]="stepForm.invalid"
+            class="px-4 py-2 bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-lg hover:from-red-700 hover:to-pink-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+            {{ editingStepIndex !== null ? 'Update Step' : 'Add Step' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> 

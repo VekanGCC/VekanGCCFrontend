@@ -1,0 +1,291 @@
+.file-upload-container {
+  @apply w-full;
+
+  .error-message {
+    @apply mb-4;
+  }
+
+  .upload-area {
+    @apply border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-6 md:p-8 text-center transition-all duration-200 cursor-pointer;
+    @apply hover:border-blue-400 hover:bg-blue-50;
+
+    &.dragging {
+      @apply border-blue-500 bg-blue-100;
+    }
+
+    &.uploading {
+      @apply border-gray-400 bg-gray-50 cursor-not-allowed;
+    }
+
+    .upload-content {
+      @apply flex flex-col items-center justify-center;
+
+      .upload-icon {
+        @apply w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-gray-400 mb-2 sm:mb-3 md:mb-4;
+      }
+
+      .upload-title {
+        @apply text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2;
+      }
+
+      .upload-description {
+        @apply text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4;
+      }
+
+      .file-input {
+        @apply hidden;
+      }
+
+      .upload-button {
+        @apply inline-flex items-center px-3 py-2 sm:px-4 sm:py-2 border border-transparent text-sm font-medium rounded-md;
+        @apply text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500;
+        @apply disabled:opacity-50 disabled:cursor-not-allowed;
+        @apply w-full sm:w-auto;
+      }
+    }
+  }
+
+  .progress-container {
+    @apply mt-4;
+
+    .progress-bar {
+      @apply w-full bg-gray-200 rounded-full h-2 mb-2;
+
+      .progress-fill {
+        @apply bg-blue-600 h-2 rounded-full transition-all duration-300;
+      }
+    }
+
+    .progress-text {
+      @apply text-xs sm:text-sm text-gray-600 text-center;
+    }
+  }
+
+  .file-list {
+    @apply mt-4 sm:mt-6;
+
+    .file-list-title {
+      @apply text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3;
+    }
+
+    .file-items {
+      @apply space-y-2;
+
+      .file-item {
+        @apply flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded-lg border;
+
+        .file-info {
+          @apply flex items-center flex-1 min-w-0;
+
+          .file-icon {
+            @apply w-6 h-6 sm:w-8 sm:h-8 mr-2 sm:mr-3 flex-shrink-0;
+          }
+
+          .file-details {
+            @apply flex-1 min-w-0;
+
+            .file-name {
+              @apply text-xs sm:text-sm font-medium text-gray-900 truncate;
+            }
+
+            .file-size {
+              @apply text-xs text-gray-500;
+            }
+          }
+        }
+
+        .remove-button {
+          @apply p-1 text-gray-400 hover:text-red-500 transition-colors flex-shrink-0;
+          @apply disabled:opacity-50 disabled:cursor-not-allowed;
+        }
+      }
+    }
+  }
+
+  .image-previews {
+    @apply mt-4 sm:mt-6;
+
+    .preview-title {
+      @apply text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3;
+    }
+
+    .preview-grid {
+      @apply grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-4;
+
+      .preview-item {
+        @apply text-center;
+
+        .preview-image {
+          @apply w-full h-16 sm:h-20 md:h-24 object-cover rounded-lg border mb-1 sm:mb-2;
+        }
+
+        .preview-name {
+          @apply text-xs text-gray-600 truncate px-1;
+        }
+      }
+    }
+  }
+
+  .uploaded-files {
+    @apply mt-4 sm:mt-6;
+
+    .uploaded-title {
+      @apply text-base sm:text-lg font-semibold text-gray-900 mb-2 sm:mb-3;
+    }
+
+    .uploaded-items {
+      @apply space-y-2;
+
+      .uploaded-item {
+        @apply flex items-center justify-between p-2 sm:p-3 bg-white rounded-lg border shadow-sm;
+
+        .file-info {
+          @apply flex items-center flex-1 min-w-0;
+
+          .file-icon {
+            @apply w-6 h-6 sm:w-8 sm:h-8 mr-2 sm:mr-3 flex-shrink-0;
+          }
+
+          .file-details {
+            @apply flex-1 min-w-0;
+
+            .file-name {
+              @apply text-xs sm:text-sm font-medium text-gray-900 truncate;
+            }
+
+            .file-size {
+              @apply text-xs text-gray-500;
+            }
+
+            .file-status {
+              @apply text-xs font-medium px-1 sm:px-2 py-1 rounded-full mt-1;
+
+              &.status-pending {
+                @apply bg-yellow-100 text-yellow-800;
+              }
+
+              &.status-approved {
+                @apply bg-green-100 text-green-800;
+              }
+
+              &.status-rejected {
+                @apply bg-red-100 text-red-800;
+              }
+            }
+          }
+        }
+
+        .file-actions {
+          @apply flex items-center space-x-1 sm:space-x-2 flex-shrink-0;
+
+          .download-button {
+            @apply p-1 sm:p-2 text-gray-400 hover:text-blue-500 transition-colors;
+          }
+
+          .remove-button {
+            @apply p-1 sm:p-2 text-gray-400 hover:text-red-500 transition-colors;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Mobile-specific adjustments
+@media (max-width: 640px) {
+  .file-upload-container {
+    .upload-area {
+      @apply p-4;
+
+      .upload-content {
+        .upload-title {
+          @apply text-sm;
+        }
+
+        .upload-description {
+          @apply text-xs;
+        }
+
+        .upload-button {
+          @apply w-full text-sm;
+        }
+      }
+    }
+
+    .file-list {
+      .file-items {
+        .file-item {
+          @apply p-2;
+
+          .file-info {
+            .file-icon {
+              @apply w-6 h-6 mr-2;
+            }
+
+            .file-details {
+              .file-name {
+                @apply text-xs;
+              }
+
+              .file-size {
+                @apply text-xs;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .image-previews {
+      .preview-grid {
+        @apply grid-cols-2 gap-2;
+
+        .preview-item {
+          .preview-image {
+            @apply h-16;
+          }
+
+          .preview-name {
+            @apply text-xs;
+          }
+        }
+      }
+    }
+
+    .uploaded-files {
+      .uploaded-items {
+        .uploaded-item {
+          @apply p-2;
+
+          .file-info {
+            .file-icon {
+              @apply w-6 h-6 mr-2;
+            }
+
+            .file-details {
+              .file-name {
+                @apply text-xs;
+              }
+
+              .file-size {
+                @apply text-xs;
+              }
+
+              .file-status {
+                @apply text-xs px-1 py-0.5;
+              }
+            }
+          }
+
+          .file-actions {
+            @apply space-x-1;
+
+            button {
+              @apply p-1;
+            }
+          }
+        }
+      }
+    }
+  }
+} 

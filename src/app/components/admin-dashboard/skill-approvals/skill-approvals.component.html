@@ -1,0 +1,65 @@
+<div class="bg-white rounded-xl shadow-sm border border-gray-100">
+  <div class="p-6 border-b border-gray-100">
+    <div class="flex items-center justify-between">
+      <h3 class="text-lg font-semibold text-gray-900">Vendor Skill</h3>
+      <select [(ngModel)]="skillApprovalFilter" (change)="onFilterChange()"
+              class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500">
+        <option value="all">All Approvals</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+      </select>
+    </div>
+  </div>
+  <div class="p-6">
+    <div *ngFor="let approval of filteredSkillApprovals; trackBy: trackById" 
+         class="flex items-center justify-between py-4 border-b border-gray-100 last:border-0">
+      <div class="flex-1">
+        <div class="flex items-start justify-between">
+          <div>
+            <p class="font-medium text-gray-900">{{approval.skill?.skill?.name || 'Unknown'}}</p>
+            <p class="text-sm text-gray-600" *ngIf="approval.skill.category">{{approval.skill.category}}</p>
+            <p class="text-sm text-gray-500 mt-1">{{approval.skill.description}}</p>
+            <div class="flex items-center gap-4 mt-2">
+              <span class="text-sm text-gray-600">
+                <strong>Vendor:</strong> {{approval.skill.vendor.firstName}} {{approval.skill.vendor.lastName}} ({{approval.skill.vendor.companyName}})
+              </span>
+              <span class="text-sm text-gray-600">
+                <strong>Experience:</strong> {{approval.skill.yearsOfExperience}} years
+              </span>
+              <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + getProficiencyClass(approval.skill.proficiency)">
+                {{approval.skill.proficiency | titlecase}}
+              </span>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + 
+              (approval.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+               approval.status === 'approved' ? 'bg-green-100 text-green-800' :
+               'bg-red-100 text-red-800')">
+              {{approval.status}}
+            </span>
+            <div class="flex gap-2" *ngIf="approval.status === 'pending'">
+              <button (click)="onOpenApprovalModal(approval.skill)"
+                      class="px-3 py-1 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors">
+                Approve
+              </button>
+              <button (click)="onOpenRejectModal(approval.skill)"
+                      class="px-3 py-1 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors">
+                Reject
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p *ngIf="skillApprovals.length === 0" class="text-gray-500 text-center py-8">No vendor skill approvals found</p>
+  </div>
+  
+  <!-- Pagination -->
+  <app-pagination
+    *ngIf="!paginationState.isLoading && skillApprovals.length > 0"
+    [paginationState]="paginationState"
+    (pageChange)="onPageChange($event)">
+  </app-pagination>
+</div> 

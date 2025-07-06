@@ -1,0 +1,487 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Profile</h1>
+      <p class="mt-2 text-gray-600">Manage your account information and settings</p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+    </div>
+
+    <!-- Profile Content -->
+    <div *ngIf="!isLoading && profileData" class="bg-white shadow rounded-lg">
+      <!-- Tab Navigation -->
+      <div class="border-b border-gray-200">
+        <nav class="-mb-px flex space-x-8 px-6">
+          <button
+            (click)="setActiveTab('personal')"
+            [class]="'py-4 px-1 border-b-2 font-medium text-sm ' + 
+              (activeTab === 'personal' 
+                ? 'border-blue-500 text-blue-600' 
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300')">
+            Personal Information
+          </button>
+          <button
+            (click)="setActiveTab('addresses')"
+            [class]="'py-4 px-1 border-b-2 font-medium text-sm ' + 
+              (activeTab === 'addresses' 
+                ? 'border-blue-500 text-blue-600' 
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300')">
+            Addresses
+          </button>
+          <button
+            *ngIf="isVendor()"
+            (click)="setActiveTab('bank')"
+            [class]="'py-4 px-1 border-b-2 font-medium text-sm ' + 
+              (activeTab === 'bank' 
+                ? 'border-blue-500 text-blue-600' 
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300')">
+            Bank Details
+          </button>
+          <button
+            (click)="setActiveTab('compliance')"
+            [class]="'py-4 px-1 border-b-2 font-medium text-sm ' + 
+              (activeTab === 'compliance' 
+                ? 'border-blue-500 text-blue-600' 
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300')">
+            Compliance
+          </button>
+        </nav>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="p-6">
+        <!-- Personal Information Tab -->
+        <div *ngIf="activeTab === 'personal'">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold text-gray-900">Personal Information</h2>
+            <button
+              (click)="toggleEdit()"
+              class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+              {{ isEditing ? 'Cancel' : 'Edit' }}
+            </button>
+          </div>
+
+          <form [formGroup]="personalForm" (ngSubmit)="savePersonalInfo()" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">First Name</label>
+                <input
+                  type="text"
+                  formControlName="firstName"
+                  [readonly]="!isEditing"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Last Name</label>
+                <input
+                  type="text"
+                  formControlName="lastName"
+                  [readonly]="!isEditing"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Phone</label>
+                <input
+                  type="tel"
+                  formControlName="phone"
+                  [readonly]="!isEditing"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Company Name</label>
+                <input
+                  type="text"
+                  formControlName="companyName"
+                  [readonly]="!isEditing"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Contact Person</label>
+                <input
+                  type="text"
+                  formControlName="contactPerson"
+                  [readonly]="!isEditing"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">GST Number</label>
+                <input
+                  type="text"
+                  formControlName="gstNumber"
+                  [readonly]="!isEditing"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Service Type</label>
+                <input
+                  type="text"
+                  formControlName="serviceType"
+                  [readonly]="!isEditing"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Payment Terms</label>
+                <input
+                  type="text"
+                  formControlName="paymentTerms"
+                  [readonly]="!isEditing"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-100">
+              </div>
+            </div>
+
+            <div *ngIf="isEditing" class="flex justify-end">
+              <button
+                type="submit"
+                [disabled]="!personalForm.valid || isLoading"
+                class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400 transition-colors">
+                Save Changes
+              </button>
+            </div>
+          </form>
+
+          <!-- Change Password Section -->
+          <div class="mt-8 pt-8 border-t border-gray-200">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Change Password</h3>
+            <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="space-y-4 max-w-md">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Current Password</label>
+                <input
+                  type="password"
+                  formControlName="currentPassword"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">New Password</label>
+                <input
+                  type="password"
+                  formControlName="newPassword"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Confirm New Password</label>
+                <input
+                  type="password"
+                  formControlName="confirmPassword"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <button
+                type="submit"
+                [disabled]="!passwordForm.valid || isLoading"
+                class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:bg-gray-400 transition-colors">
+                Change Password
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Addresses Tab -->
+        <div *ngIf="activeTab === 'addresses'">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold text-gray-900">Addresses</h2>
+            <button
+              (click)="addressForm.reset()"
+              class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+              Add New Address
+            </button>
+          </div>
+
+          <!-- Add Address Form -->
+          <form [formGroup]="addressForm" (ngSubmit)="addAddress()" class="mb-8 p-4 border border-gray-200 rounded-lg">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Add New Address</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Address Line 1</label>
+                <input
+                  type="text"
+                  formControlName="addressLine1"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Address Line 2</label>
+                <input
+                  type="text"
+                  formControlName="addressLine2"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">City</label>
+                <input
+                  type="text"
+                  formControlName="city"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">State</label>
+                <input
+                  type="text"
+                  formControlName="state"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Country</label>
+                <input
+                  type="text"
+                  formControlName="country"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">PIN Code</label>
+                <input
+                  type="text"
+                  formControlName="pinCode"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+              </div>
+            </div>
+            <div class="mt-4 flex items-center">
+              <input
+                type="checkbox"
+                formControlName="isDefault"
+                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+              <label class="ml-2 block text-sm text-gray-900">Set as default address</label>
+            </div>
+            <div class="mt-4">
+              <button
+                type="submit"
+                [disabled]="!addressForm.valid || isLoading"
+                class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400 transition-colors">
+                Add Address
+              </button>
+            </div>
+          </form>
+
+          <!-- Addresses List -->
+          <div class="space-y-4">
+            <div *ngFor="let address of profileData.addresses" class="border border-gray-200 rounded-lg p-4">
+              <div class="flex justify-between items-start">
+                <div class="flex-1">
+                  <div class="flex items-center space-x-2">
+                    <h4 class="text-lg font-medium text-gray-900">{{address.addressLine1}}</h4>
+                    <span *ngIf="address.isDefault" class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Default</span>
+                  </div>
+                  <p *ngIf="address.addressLine2" class="text-gray-600">{{address.addressLine2}}</p>
+                  <p class="text-gray-600">{{address.city}}, {{address.state}} {{address.pinCode}}</p>
+                  <p class="text-gray-600">{{address.country}}</p>
+                </div>
+                <button
+                  (click)="deleteAddress(address._id)"
+                  class="text-red-600 hover:text-red-800">
+                  <img src="assets/icons/lucide/lucide/trash-2.svg" alt="trash-2" class="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bank Details Tab (Vendor Only) -->
+        <div *ngIf="activeTab === 'bank' && isVendor()">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold text-gray-900">Bank Details</h2>
+            <button
+              (click)="bankForm.reset()"
+              class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">
+              Add Bank Details
+            </button>
+          </div>
+
+          <!-- Add Bank Details Form -->
+          <form [formGroup]="bankForm" (ngSubmit)="addBankDetails()" class="mb-8 p-4 border border-gray-200 rounded-lg">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Add Bank Details</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Bank Name</label>
+                <input
+                  type="text"
+                  formControlName="bankName"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Account Number</label>
+                <input
+                  type="text"
+                  formControlName="bankAccountNumber"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Account Type</label>
+                <select
+                  formControlName="accountType"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                  <option value="">Select Account Type</option>
+                  <option value="savings">Savings</option>
+                  <option value="current">Current</option>
+                  <option value="business">Business</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">IFSC Code</label>
+                <input
+                  type="text"
+                  formControlName="ifscCode"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Branch Name</label>
+                <input
+                  type="text"
+                  formControlName="branchName"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Bank City</label>
+                <input
+                  type="text"
+                  formControlName="bankCity"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+              </div>
+            </div>
+            <div class="mt-4">
+              <button
+                type="submit"
+                [disabled]="!bankForm.valid || isLoading"
+                class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400 transition-colors">
+                Add Bank Details
+              </button>
+            </div>
+          </form>
+
+          <!-- Bank Details List -->
+          <div class="space-y-4">
+            <div *ngFor="let bank of profileData.bankDetails" class="border border-gray-200 rounded-lg p-4">
+              <div class="flex justify-between items-start">
+                <div class="flex-1">
+                  <h4 class="text-lg font-medium text-gray-900">{{bank.bankName}}</h4>
+                  <p class="text-gray-600">Account: {{bank.bankAccountNumber}}</p>
+                  <p class="text-gray-600">Type: {{bank.accountType}}</p>
+                  <p class="text-gray-600">IFSC: {{bank.ifscCode}}</p>
+                  <p class="text-gray-600">{{bank.branchName}}, {{bank.bankCity}}</p>
+                  <span *ngIf="bank.isVerified" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    Verified
+                  </span>
+                </div>
+                <button
+                  (click)="deleteBankDetails(bank._id)"
+                  class="text-red-600 hover:text-red-800">
+                  <img src="assets/icons/lucide/lucide/trash-2.svg" alt="trash-2" class="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Compliance Tab -->
+        <div *ngIf="activeTab === 'compliance'">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-semibold text-gray-900">Statutory Compliance</h2>
+            <button
+              (click)="saveCompliance()"
+              [disabled]="!complianceForm.valid || isLoading"
+              class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400 transition-colors">
+              Save Compliance
+            </button>
+          </div>
+
+          <form [formGroup]="complianceForm" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">PAN Number</label>
+                <input
+                  type="text"
+                  formControlName="panNumber"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <h3 class="text-lg font-medium text-gray-900">Registrations</h3>
+              
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  formControlName="registeredUnderESI"
+                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                <label class="ml-2 block text-sm text-gray-900">Registered under ESI</label>
+              </div>
+              <div *ngIf="complianceForm.get('registeredUnderESI')?.value" class="ml-6">
+                <label class="block text-sm font-medium text-gray-700">ESI Registration Number</label>
+                <input
+                  type="text"
+                  formControlName="esiRegistrationNumber"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+              </div>
+
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  formControlName="registeredUnderPF"
+                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                <label class="ml-2 block text-sm text-gray-900">Registered under PF</label>
+              </div>
+              <div *ngIf="complianceForm.get('registeredUnderPF')?.value" class="ml-6">
+                <label class="block text-sm font-medium text-gray-700">PF Registration Number</label>
+                <input
+                  type="text"
+                  formControlName="pfRegistrationNumber"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+              </div>
+
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  formControlName="registeredUnderMSMED"
+                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                <label class="ml-2 block text-sm text-gray-900">Registered under MSMED</label>
+              </div>
+              <div *ngIf="complianceForm.get('registeredUnderMSMED')?.value" class="ml-6">
+                <label class="block text-sm font-medium text-gray-700">MSMED Registration Number</label>
+                <input
+                  type="text"
+                  formControlName="msmedRegistrationNumber"
+                  class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <h3 class="text-lg font-medium text-gray-900">Compliance Questions</h3>
+              
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  formControlName="compliesWithStatutoryRequirements"
+                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                <label class="ml-2 block text-sm text-gray-900">Complies with all statutory requirements</label>
+              </div>
+
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  formControlName="hasCloseRelativesInCompany"
+                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                <label class="ml-2 block text-sm text-gray-900">Has close relatives in the company</label>
+              </div>
+
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  formControlName="hasAdequateSafetyStandards"
+                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                <label class="ml-2 block text-sm text-gray-900">Has adequate safety standards</label>
+              </div>
+
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  formControlName="hasOngoingLitigation"
+                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                <label class="ml-2 block text-sm text-gray-900">Has ongoing litigation</label>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

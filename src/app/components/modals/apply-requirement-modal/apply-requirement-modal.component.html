@@ -1,0 +1,298 @@
+<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between p-6 border-b border-gray-200">
+      <h2 class="text-xl font-semibold text-gray-900">Apply Resources to Requirement</h2>
+      <button
+        (click)="onClose()"
+        class="text-gray-400 hover:text-gray-600 transition-colors">
+        <img src="assets/icons/lucide/lucide/x.svg" alt="x" class="w-6 h-6" />
+      </button>
+    </div>
+
+    <div class="p-6">
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="flex justify-center items-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+        <p class="text-red-800">{{ errorMessage }}</p>
+      </div>
+
+      <!-- Requirement Info -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+        <div class="flex items-center gap-2 mb-6">
+          <div class="w-6 h-6 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
+            <img src="assets/icons/lucide/lucide/file-text.svg" alt="requirements" class="w-3 h-3 text-white" />
+          </div>
+          <h3 class="text-lg font-semibold text-gray-900">Requirement Information</h3>
+        </div>
+        
+        <!-- Loading state for requirement -->
+        <div *ngIf="!requirement && !errorMessage" class="flex items-center justify-center py-8">
+          <div class="flex items-center gap-3 text-gray-500">
+            <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+            <span class="text-sm">Loading requirement details...</span>
+          </div>
+        </div>
+        
+        <!-- Error state -->
+        <div *ngIf="errorMessage && errorMessage.includes('Requirement not found')" class="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <img src="assets/icons/lucide/lucide/alert-circle.svg" alt="error" class="w-5 h-5 text-red-500" />
+          <span class="text-sm text-red-700">{{ errorMessage }}</span>
+        </div>
+        
+        <!-- Requirement details -->
+        <div *ngIf="requirement" class="space-y-4">
+          <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+            
+            <!-- Requirement Header -->
+            <div class="flex items-start justify-between mb-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-green-100 to-emerald-100 rounded-lg flex items-center justify-center">
+                  <img src="assets/icons/lucide/lucide/file-text.svg" alt="requirement" class="w-5 h-5 text-green-600" />
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900 text-lg">{{ requirement.title }}</h4>
+                  <div class="flex items-center gap-2 mt-1">
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      {{ requirement.category }}
+                    </span>
+                    <span class="text-xs text-gray-500">• Requirement</span>
+                    <div class="flex items-center gap-1">
+                      <div class="w-2 h-2 rounded-full" 
+                           [class]="requirement.status === 'open' ? 'bg-green-500' : 'bg-gray-400'"></div>
+                      <span class="text-xs font-medium text-gray-600 capitalize">{{ requirement.status }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Horizontal Data Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-4">
+              <!-- Budget -->
+              <div class="flex items-center gap-2 p-3 bg-white rounded-lg">
+                <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                  <img src="assets/icons/lucide/lucide/dollar-sign.svg" alt="budget" class="w-4 h-4 text-green-600" />
+                </div>
+                <div>
+                  <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Budget</p>
+                  <p class="text-sm font-semibold text-gray-900">
+                    {{ requirement.budget?.currency || 'USD' }}{{ requirement.budget?.charge || 0 }}/hr
+                  </p>
+                  <p class="text-xs text-gray-500">{{ requirement.budget?.type || 'Not specified' }}</p>
+                </div>
+              </div>
+              
+              <!-- Duration -->
+              <div class="flex items-center gap-2 p-3 bg-white rounded-lg">
+                <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <img src="assets/icons/lucide/lucide/clock.svg" alt="duration" class="w-4 h-4 text-blue-600" />
+                </div>
+                <div>
+                  <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Duration</p>
+                  <p class="text-sm font-semibold text-gray-900">
+                    {{ requirement.duration || 'Not specified' }}
+                  </p>
+                </div>
+              </div>
+              
+              <!-- Location -->
+              <div *ngIf="requirement.location" class="flex items-center gap-2 p-3 bg-white rounded-lg">
+                <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <img src="assets/icons/lucide/lucide/map-pin.svg" alt="location" class="w-4 h-4 text-purple-600" />
+                </div>
+                <div>
+                  <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Location</p>
+                  <p class="text-sm font-semibold text-gray-900">
+                    {{ getLocationDisplay(requirement.location) }}
+                  </p>
+                  <p *ngIf="requirement.location.remote" class="text-xs text-blue-600">Remote Available</p>
+                </div>
+              </div>
+              
+              <!-- Experience -->
+              <div *ngIf="requirement.experience" class="flex items-center gap-2 p-3 bg-white rounded-lg">
+                <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                  <img src="assets/icons/lucide/lucide/user-check.svg" alt="experience" class="w-4 h-4 text-orange-600" />
+                </div>
+                <div>
+                  <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Experience</p>
+                  <p class="text-sm font-semibold text-gray-900">
+                    {{ requirement.experience?.minYears || 0 }} years
+                  </p>
+                  <p class="text-xs text-gray-500">{{ requirement.experience?.level || 'Not specified' }}</p>
+                </div>
+              </div>
+              
+              <!-- Skills Count -->
+              <div class="flex items-center gap-2 p-3 bg-white rounded-lg">
+                <div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
+                  <img src="assets/icons/lucide/lucide/target.svg" alt="skills" class="w-4 h-4 text-indigo-600" />
+                </div>
+                <div>
+                  <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Skills</p>
+                  <p class="text-sm font-semibold text-gray-900">
+                    {{ requirement.skills && requirement.skills.length > 0 ? requirement.skills.length + ' skills' : 'No skills' }}
+                  </p>
+                </div>
+              </div>
+              
+              <!-- Description Preview -->
+              <div *ngIf="requirement.description" class="flex items-center gap-2 p-3 bg-white rounded-lg">
+                <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
+                  <img src="assets/icons/lucide/lucide/file-text.svg" alt="description" class="w-4 h-4 text-yellow-600" />
+                </div>
+                <div>
+                  <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">About</p>
+                  <p class="text-sm text-gray-900 line-clamp-2">{{ requirement.description }}</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Skills Section -->
+            <div *ngIf="requirement.skills && requirement.skills.length > 0" class="mb-3">
+              <div class="flex items-center gap-2 mb-2">
+                <img src="assets/icons/lucide/lucide/target.svg" alt="skills" class="w-4 h-4 text-gray-500" />
+                <span class="text-sm font-medium text-gray-700">Required Skills & Expertise</span>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <span *ngFor="let skill of requirement.skills" 
+                      class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 border border-green-200">
+                  {{ getSkillDisplayName(skill) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <p class="text-sm text-gray-600 mt-4">Select one or more of your resources to apply to this requirement.</p>
+      </div>
+
+      <!-- Resources Selection -->
+      <div class="space-y-4">
+        <h3 class="font-semibold text-gray-900">Select Resources to Apply</h3>
+        
+        <!-- No Resources State -->
+        <div *ngIf="!isLoading && resources.length === 0" class="text-center py-8">
+          <img src="assets/icons/lucide/lucide/users.svg" alt="users" class="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <h4 class="text-lg font-medium text-gray-900 mb-2">No Active Resources</h4>
+          <p class="text-gray-500">You need to have active resources to apply to requirements.</p>
+        </div>
+
+        <!-- Resources List -->
+        <div *ngIf="resources.length > 0" class="space-y-3">
+          <div *ngFor="let resource of resources" 
+               class="p-4 border rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+               [class.border-blue-500]="isResourceSelected(resource._id)"
+               [class.bg-blue-50]="isResourceSelected(resource._id)"
+               (click)="selectResource(resource)">
+            
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <div class="flex items-center gap-3 mb-2">
+                  <h4 class="font-semibold text-gray-900">{{ resource.name }}</h4>
+                  <span [class]="'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ' + getStatusClass(resource.status)">
+                    {{ resource.status }}
+                  </span>
+                </div>
+                
+                <p class="text-sm text-gray-600 mb-3">{{ resource.description }}</p>
+                
+                <div class="flex items-center gap-4 text-sm text-gray-500 mb-3">
+                  <span *ngIf="resource.rate.hourly">${{ resource.rate.hourly }}/hr</span>
+                  <span *ngIf="resource.experience.years">{{ resource.experience.years }} years ({{ resource.experience.level }})</span>
+                  <span *ngIf="resource.location.city">{{ resource.location.city }}, {{ resource.location.state }}</span>
+                </div>
+                
+                <div class="flex flex-wrap gap-1">
+                  <span *ngIf="resource.skills && resource.skills.length > 0" 
+                        class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    {{ resource.skills[0].name }}
+                  </span>
+                </div>
+                
+                <!-- Availability -->
+                <div *ngIf="resource.availability" class="mt-2">
+                  <span [class]="'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ' + getAvailabilityClass(resource.availability.status)">
+                    {{ resource.availability.status }} ({{ resource.availability.hours_per_week || 0 }} hrs/week)
+                  </span>
+                </div>
+              </div>
+              
+              <div class="ml-3">
+                <div [class]="'w-5 h-5 rounded border-2 flex items-center justify-center ' + 
+                  (isResourceSelected(resource._id) ? 'border-blue-500 bg-blue-500' : 'border-gray-300')">
+                  <img *ngIf="isResourceSelected(resource._id)" src="assets/icons/lucide/lucide/check.svg" alt="check" class="w-3 h-3 text-white" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Application Details -->
+      <div *ngIf="selectedResource" class="mt-6 space-y-4">
+        <h3 class="font-semibold text-gray-900">Application Details</h3>
+        
+        <!-- Proposed Rate -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Proposed Rate (USD/hr)
+          </label>
+          <input
+            type="number"
+            [(ngModel)]="proposedRate"
+            min="0"
+            step="0.01"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Enter your proposed hourly rate">
+        </div>
+        
+        <!-- Availability -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Availability
+          </label>
+          <select
+            [(ngModel)]="availability"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <option value="">Select availability</option>
+            <option value="available">Available</option>
+            <option value="partially_available">Partially Available</option>
+            <option value="unavailable">Unavailable</option>
+          </select>
+        </div>
+        
+        <!-- Notes -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Notes (Optional)
+          </label>
+          <textarea
+            [(ngModel)]="notes"
+            rows="3"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Add any additional notes or comments about this application..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-end space-x-4 p-6 border-t border-gray-200">
+      <button
+        (click)="onClose()"
+        class="px-6 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
+        Cancel
+      </button>
+      <button
+        (click)="onSubmit()"
+        [disabled]="!selectedResource || isLoading"
+        class="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+        <span *ngIf="isLoading">Creating Application...</span>
+        <span *ngIf="!isLoading">Apply Resource</span>
+      </button>
+    </div>
+  </div>
+</div> 

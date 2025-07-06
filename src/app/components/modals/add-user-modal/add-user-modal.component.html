@@ -1,0 +1,170 @@
+<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="flex items-center justify-between p-6 border-b border-gray-200">
+      <h2 class="text-xl font-semibold text-gray-900">Add New Employee</h2>
+      <button
+        (click)="onClose()"
+        class="text-gray-400 hover:text-gray-600 transition-colors">
+        <img src="assets/icons/lucide/lucide/x.svg" alt="x" class="w-6 h-6" />
+      </button>
+    </div>
+
+    <div class="p-6">
+      <!-- Success Message -->
+      <div *ngIf="successMessage" class="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
+        <img src="assets/icons/lucide/lucide/check-circle.svg" alt="success" class="w-5 h-5 text-green-600" />
+        <span class="text-green-800">{{ successMessage }}</span>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="errorMessage" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2">
+        <img src="assets/icons/lucide/lucide/alert-circle.svg" alt="error" class="w-5 h-5 text-red-600" />
+        <span class="text-red-800">{{ errorMessage }}</span>
+      </div>
+
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              First Name *
+            </label>
+            <input
+              type="text"
+              formControlName="firstName"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="e.g., John"
+              required>
+            <div *ngIf="userForm.get('firstName')?.invalid && userForm.get('firstName')?.touched" class="text-red-500 text-sm mt-1">
+              <span *ngIf="userForm.get('firstName')?.errors?.['required']">First name is required</span>
+              <span *ngIf="userForm.get('firstName')?.errors?.['minlength']">First name must be at least 2 characters</span>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Last Name *
+            </label>
+            <input
+              type="text"
+              formControlName="lastName"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="e.g., Doe"
+              required>
+            <div *ngIf="userForm.get('lastName')?.invalid && userForm.get('lastName')?.touched" class="text-red-500 text-sm mt-1">
+              <span *ngIf="userForm.get('lastName')?.errors?.['required']">Last name is required</span>
+              <span *ngIf="userForm.get('lastName')?.errors?.['minlength']">Last name must be at least 2 characters</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Email Address *
+          </label>
+          <input
+            type="email"
+            formControlName="email"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="e.g., john.doe@company.com"
+            required>
+          <div *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched" class="text-red-500 text-sm mt-1">
+            <span *ngIf="userForm.get('email')?.errors?.['required']">Email is required</span>
+            <span *ngIf="userForm.get('email')?.errors?.['email']">Please enter a valid email address</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Phone Number *
+          </label>
+          <input
+            type="tel"
+            formControlName="phone"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="e.g., +1 (555) 123-4567"
+            required>
+          <div *ngIf="userForm.get('phone')?.invalid && userForm.get('phone')?.touched" class="text-red-500 text-sm mt-1">
+            <span *ngIf="userForm.get('phone')?.errors?.['required']">Phone number is required</span>
+            <span *ngIf="userForm.get('phone')?.errors?.['pattern']">Please enter a valid phone number</span>
+          </div>
+        </div>
+
+        <!-- Role Selection -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Role *
+          </label>
+          <select
+            formControlName="organizationRole"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            required>
+            <option value="" disabled>Select a role</option>
+            <option *ngFor="let role of roleOptions" [value]="role.value">
+              {{ role.label }}
+            </option>
+          </select>
+          <div *ngIf="userForm.get('organizationRole')?.invalid && userForm.get('organizationRole')?.touched" class="text-red-500 text-sm mt-1">
+            <span *ngIf="userForm.get('organizationRole')?.errors?.['required']">Role is required</span>
+          </div>
+          <!-- Role description -->
+          <div class="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <p class="text-sm text-blue-800">
+              <strong>Role Description:</strong> 
+              {{ getRoleDescription() }}
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Password *
+          </label>
+          <input
+            type="password"
+            formControlName="password"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Enter password"
+            required>
+          <div *ngIf="userForm.get('password')?.invalid && userForm.get('password')?.touched" class="text-red-500 text-sm mt-1">
+            <span *ngIf="userForm.get('password')?.errors?.['required']">Password is required</span>
+            <span *ngIf="userForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</span>
+          </div>
+        </div>
+
+        <!-- Confirm Password -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Confirm Password *
+          </label>
+          <input
+            type="password"
+            formControlName="confirmPassword"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Re-enter password"
+            required>
+          <div *ngIf="userForm.get('confirmPassword')?.invalid && userForm.get('confirmPassword')?.touched" class="text-red-500 text-sm mt-1">
+            <span *ngIf="userForm.get('confirmPassword')?.errors?.['required']">Please confirm your password</span>
+            <span *ngIf="userForm.get('confirmPassword')?.errors?.['passwordMismatch']">Passwords do not match</span>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
+          <button
+            type="button"
+            (click)="onClose()"
+            [disabled]="loading"
+            class="px-6 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50">
+            Cancel
+          </button>
+          <button
+            type="submit"
+            [disabled]="!userForm.valid || loading"
+            class="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+            <div *ngIf="loading" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            {{ loading ? 'Adding...' : 'Add Employee' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

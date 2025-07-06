@@ -1,0 +1,181 @@
+<div class="payment-management p-6">
+  <!-- Header -->
+  <div class="header-section mb-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Payment Management</h1>
+        <p class="text-gray-600 mt-1">Track and manage invoice payments</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-section mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="bg-white p-4 rounded-lg shadow border">
+        <div class="flex items-center">
+          <div class="p-2 bg-green-100 rounded-lg">
+            <span class="text-green-600 text-xl">✅</span>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-600">Approved Invoices</p>
+            <p class="text-2xl font-bold text-gray-900">{{ approvedInvoicesCount }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white p-4 rounded-lg shadow border">
+        <div class="flex items-center">
+          <div class="p-2 bg-blue-100 rounded-lg">
+            <span class="text-blue-600 text-xl">💰</span>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-600">Paid Invoices</p>
+            <p class="text-2xl font-bold text-gray-900">{{ paidInvoicesCount }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white p-4 rounded-lg shadow border">
+        <div class="flex items-center">
+          <div class="p-2 bg-red-100 rounded-lg">
+            <span class="text-red-600 text-xl">⚠️</span>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-600">Overdue</p>
+            <p class="text-2xl font-bold text-gray-900">{{ overdueInvoicesCount }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white p-4 rounded-lg shadow border">
+        <div class="flex items-center">
+          <div class="p-2 bg-purple-100 rounded-lg">
+            <span class="text-purple-600 text-xl">📊</span>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-600">Outstanding Amount</p>
+            <p class="text-2xl font-bold text-gray-900">${{ totalAmountOutstanding.toLocaleString() }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Grid -->
+  <div class="data-grid-section">
+    <div class="bg-white rounded-lg shadow border">
+      <div class="p-4 border-b border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-900">Approved Invoices</h2>
+      </div>
+      
+      <div class="ag-grid-container" style="height: 600px;">
+        <ag-grid-angular
+          [rowData]="invoices"
+          [columnDefs]="columnDefs"
+          [defaultColDef]="defaultColDef"
+          [gridOptions]="gridOptions"
+          [loadingOverlayComponent]="'loadingOverlay'"
+          [loadingOverlayComponentParams]="{ loadingMessage: 'Loading invoices...' }"
+          class="ag-theme-alpine w-full h-full">
+        </ag-grid-angular>
+      </div>
+      
+      <!-- Pagination -->
+      <div class="p-4 border-t border-gray-200">
+        <app-pagination
+          [paginationState]="paginationState"
+          (pageChange)="onPageChange($event)">
+        </app-pagination>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment Modal -->
+  <div *ngIf="showPaymentModal && selectedInvoice" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">Mark Invoice as Paid</h3>
+        <button 
+          (click)="onCloseModal()"
+          class="text-gray-400 hover:text-gray-600">
+          <span class="text-xl">×</span>
+        </button>
+      </div>
+      
+      <div class="mb-4 p-3 bg-gray-50 rounded-lg">
+        <p class="text-sm text-gray-600">Invoice: #{{ selectedInvoice._id.slice(-6) }}</p>
+        <p class="text-sm font-medium text-gray-900">
+          {{ selectedInvoice.invoiceAmount ? 
+             selectedInvoice.invoiceAmount.currency + ' ' + selectedInvoice.invoiceAmount.amount.toLocaleString() : 
+             'N/A' }}
+        </p>
+      </div>
+      
+      <form [formGroup]="paymentForm" (ngSubmit)="onSubmitPayment()" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Paid Amount</label>
+          <input 
+            type="number"
+            formControlName="paidAmount"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Enter paid amount">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Payment Date</label>
+          <input 
+            type="date"
+            formControlName="paidDate"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
+          <select 
+            formControlName="paymentMethod"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <option value="bank_transfer">Bank Transfer</option>
+            <option value="check">Check</option>
+            <option value="credit_card">Credit Card</option>
+            <option value="cash">Cash</option>
+          </select>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Transaction ID (Optional)</label>
+          <input 
+            type="text"
+            formControlName="transactionId"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Enter transaction ID">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Notes (Optional)</label>
+          <textarea 
+            formControlName="notes"
+            rows="3"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Add payment notes">
+          </textarea>
+        </div>
+        
+        <div class="flex justify-end space-x-3 pt-4">
+          <button 
+            type="button"
+            (click)="onCloseModal()"
+            class="px-4 py-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
+            Cancel
+          </button>
+          <button 
+            type="submit"
+            [disabled]="isLoading"
+            class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50">
+            {{ isLoading ? 'Processing...' : 'Mark as Paid' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> 

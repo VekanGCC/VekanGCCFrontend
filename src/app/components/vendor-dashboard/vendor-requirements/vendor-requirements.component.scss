@@ -1,0 +1,99 @@
+// Vendor Requirements Component Styles
+.vendor-requirements {
+  // Add any specific styles here if needed
+}
+
+// Custom AG Grid header styling to match vendor resources
+::ng-deep .ag-theme-alpine {
+  .ag-header {
+    background-color: #475569 !important; // slate-600
+  }
+  
+  .ag-header-cell {
+    background-color: #475569 !important; // slate-600
+    color: #f1f5f9 !important; // slate-100
+  }
+  
+  .ag-header-cell-text {
+    color: #f1f5f9 !important; // slate-100
+    font-weight: 500 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    font-size: 0.75rem !important;
+  }
+  
+  .ag-header-cell-resize {
+    background-color: #64748b !important; // slate-500
+  }
+  
+  .ag-header-cell-moving {
+    background-color: #475569 !important; // slate-600
+  }
+  
+  .ag-header-cell-moving .ag-header-cell-text {
+    color: #f1f5f9 !important; // slate-100
+  }
+  
+  // Row styling for alternating colors
+  .ag-row-even {
+    background-color: #f9fafb !important; // gray-50
+  }
+  
+  .ag-row-even:hover {
+    background-color: #f3f4f6 !important; // gray-100
+  }
+  
+  .ag-row-odd {
+    background-color: #ffffff !important; // white
+  }
+  
+  .ag-row-odd:hover {
+    background-color: #f9fafb !important; // gray-50
+  }
+  
+  // Cell styling
+  .ag-cell {
+    padding: 0.75rem 1.5rem !important;
+    border-right: 1px solid #e5e7eb !important; // gray-200
+  }
+  
+  // Remove default borders
+  .ag-header-cell {
+    border-right: 1px solid #64748b !important; // slate-500
+  }
+  
+  // Custom button styling in cells
+  .ag-cell button {
+    transition: all 0.2s ease-in-out !important;
+  }
+  
+  // Responsive column hiding
+  @media (max-width: 768px) {
+    .ag-header-cell[col-id="skills"],
+    .ag-header-cell[col-id="duration"] {
+      display: none !important;
+    }
+    
+    .ag-cell[col-id="skills"],
+    .ag-cell[col-id="duration"] {
+      display: none !important;
+    }
+  }
+  
+  @media (max-width: 1024px) {
+    .ag-header-cell[col-id="budget"] {
+      display: none !important;
+    }
+    
+    .ag-cell[col-id="budget"] {
+      display: none !important;
+    }
+  }
+}
+
+// Container styling
+.ag-theme-alpine {
+  border-radius: 0.75rem !important;
+  overflow: hidden !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+} 

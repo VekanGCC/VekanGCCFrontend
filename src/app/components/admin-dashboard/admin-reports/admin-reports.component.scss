@@ -1,0 +1,231 @@
+.admin-reports-container {
+  @apply p-6 space-y-6;
+
+  .reports-header {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
+    
+    .header-content {
+      @apply mb-6;
+      
+      h1 {
+        @apply text-3xl font-bold text-gray-900 mb-2;
+      }
+      
+      p {
+        @apply text-gray-600;
+      }
+    }
+    
+    .controls-section {
+      @apply flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4;
+      
+      .date-range-controls {
+        @apply flex flex-col sm:flex-row items-start sm:items-center gap-4;
+        
+        .control-label {
+          @apply text-sm font-medium text-gray-700 whitespace-nowrap;
+        }
+        
+        .date-select {
+          @apply px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500;
+        }
+        
+        .custom-date-inputs {
+          @apply flex items-center gap-2;
+          
+          .date-input {
+            @apply px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500;
+          }
+          
+          .date-separator {
+            @apply text-gray-500;
+          }
+        }
+      }
+      
+      .export-btn {
+        @apply bg-gradient-to-r from-red-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:from-red-700 hover:to-pink-700 transition-all duration-200 flex items-center;
+      }
+    }
+  }
+
+  .report-selector {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-4;
+    
+    .selector-tabs {
+      @apply flex flex-wrap gap-2;
+      
+      .tab-btn {
+        @apply flex items-center px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium;
+        @apply bg-gray-100 text-gray-700 hover:bg-gray-200;
+        
+        &.active {
+          @apply bg-gradient-to-r from-red-600 to-pink-600 text-white;
+        }
+      }
+    }
+  }
+
+  .loading-state {
+    @apply flex flex-col items-center justify-center py-12;
+    
+    .loading-spinner {
+      @apply w-8 h-8 border-4 border-gray-200 border-t-red-600 rounded-full animate-spin mb-4;
+    }
+    
+    .loading-text {
+      @apply text-gray-600;
+    }
+  }
+
+  .report-content {
+    @apply space-y-6;
+
+    .report-section {
+      @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
+      
+      .section-header {
+        @apply mb-6;
+        
+        .section-title {
+          @apply text-2xl font-bold text-gray-900 mb-2;
+        }
+        
+        .section-description {
+          @apply text-gray-600;
+        }
+      }
+      
+      .summary-cards {
+        @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8;
+        
+        .summary-card {
+          @apply bg-gray-50 rounded-lg p-4 border border-gray-200;
+          
+          .card-icon {
+            @apply w-12 h-12 rounded-lg flex items-center justify-center mb-3;
+          }
+          
+          .card-content {
+            .card-title {
+              @apply text-sm font-medium text-gray-600 mb-1;
+            }
+            
+            .card-value {
+              @apply text-2xl font-bold text-gray-900;
+            }
+          }
+        }
+      }
+      
+      .charts-grid {
+        @apply grid grid-cols-1 lg:grid-cols-2 gap-6;
+        
+        .chart-container {
+          @apply bg-gray-50 rounded-lg p-4 border border-gray-200;
+          
+          &.full-width {
+            @apply lg:col-span-2;
+          }
+          
+          .chart-title {
+            @apply text-lg font-semibold text-gray-900 mb-4;
+          }
+          
+          canvas {
+            @apply w-full h-64;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .admin-reports-container {
+    @apply p-4;
+    
+    .reports-header {
+      @apply p-4;
+      
+      .controls-section {
+        @apply flex-col;
+        
+        .date-range-controls {
+          @apply flex-col items-start;
+        }
+      }
+    }
+    
+    .report-selector {
+      @apply p-3;
+      
+      .selector-tabs {
+        @apply flex-col;
+        
+        .tab-btn {
+          @apply justify-center;
+        }
+      }
+    }
+    
+    .report-content {
+      .report-section {
+        @apply p-4;
+        
+        .summary-cards {
+          @apply grid-cols-1;
+        }
+        
+        .charts-grid {
+          @apply grid-cols-1;
+          
+          .chart-container {
+            canvas {
+              @apply h-48;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Chart container specific styles
+.chart-container {
+  position: relative;
+  
+  canvas {
+    max-height: 400px;
+  }
+}
+
+// Animation for cards
+.summary-card {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Tab button animations
+.tab-btn {
+  transition: all 0.2s ease-in-out;
+  
+  &:hover:not(.active) {
+    transform: translateY(-1px);
+  }
+}
+
+// Export button hover effect
+.export-btn {
+  transition: all 0.2s ease-in-out;
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  }
+} 

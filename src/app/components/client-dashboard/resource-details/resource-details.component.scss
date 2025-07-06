@@ -1,0 +1,67 @@
+// Resource Details Component Styles
+.resource-details {
+  .back-button {
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: translateX(-2px);
+    }
+  }
+  
+  .apply-button {
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  }
+  
+  .info-card {
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  .skill-tag {
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+  
+  .status-badge {
+    transition: all 0.2s ease;
+  }
+  
+  .attachment-card {
+    transition: all 0.2s ease;
+    cursor: pointer;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .resource-details {
+    .header-section {
+      .flex {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+    }
+    
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+} 

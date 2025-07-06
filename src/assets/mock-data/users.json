@@ -1,0 +1,37 @@
+[
+  {
+    "id": "1",
+    "email": "vendor@techcorp.com",
+    "name": "John Smith",
+    "role": "vendor",
+    "company": "TechCorp Solutions"
+  },
+  {
+    "id": "2",
+    "email": "client@innovate.com",
+    "name": "Sarah Johnson",
+    "role": "client",
+    "company": "Innovate Inc"
+  },
+  {
+    "id": "3",
+    "email": "vendor2@devstudio.com",
+    "name": "Mike Chen",
+    "role": "vendor",
+    "company": "DevStudio"
+  },
+  {
+    "id": "4",
+    "email": "client2@startup.com",
+    "name": "Emily Davis",
+    "role": "client",
+    "company": "StartupXYZ"
+  },
+  {
+    "id": "admin",
+    "email": "admin@talentbridge.com",
+    "name": "Admin User",
+    "role": "admin",
+    "company": "TalentBridge"
+  }
+]

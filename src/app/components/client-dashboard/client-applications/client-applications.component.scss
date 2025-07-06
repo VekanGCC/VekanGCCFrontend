@@ -1,0 +1,19 @@
+// Client Applications Component Styles
+.client-applications {
+  // Add any specific styles here if needed
+}
+
+// Ensure truncation works properly in AG Grid cells
+:host ::ng-deep .ag-cell {
+  .truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+}
+
+// Tooltip styles for truncated text
+:host ::ng-deep .ag-cell[title] {
+  cursor: help;
+} 

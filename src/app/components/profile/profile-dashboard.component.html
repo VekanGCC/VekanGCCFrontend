@@ -1,0 +1,710 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header Section -->
+    <div class="mb-8">
+      <div class="flex items-center space-x-4 mb-4">
+        <div class="p-3 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl shadow-lg">
+          <img src="assets/icons/duotune/general/gen002.svg" class="w-8 h-8 text-white" alt="User">
+        </div>
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900">Profile Dashboard</h1>
+          <p class="text-gray-600 mt-1">View your approved account information</p>
+        </div>
+      </div>
+      <div class="h-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full"></div>
+    </div>
+
+    <!-- Profile Content -->
+    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+      <!-- No Data Message -->
+      <div *ngIf="!profileData" class="bg-gradient-to-r from-red-50 to-pink-50 border-l-4 border-red-400 p-6 m-6 rounded-lg">
+        <div class="flex items-center">
+          <img src="assets/icons/duotune/general/gen001.svg" class="w-6 h-6 text-red-400 mr-3" alt="Alert">
+          <div>
+            <h3 class="text-lg font-semibold text-red-800">No Profile Data Available</h3>
+            <p class="text-red-700 mt-1">This means the API call either failed or returned no data.</p>
+            <p class="text-red-600 mt-2"><strong>Loading:</strong> {{isLoading}}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div class="text-center">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p class="text-gray-600">Loading profile data...</p>
+        </div>
+      </div>
+
+      <!-- Error State -->
+      <div *ngIf="!isLoading && !profileData" class="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div class="bg-gradient-to-r from-red-50 to-pink-50 border-l-4 border-red-400 p-6 m-6 rounded-lg">
+          <div class="flex items-center">
+            <img src="assets/icons/lucide/lucide/alert-triangle.svg" class="w-6 h-6 text-red-400 mr-3" alt="Alert">
+            <div>
+              <h3 class="text-lg font-semibold text-red-800">No Profile Data Available</h3>
+              <p class="text-red-700">Unable to load profile information. Please try again later.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Content -->
+      <div *ngIf="!isLoading && profileData" class="min-h-screen bg-gray-50">
+        <!-- Admin Header (only for admin view) -->
+        <div *ngIf="isAdminView && isCurrentUserAdmin()" class="bg-white border-b border-gray-200 px-6 py-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+              <button (click)="onBackToUsers()" 
+                      class="flex items-center text-gray-600 hover:text-gray-900 transition-colors">
+                <img src="assets/icons/lucide/lucide/arrow-left.svg" alt="back" class="w-5 h-5 mr-2" />
+                Back to Users
+              </button>
+              <div class="h-6 w-px bg-gray-300"></div>
+              <div>
+                <h2 class="text-2xl font-bold text-gray-900">{{profileData.user.firstName}} {{profileData.user.lastName}}</h2>
+                <p class="text-gray-600">{{profileData.user.userType | titlecase}} Profile</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-3">
+              <!-- Approve/Reject Buttons for Pending Users -->
+              <button *ngIf="profileData.user.approvalStatus === 'pending'"
+                      (click)="onApproveUser()"
+                      class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors">
+                <img src="assets/icons/lucide/lucide/check.svg" class="w-4 h-4 mr-2" alt="Approve" />
+                Approve User
+              </button>
+              <button *ngIf="profileData.user.approvalStatus === 'pending'"
+                      (click)="onOpenRejectModal()"
+                      class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors ml-2">
+                <img src="assets/icons/lucide/lucide/x.svg" class="w-4 h-4 mr-2" alt="Reject" />
+                Reject User
+              </button>
+            </div>
+          </div>
+        </div>
+
+
+
+        <!-- Main Content -->
+        <div class="max-w-7xl mx-auto p-6">
+          <!-- Tab Navigation -->
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-8">
+            <div class="flex flex-wrap border-b border-gray-200">
+              <button 
+                *ngFor="let tab of tabList"
+                (click)="setActiveTab(tab.value)"
+                [class]="activeTab === tab.value ? 
+                  'flex items-center px-6 py-4 text-blue-600 border-b-2 border-blue-600 font-medium' : 
+                  'flex items-center px-6 py-4 text-gray-500 hover:text-gray-700 hover:bg-gray-50'"
+              >
+                <img 
+                  [src]="activeTab === tab.value ? 'assets/icons/lucide/lucide/user.svg' : 'assets/icons/lucide/lucide/user.svg'" 
+                  class="w-5 h-5 mr-2" 
+                  [alt]="tab.label"
+                >
+                {{tab.label}}
+              </button>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="p-8">
+              <!-- Personal Information Tab -->
+              <div *ngIf="activeTab === 'personal'" class="space-y-8">
+                <div class="flex justify-between items-center">
+                  <div>
+                    <h3 class="text-2xl font-bold text-gray-900 flex items-center">
+                      <img src="assets/icons/lucide/lucide/user.svg" class="w-6 h-6 mr-3 text-blue-600" alt="User">
+                      Personal Information
+                    </h3>
+                    <p class="text-gray-600 mt-1">Your basic account details and contact information</p>
+                  </div>
+                  <div class="flex items-center space-x-3">
+                    <!-- Edit Button (Admin Only) -->
+                    <button *ngIf="canEditProfile() && !isEditingPersonal" 
+                            (click)="startEditingPersonal()"
+                            class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
+                      <img src="assets/icons/lucide/lucide/edit.svg" class="w-4 h-4 mr-2" alt="Edit" />
+                      Edit
+                    </button>
+                    
+                    <!-- Save/Cancel Buttons (Admin Only) -->
+                    <div *ngIf="canEditProfile() && isEditingPersonal" class="flex items-center space-x-2">
+                      <button (click)="savePersonalInfo()"
+                              class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors">
+                        <img src="assets/icons/lucide/lucide/check.svg" class="w-4 h-4 mr-2" alt="Save" />
+                        Save
+                      </button>
+                      <button (click)="cancelEditingPersonal()"
+                              class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors">
+                        <img src="assets/icons/lucide/lucide/x.svg" class="w-4 h-4 mr-2" alt="Cancel" />
+                        Cancel
+                      </button>
+                    </div>
+                    
+                    <span [class]="'inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ' + 
+                      (profileData?.user?.approvalStatus === 'approved' ? 'bg-green-100 text-green-800' :
+                       profileData?.user?.approvalStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                       'bg-red-100 text-red-800')">
+                      <img [src]="profileData?.user?.approvalStatus === 'approved' ? 'assets/icons/lucide/lucide/circle-check.svg' : 
+                                 profileData?.user?.approvalStatus === 'pending' ? 'assets/icons/lucide/lucide/clock.svg' : 
+                                 'assets/icons/lucide/lucide/x-circle.svg'" 
+                           class="w-4 h-4 mr-2" [alt]="profileData?.user?.approvalStatus">
+                      {{profileData?.user?.approvalStatus === 'approved' ? 'Admin Approved' : 
+                        profileData?.user?.approvalStatus === 'pending' ? 'Pending Approval' : 
+                        'Admin Rejected'}}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                      <img src="assets/icons/lucide/lucide/user.svg" class="w-5 h-5 mr-2 text-blue-600" alt="User">
+                      Basic Information
+                    </h4>
+                    <div class="space-y-4">
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                        <div *ngIf="!isEditingPersonal" class="p-3 bg-white border border-gray-200 rounded-lg text-gray-900 font-medium shadow-sm">
+                          {{profileData.user.firstName || 'Not provided'}}
+                        </div>
+                        <input *ngIf="isEditingPersonal" 
+                               type="text" 
+                               [(ngModel)]="editPersonalForm.firstName"
+                               class="w-full p-3 bg-white border border-gray-300 rounded-lg text-gray-900 font-medium shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                      </div>
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                        <div *ngIf="!isEditingPersonal" class="p-3 bg-white border border-gray-200 rounded-lg text-gray-900 font-medium shadow-sm">
+                          {{profileData.user.lastName || 'Not provided'}}
+                        </div>
+                        <input *ngIf="isEditingPersonal" 
+                               type="text" 
+                               [(ngModel)]="editPersonalForm.lastName"
+                               class="w-full p-3 bg-white border border-gray-300 rounded-lg text-gray-900 font-medium shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                      </div>
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                        <div *ngIf="!isEditingPersonal" class="p-3 bg-white border border-gray-200 rounded-lg text-gray-900 font-medium shadow-sm">
+                          {{profileData.user.phone || 'Not provided'}}
+                        </div>
+                        <input *ngIf="isEditingPersonal" 
+                               type="tel" 
+                               [(ngModel)]="editPersonalForm.phone"
+                               class="w-full p-3 bg-white border border-gray-300 rounded-lg text-gray-900 font-medium shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                      </div>
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">User Type / Role</label>
+                        <div class="p-3 bg-white border border-gray-200 rounded-lg text-gray-900 font-medium shadow-sm">
+                          <span [class]="'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ' + 
+                            (profileData.user.userType === 'admin' ? 'bg-purple-100 text-purple-800' :
+                             profileData.user.userType === 'vendor' ? 'bg-blue-100 text-blue-800' :
+                             profileData.user.userType === 'client' ? 'bg-green-100 text-green-800' :
+                             'bg-gray-100 text-gray-800')">
+                            {{profileData.user.userType | titlecase}}
+                          </span>
+                          <span *ngIf="profileData.user.organizationRole" class="ml-2 text-gray-600">
+                            ({{profileData.user.organizationRole | titlecase}})
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl border border-green-100">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                      <img src="assets/icons/lucide/lucide/building.svg" class="w-5 h-5 mr-2 text-green-600" alt="Building">
+                      Company Details
+                    </h4>
+                    <div class="space-y-4">
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Company Name</label>
+                        <div *ngIf="!isEditingPersonal" class="p-3 bg-white border border-gray-200 rounded-lg text-gray-900 font-medium shadow-sm">
+                          {{profileData.user.companyName || 'Not provided'}}
+                        </div>
+                        <input *ngIf="isEditingPersonal" 
+                               type="text" 
+                               [(ngModel)]="editPersonalForm.companyName"
+                               class="w-full p-3 bg-white border border-gray-300 rounded-lg text-gray-900 font-medium shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                      </div>
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Contact Person</label>
+                        <div *ngIf="!isEditingPersonal" class="p-3 bg-white border border-gray-200 rounded-lg text-gray-900 font-medium shadow-sm">
+                          {{profileData.user.contactPerson || 'Not provided'}}
+                        </div>
+                        <input *ngIf="isEditingPersonal" 
+                               type="text" 
+                               [(ngModel)]="editPersonalForm.contactPerson"
+                               class="w-full p-3 bg-white border border-gray-300 rounded-lg text-gray-900 font-medium shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                      </div>
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">GST Number</label>
+                        <div *ngIf="!isEditingPersonal" class="p-3 bg-white border border-gray-200 rounded-lg text-gray-900 font-medium shadow-sm">
+                          {{profileData.user.gstNumber || 'Not provided'}}
+                        </div>
+                        <input *ngIf="isEditingPersonal" 
+                               type="text" 
+                               [(ngModel)]="editPersonalForm.gstNumber"
+                               class="w-full p-3 bg-white border border-gray-300 rounded-lg text-gray-900 font-medium shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="bg-gradient-to-br from-purple-50 to-violet-50 p-6 rounded-xl border border-purple-100">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                      <img src="assets/icons/lucide/lucide/settings.svg" class="w-5 h-5 mr-2 text-purple-600" alt="Settings">
+                      Business Details
+                    </h4>
+                    <div class="space-y-4">
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Service Type</label>
+                        <div *ngIf="!isEditingPersonal" class="p-3 bg-white border border-gray-200 rounded-lg text-gray-900 font-medium shadow-sm">
+                          {{profileData.user.serviceType || 'Not provided'}}
+                        </div>
+                        <input *ngIf="isEditingPersonal" 
+                               type="text" 
+                               [(ngModel)]="editPersonalForm.serviceType"
+                               class="w-full p-3 bg-white border border-gray-300 rounded-lg text-gray-900 font-medium shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                      </div>
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Payment Terms</label>
+                        <div *ngIf="!isEditingPersonal" class="p-3 bg-white border border-gray-200 rounded-lg text-gray-900 font-medium shadow-sm">
+                          {{profileData.user.paymentTerms || 'Not provided'}}
+                        </div>
+                        <input *ngIf="isEditingPersonal" 
+                               type="text" 
+                               [(ngModel)]="editPersonalForm.paymentTerms"
+                               class="w-full p-3 bg-white border border-gray-300 rounded-lg text-gray-900 font-medium shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Addresses Tab -->
+              <div *ngIf="activeTab === 'addresses'" class="space-y-8">
+                <div class="flex justify-between items-center">
+                  <div>
+                    <h3 class="text-2xl font-bold text-gray-900 flex items-center">
+                      <img src="assets/icons/lucide/lucide/map-pin.svg" class="w-6 h-6 mr-3 text-blue-600" alt="Map Pin">
+                      Addresses
+                    </h3>
+                    <p class="text-gray-600 mt-1">Your registered business addresses</p>
+                  </div>
+                  <div class="flex items-center space-x-3">
+                    <!-- Add Address Button (Admin Only) -->
+                    <button *ngIf="canEditProfile()" 
+                            (click)="showAddAddressModal = true"
+                            class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors">
+                      <img src="assets/icons/lucide/lucide/plus.svg" class="w-4 h-4 mr-2" alt="Add" />
+                      Add Address
+                    </button>
+                    
+                    <span [class]="'inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ' + 
+                      (profileData?.user?.approvalStatus === 'approved' ? 'bg-green-100 text-green-800' :
+                       profileData?.user?.approvalStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                       'bg-red-100 text-red-800')">
+                      <img [src]="profileData?.user?.approvalStatus === 'approved' ? 'assets/icons/lucide/lucide/circle-check.svg' : 
+                                 profileData?.user?.approvalStatus === 'pending' ? 'assets/icons/lucide/lucide/clock.svg' : 
+                                 'assets/icons/lucide/lucide/x-circle.svg'" 
+                           class="w-4 h-4 mr-2" [alt]="profileData?.user?.approvalStatus">
+                      {{profileData?.user?.approvalStatus === 'approved' ? 'Admin Approved' : 
+                        profileData?.user?.approvalStatus === 'pending' ? 'Pending Approval' : 
+                        'Admin Rejected'}}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Addresses List -->
+                <div class="space-y-6">
+                  <div *ngFor="let address of profileData?.addresses || []; let i = index" 
+                       class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100 hover:shadow-lg transition-all duration-200">
+                    <div class="flex items-start justify-between">
+                      <div class="flex-1">
+                        <div class="flex items-center space-x-3 mb-3">
+                          <div class="p-2 bg-blue-600 rounded-lg">
+                            <img src="assets/icons/lucide/lucide/map-pin.svg" class="w-5 h-5 text-white" alt="Map Pin">
+                          </div>
+                          <div>
+                            <h4 class="text-xl font-semibold text-gray-900">{{address.addressLine1}}</h4>
+                            <span *ngIf="address.isDefault" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              <img src="assets/icons/lucide/lucide/star.svg" class="w-3 h-3 mr-1" alt="Star">
+                              Default Address
+                            </span>
+                          </div>
+                        </div>
+                        <div class="ml-12 space-y-2">
+                          <p *ngIf="address.addressLine2" class="text-gray-700 font-medium">{{address.addressLine2}}</p>
+                          <p class="text-gray-600 flex items-center">
+                            <img src="assets/icons/lucide/lucide/map-pin.svg" class="w-4 h-4 mr-2 text-gray-400" alt="Map Pin">
+                            {{address.city}}, {{address.state}} {{address.pinCode}}
+                          </p>
+                          <p class="text-gray-600 flex items-center">
+                            <img src="assets/icons/lucide/lucide/globe.svg" class="w-4 h-4 mr-2 text-gray-400" alt="Globe">
+                            {{address.country}}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <!-- Edit/Delete Buttons (Admin Only) -->
+                      <div *ngIf="canEditProfile()" class="flex items-center space-x-2 ml-4">
+                        <button (click)="editAddress(address)"
+                                class="inline-flex items-center px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
+                          <img src="assets/icons/lucide/lucide/edit.svg" class="w-4 h-4" alt="Edit" />
+                        </button>
+                        <button (click)="deleteAddress(address._id)"
+                                class="inline-flex items-center px-3 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors">
+                          <img src="assets/icons/lucide/lucide/trash.svg" class="w-4 h-4" alt="Delete" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div *ngIf="!profileData?.addresses?.length" class="text-center py-12">
+                    <div class="p-6 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
+                      <img src="assets/icons/lucide/lucide/map-pin-off.svg" class="w-12 h-12 text-gray-400 mx-auto mb-4" alt="Map Pin Off">
+                      <h3 class="text-lg font-medium text-gray-900 mb-2">No Addresses Found</h3>
+                      <p class="text-gray-600">No addresses have been registered for this account.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bank Details Tab (Vendor Only) -->
+              <div *ngIf="activeTab === 'bank' && isVendor()" class="space-y-8">
+                <div class="flex justify-between items-center">
+                  <div>
+                    <h3 class="text-2xl font-bold text-gray-900 flex items-center">
+                      <img src="assets/icons/lucide/lucide/credit-card.svg" class="w-6 h-6 mr-3 text-blue-600" alt="Credit Card">
+                      Bank Details
+                    </h3>
+                    <p class="text-gray-600 mt-1">Your registered banking information</p>
+                  </div>
+                  <div class="flex items-center space-x-3">
+                    <!-- Add Bank Details Button (Admin Only) -->
+                    <button *ngIf="canEditProfile()" 
+                            (click)="showAddBankDetailsModal = true"
+                            class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors">
+                      <img src="assets/icons/lucide/lucide/plus.svg" class="w-4 h-4 mr-2" alt="Add" />
+                      Add Bank Details
+                    </button>
+                    
+                    <span [class]="'inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ' + 
+                      (profileData?.user?.approvalStatus === 'approved' ? 'bg-green-100 text-green-800' :
+                       profileData?.user?.approvalStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                       'bg-red-100 text-red-800')">
+                      <img [src]="profileData?.user?.approvalStatus === 'approved' ? 'assets/icons/lucide/lucide/circle-check.svg' : 
+                                 profileData?.user?.approvalStatus === 'pending' ? 'assets/icons/lucide/lucide/clock.svg' : 
+                                 'assets/icons/lucide/lucide/x-circle.svg'" 
+                           class="w-4 h-4 mr-2" [alt]="profileData?.user?.approvalStatus">
+                      {{profileData?.user?.approvalStatus === 'approved' ? 'Admin Approved' : 
+                        profileData?.user?.approvalStatus === 'pending' ? 'Pending Approval' : 
+                        'Admin Rejected'}}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Bank Details List -->
+                <div class="space-y-6">
+                  <div *ngFor="let bank of profileData?.bankDetails || []; let i = index" 
+                       class="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl border border-green-100 hover:shadow-lg transition-all duration-200">
+                    <div class="flex items-start justify-between">
+                      <div class="flex-1">
+                        <div class="flex items-center space-x-3 mb-4">
+                          <div class="p-2 bg-green-600 rounded-lg">
+                            <img src="assets/icons/lucide/lucide/credit-card.svg" class="w-5 h-5 text-white" alt="Credit Card">
+                          </div>
+                          <div>
+                            <h4 class="text-xl font-semibold text-gray-900">{{bank.bankName || 'Bank Name Not Provided'}}</h4>
+                            <div class="flex items-center space-x-2 mt-1">
+                              <span *ngIf="bank.isVerified" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <img src="assets/icons/lucide/lucide/circle-check.svg" class="w-3 h-3 mr-1" alt="Check">
+                                Verified
+                              </span>
+                              <span *ngIf="!bank.isVerified" class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                <img src="assets/icons/lucide/lucide/clock.svg" class="w-3 h-3 mr-1" alt="Clock">
+                                Not Verified
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="ml-12 grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div class="bg-white p-3 rounded-lg border border-gray-200">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Account Number</label>
+                            <p class="text-gray-900 font-medium">{{bank.bankAccountNumber || 'Not Provided'}}</p>
+                          </div>
+                          <div class="bg-white p-3 rounded-lg border border-gray-200">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Account Type</label>
+                            <p class="text-gray-900 font-medium">{{bank.accountType || 'Not Provided'}}</p>
+                          </div>
+                          <div class="bg-white p-3 rounded-lg border border-gray-200">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">IFSC Code</label>
+                            <p class="text-gray-900 font-medium">{{bank.ifscCode || 'Not Provided'}}</p>
+                          </div>
+                          <div class="bg-white p-3 rounded-lg border border-gray-200">
+                            <label class="block text-xs font-medium text-gray-500 mb-1">Branch</label>
+                            <p class="text-gray-900 font-medium">{{bank.branchName || 'Branch Not Provided'}}, {{bank.bankCity || 'City Not Provided'}}</p>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <!-- Edit/Delete Buttons (Admin Only) -->
+                      <div *ngIf="canEditProfile()" class="flex items-center space-x-2 ml-4">
+                        <button (click)="editBankDetails(bank)"
+                                class="inline-flex items-center px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
+                          <img src="assets/icons/lucide/lucide/edit.svg" class="w-4 h-4" alt="Edit" />
+                        </button>
+                        <button (click)="deleteBankDetails(bank._id)"
+                                class="inline-flex items-center px-3 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors">
+                          <img src="assets/icons/lucide/lucide/trash.svg" class="w-4 h-4" alt="Delete" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div *ngIf="!profileData?.bankDetails?.length" class="text-center py-12">
+                    <div class="p-6 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
+                      <img src="assets/icons/lucide/lucide/credit-card.svg" class="w-12 h-12 text-gray-400 mx-auto mb-4" alt="Credit Card">
+                      <h3 class="text-lg font-medium text-gray-900 mb-2">No Bank Details Found</h3>
+                      <p class="text-gray-600">No banking information has been registered for this account.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Compliance Tab -->
+              <div *ngIf="activeTab === 'compliance'" class="space-y-8">
+                <div class="flex justify-between items-center">
+                  <div>
+                    <h3 class="text-2xl font-bold text-gray-900 flex items-center">
+                      <img src="assets/icons/lucide/lucide/shield-check.svg" class="w-6 h-6 mr-3 text-blue-600" alt="Shield Check">
+                      Statutory Compliance
+                    </h3>
+                    <p class="text-gray-600 mt-1">Your regulatory and compliance information</p>
+                  </div>
+                  <div class="flex items-center space-x-3">
+                    <!-- Edit Compliance Button (Admin Only) -->
+                    <button *ngIf="canEditProfile() && !isEditingCompliance" 
+                            (click)="startEditingCompliance()"
+                            class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
+                      <img src="assets/icons/lucide/lucide/edit.svg" class="w-4 h-4 mr-2" alt="Edit" />
+                      Edit
+                    </button>
+                    
+                    <!-- Save/Cancel Buttons (Admin Only) -->
+                    <div *ngIf="canEditProfile() && isEditingCompliance" class="flex items-center space-x-2">
+                      <button (click)="saveCompliance()"
+                              class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors">
+                        <img src="assets/icons/lucide/lucide/check.svg" class="w-4 h-4 mr-2" alt="Save" />
+                        Save
+                      </button>
+                      <button (click)="cancelEditingCompliance()"
+                              class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors">
+                        <img src="assets/icons/lucide/lucide/x.svg" class="w-4 h-4 mr-2" alt="Cancel" />
+                        Cancel
+                      </button>
+                    </div>
+                    
+                    <span [class]="'inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ' + 
+                      (profileData?.user?.approvalStatus === 'approved' ? 'bg-green-100 text-green-800' :
+                       profileData?.user?.approvalStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                       'bg-red-100 text-red-800')">
+                      <img [src]="profileData?.user?.approvalStatus === 'approved' ? 'assets/icons/lucide/lucide/circle-check.svg' : 
+                                 profileData?.user?.approvalStatus === 'pending' ? 'assets/icons/lucide/lucide/clock.svg' : 
+                                 'assets/icons/lucide/lucide/x-circle.svg'" 
+                           class="w-4 h-4 mr-2" [alt]="profileData?.user?.approvalStatus">
+                      {{profileData?.user?.approvalStatus === 'approved' ? 'Admin Approved' : 
+                        profileData?.user?.approvalStatus === 'pending' ? 'Pending Approval' : 
+                        'Admin Rejected'}}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="space-y-8">
+                  <!-- PAN Number Section -->
+                  <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                      <img src="assets/icons/lucide/lucide/credit-card.svg" class="w-5 h-5 mr-2 text-blue-600" alt="Credit Card">
+                      Tax Information
+                    </h4>
+                    <div class="bg-white p-4 rounded-lg border border-gray-200">
+                      <label class="block text-sm font-medium text-gray-700 mb-2">PAN Number</label>
+                      <div *ngIf="!isEditingCompliance" class="p-3 bg-gray-50 border border-gray-200 rounded-lg text-gray-900 font-medium">
+                        {{profileData.compliance?.panNumber || 'Not provided'}}
+                      </div>
+                      <input *ngIf="isEditingCompliance" 
+                             type="text" 
+                             [(ngModel)]="editComplianceForm.panNumber"
+                             class="w-full p-3 bg-white border border-gray-300 rounded-lg text-gray-900 font-medium shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                  </div>
+
+                  <!-- Registrations Section -->
+                  <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl border border-green-100">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                      <img src="assets/icons/lucide/lucide/building.svg" class="w-5 h-5 mr-2 text-green-600" alt="Building">
+                      Government Registrations
+                    </h4>
+                    
+                    <div class="space-y-6">
+                      <!-- ESI Registration -->
+                      <div class="bg-white p-4 rounded-lg border border-gray-200">
+                        <div class="flex items-center mb-3">
+                          <div *ngIf="!isEditingCompliance" class="h-5 w-5 rounded border-2 border-gray-300 flex items-center justify-center mr-3">
+                            <div *ngIf="profileData.compliance?.registeredUnderESI" class="w-2.5 h-2.5 bg-green-600 rounded"></div>
+                          </div>
+                          <input *ngIf="isEditingCompliance" 
+                                 type="checkbox" 
+                                 [(ngModel)]="editComplianceForm.registeredUnderESI"
+                                 class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mr-3">
+                          <label class="text-sm font-medium text-gray-900">Registered under ESI</label>
+                        </div>
+                        <div *ngIf="(profileData.compliance?.registeredUnderESI && !isEditingCompliance) || (editComplianceForm.registeredUnderESI && isEditingCompliance)" class="ml-8">
+                          <label class="block text-xs font-medium text-gray-500 mb-1">ESI Registration Number</label>
+                          <div *ngIf="!isEditingCompliance" class="p-2 bg-gray-50 border border-gray-200 rounded text-gray-900 font-medium">
+                            {{profileData.compliance?.esiRegistrationNumber || 'Not provided'}}
+                          </div>
+                          <input *ngIf="isEditingCompliance" 
+                                 type="text" 
+                                 [(ngModel)]="editComplianceForm.esiRegistrationNumber"
+                                 class="w-full p-2 bg-white border border-gray-300 rounded text-gray-900 font-medium shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                      </div>
+
+                      <!-- PF Registration -->
+                      <div class="bg-white p-4 rounded-lg border border-gray-200">
+                        <div class="flex items-center mb-3">
+                          <div *ngIf="!isEditingCompliance" class="h-5 w-5 rounded border-2 border-gray-300 flex items-center justify-center mr-3">
+                            <div *ngIf="profileData.compliance?.registeredUnderPF" class="w-2.5 h-2.5 bg-green-600 rounded"></div>
+                          </div>
+                          <input *ngIf="isEditingCompliance" 
+                                 type="checkbox" 
+                                 [(ngModel)]="editComplianceForm.registeredUnderPF"
+                                 class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mr-3">
+                          <label class="text-sm font-medium text-gray-900">Registered under PF</label>
+                        </div>
+                        <div *ngIf="(profileData.compliance?.registeredUnderPF && !isEditingCompliance) || (editComplianceForm.registeredUnderPF && isEditingCompliance)" class="ml-8">
+                          <label class="block text-xs font-medium text-gray-500 mb-1">PF Registration Number</label>
+                          <div *ngIf="!isEditingCompliance" class="p-2 bg-gray-50 border border-gray-200 rounded text-gray-900 font-medium">
+                            {{profileData.compliance?.pfRegistrationNumber || 'Not provided'}}
+                          </div>
+                          <input *ngIf="isEditingCompliance" 
+                                 type="text" 
+                                 [(ngModel)]="editComplianceForm.pfRegistrationNumber"
+                                 class="w-full p-2 bg-white border border-gray-300 rounded text-gray-900 font-medium shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                      </div>
+
+                      <!-- MSMED Registration -->
+                      <div class="bg-white p-4 rounded-lg border border-gray-200">
+                        <div class="flex items-center mb-3">
+                          <div *ngIf="!isEditingCompliance" class="h-5 w-5 rounded border-2 border-gray-300 flex items-center justify-center mr-3">
+                            <div *ngIf="profileData.compliance?.registeredUnderMSMED" class="w-2.5 h-2.5 bg-green-600 rounded"></div>
+                          </div>
+                          <input *ngIf="isEditingCompliance" 
+                                 type="checkbox" 
+                                 [(ngModel)]="editComplianceForm.registeredUnderMSMED"
+                                 class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mr-3">
+                          <label class="text-sm font-medium text-gray-900">Registered under MSMED</label>
+                        </div>
+                        <div *ngIf="(profileData.compliance?.registeredUnderMSMED && !isEditingCompliance) || (editComplianceForm.registeredUnderMSMED && isEditingCompliance)" class="ml-8">
+                          <label class="block text-xs font-medium text-gray-500 mb-1">MSMED Registration Number</label>
+                          <div *ngIf="!isEditingCompliance" class="p-2 bg-gray-50 border border-gray-200 rounded text-gray-900 font-medium">
+                            {{profileData.compliance?.msmedRegistrationNumber || 'Not provided'}}
+                          </div>
+                          <input *ngIf="isEditingCompliance" 
+                                 type="text" 
+                                 [(ngModel)]="editComplianceForm.msmedRegistrationNumber"
+                                 class="w-full p-2 bg-white border border-gray-300 rounded text-gray-900 font-medium shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Compliance Status Section -->
+                  <div class="bg-gradient-to-br from-purple-50 to-violet-50 p-6 rounded-xl border border-purple-100">
+                    <h4 class="text-lg font-semibold text-gray-900 mb-6 flex items-center">
+                      <img src="assets/icons/lucide/lucide/shield.svg" class="w-5 h-5 mr-2 text-purple-600" alt="Shield">
+                      Compliance Status
+                    </h4>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div class="bg-white p-4 rounded-lg border border-gray-200">
+                        <div class="flex items-center mb-2">
+                          <div *ngIf="!isEditingCompliance" class="h-4 w-4 rounded border border-gray-300 flex items-center justify-center mr-3">
+                            <div *ngIf="profileData.compliance?.compliesWithStatutoryRequirements" class="w-2 h-2 bg-green-600 rounded"></div>
+                          </div>
+                          <input *ngIf="isEditingCompliance" 
+                                 type="checkbox" 
+                                 [(ngModel)]="editComplianceForm.compliesWithStatutoryRequirements"
+                                 class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mr-3">
+                          <label class="text-sm font-medium text-gray-900">Complies with statutory requirements</label>
+                        </div>
+                      </div>
+
+                      <div class="bg-white p-4 rounded-lg border border-gray-200">
+                        <div class="flex items-center mb-2">
+                          <div *ngIf="!isEditingCompliance" class="h-4 w-4 rounded border border-gray-300 flex items-center justify-center mr-3">
+                            <div *ngIf="profileData.compliance?.hasCloseRelativesInCompany" class="w-2 h-2 bg-green-600 rounded"></div>
+                          </div>
+                          <input *ngIf="isEditingCompliance" 
+                                 type="checkbox" 
+                                 [(ngModel)]="editComplianceForm.hasCloseRelativesInCompany"
+                                 class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mr-3">
+                          <label class="text-sm font-medium text-gray-900">Has close relatives in company</label>
+                        </div>
+                      </div>
+
+                      <div class="bg-white p-4 rounded-lg border border-gray-200">
+                        <div class="flex items-center mb-2">
+                          <div *ngIf="!isEditingCompliance" class="h-4 w-4 rounded border border-gray-300 flex items-center justify-center mr-3">
+                            <div *ngIf="profileData.compliance?.hasAdequateSafetyStandards" class="w-2 h-2 bg-green-600 rounded"></div>
+                          </div>
+                          <input *ngIf="isEditingCompliance" 
+                                 type="checkbox" 
+                                 [(ngModel)]="editComplianceForm.hasAdequateSafetyStandards"
+                                 class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mr-3">
+                          <label class="text-sm font-medium text-gray-900">Has adequate safety standards</label>
+                        </div>
+                      </div>
+
+                      <div class="bg-white p-4 rounded-lg border border-gray-200">
+                        <div class="flex items-center mb-2">
+                          <div *ngIf="!isEditingCompliance" class="h-4 w-4 rounded border border-gray-300 flex items-center justify-center mr-3">
+                            <div *ngIf="profileData.compliance?.hasOngoingLitigation" class="w-2 h-2 bg-green-600 rounded"></div>
+                          </div>
+                          <input *ngIf="isEditingCompliance" 
+                                 type="checkbox" 
+                                 [(ngModel)]="editComplianceForm.hasOngoingLitigation"
+                                 class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 mr-3">
+                          <label class="text-sm font-medium text-gray-900">Has ongoing litigation</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reject Modal (Admin Only) -->
+  <div *ngIf="showRejectModal && isAdminView && isCurrentUserAdmin()" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+    <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-md">
+      <h3 class="text-lg font-semibold mb-4 text-red-700 flex items-center">
+        <img src="assets/icons/lucide/lucide/alert-triangle.svg" class="w-5 h-5 mr-2 text-red-600" alt="Alert" />
+        Reject User
+      </h3>
+      <label class="block text-sm font-medium text-gray-700 mb-2">Rejection Reason</label>
+      <textarea [(ngModel)]="rejectNotes" rows="3" class="w-full border border-gray-300 rounded-lg p-2 mb-4" placeholder="Enter reason for rejection..."></textarea>
+      <div class="flex justify-end space-x-2">
+        <button (click)="onCloseRejectModal()" class="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300">Cancel</button>
+        <button (click)="onRejectUser()" [disabled]="!rejectNotes.trim()" class="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700">Reject</button>
+      </div>
+    </div>
+  </div>
+</div> 

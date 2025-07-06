@@ -1,0 +1,123 @@
+<div class="space-y-6">
+  <!-- Platform Statistics Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <!-- Total Users -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <div class="p-2 rounded-lg bg-blue-50">
+            <img src="assets/icons/lucide/lucide/users.svg" alt="users" class="w-4 h-4 text-blue-600" />
+          </div>
+          <span class="ml-3 text-sm font-medium text-gray-700">Total Users</span>
+        </div>
+        <span class="text-2xl font-bold text-gray-900">{{platformStats.totalUsers || 0}}</span>
+      </div>
+    </div>
+
+    <!-- Total Applications -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <div class="p-2 rounded-lg bg-green-50">
+            <img src="assets/icons/lucide/lucide/trending-up.svg" alt="trending-up" class="w-4 h-4 text-green-600" />
+          </div>
+          <span class="ml-3 text-sm font-medium text-gray-700">Total Applications</span>
+        </div>
+        <span class="text-2xl font-bold text-gray-900">{{platformStats.totalApplications || 0}}</span>
+      </div>
+    </div>
+
+    <!-- Total Resources -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <div class="p-2 rounded-lg bg-purple-50">
+            <img src="assets/icons/lucide/lucide/briefcase.svg" alt="briefcase" class="w-4 h-4 text-purple-600" />
+          </div>
+          <span class="ml-3 text-sm font-medium text-gray-700">Total Resources</span>
+        </div>
+        <span class="text-2xl font-bold text-gray-900">{{platformStats.totalResources || 0}}</span>
+      </div>
+    </div>
+
+    <!-- Total Requirements -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <div class="p-2 rounded-lg bg-yellow-50">
+            <img src="assets/icons/lucide/lucide/file-text.svg" alt="file-text" class="w-4 h-4 text-yellow-600" />
+          </div>
+          <span class="ml-3 text-sm font-medium text-gray-700">Total Requirements</span>
+        </div>
+        <span class="text-2xl font-bold text-gray-900">{{platformStats.totalRequirements || 0}}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Additional Statistics Row -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Total Vendors -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <div class="p-2 rounded-lg bg-indigo-50">
+            <img src="assets/icons/lucide/lucide/user-check.svg" alt="vendors" class="w-4 h-4 text-indigo-600" />
+          </div>
+          <span class="ml-3 text-sm font-medium text-gray-700">Total Vendors</span>
+        </div>
+        <span class="text-xl font-bold text-gray-900">{{platformStats.totalVendors || 0}}</span>
+      </div>
+    </div>
+
+    <!-- Total Clients -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <div class="p-2 rounded-lg bg-orange-50">
+            <img src="assets/icons/lucide/lucide/building.svg" alt="clients" class="w-4 h-4 text-orange-600" />
+          </div>
+          <span class="ml-3 text-sm font-medium text-gray-700">Total Clients</span>
+        </div>
+        <span class="text-xl font-bold text-gray-900">{{platformStats.totalClients || 0}}</span>
+      </div>
+    </div>
+
+    <!-- Active Skills -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <div class="p-2 rounded-lg bg-teal-50">
+            <img src="assets/icons/lucide/lucide/award.svg" alt="skills" class="w-4 h-4 text-teal-600" />
+          </div>
+          <span class="ml-3 text-sm font-medium text-gray-700">Active Skills</span>
+        </div>
+        <span class="text-xl font-bold text-gray-900">{{platformStats.activeSkills || 0}}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Skill Approvals -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+      <div class="p-6 border-b border-gray-100">
+        <h3 class="text-lg font-semibold text-gray-900">Recent Skill Approvals</h3>
+      </div>
+      <div class="p-6">
+        <div *ngFor="let approval of skillApprovals.slice(0, 5); trackBy: trackById" 
+             class="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+          <div>
+            <p class="font-medium text-gray-900">{{approval.skill.skill.name}}</p>
+            <p class="text-sm text-gray-600" *ngIf="approval.skill.category">{{approval.skill.category}}</p>
+          </div>
+          <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + 
+            (approval.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+             approval.status === 'approved' ? 'bg-green-100 text-green-800' :
+             'bg-red-100 text-red-800')">
+            {{approval.status}}
+          </span>
+        </div>
+        <p *ngIf="skillApprovals.length === 0" class="text-gray-500 text-center py-8">No pending skill approvals</p>
+      </div>
+    </div>
+  </div>
+</div> 

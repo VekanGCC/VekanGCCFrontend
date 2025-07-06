@@ -1,0 +1,288 @@
+.workflow-management-container {
+  @apply min-h-screen bg-gray-50;
+
+  // Removed circular dependency - use class directly in HTML
+
+  // Header styles
+  h1 {
+    @apply text-2xl font-bold text-gray-900 mb-2;
+  }
+
+  p {
+    @apply text-gray-600;
+  }
+
+  // Tab styles
+  nav {
+    @apply flex space-x-8 border-b border-gray-200;
+
+    button {
+      @apply py-2 px-1 border-b-2 font-medium text-sm transition-colors duration-200;
+
+      &.active {
+        @apply border-blue-500 text-blue-600;
+      }
+
+      &:not(.active) {
+        @apply border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300;
+      }
+    }
+  }
+
+  // Table styles
+  .workflow-table {
+    @apply shadow overflow-hidden sm:rounded-md;
+
+    table {
+      @apply min-w-full divide-y divide-gray-200;
+
+      thead {
+        @apply bg-gray-50;
+
+        th {
+          @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+        }
+      }
+
+      tbody {
+        @apply bg-white divide-y divide-gray-200;
+
+        tr {
+          @apply hover:bg-gray-50 transition-colors duration-150;
+
+          td {
+            @apply px-6 py-4 whitespace-nowrap;
+          }
+        }
+      }
+    }
+  }
+
+  // Status badges
+  .status-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+
+    &.active {
+      @apply bg-green-100 text-green-800;
+    }
+
+    &.completed {
+      @apply bg-blue-100 text-blue-800;
+    }
+
+    &.cancelled {
+      @apply bg-red-100 text-red-800;
+    }
+
+    &.escalated {
+      @apply bg-yellow-100 text-yellow-800;
+    }
+
+    &.pending {
+      @apply bg-gray-100 text-gray-800;
+    }
+  }
+
+  // Button styles
+  .btn {
+    @apply inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors duration-200;
+
+    &.btn-primary {
+      @apply text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-500;
+    }
+
+    &.btn-secondary {
+      @apply text-gray-700 bg-gray-100 border-gray-300 hover:bg-gray-200 focus:ring-gray-500;
+    }
+
+    &.btn-danger {
+      @apply text-red-600 hover:text-red-900;
+    }
+
+    &.btn-success {
+      @apply text-green-600 hover:text-green-900;
+    }
+
+    &:disabled {
+      @apply opacity-50 cursor-not-allowed;
+    }
+  }
+
+  // Modal styles
+  .modal-overlay {
+    @apply fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50;
+  }
+
+  .modal-content {
+    @apply relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white;
+
+    .modal-header {
+      @apply flex justify-between items-center mb-4;
+
+      h3 {
+        @apply text-lg font-medium text-gray-900;
+      }
+
+      .close-btn {
+        @apply text-gray-400 hover:text-gray-600 transition-colors duration-200;
+      }
+    }
+
+    .modal-body {
+      @apply space-y-4;
+    }
+
+    .modal-footer {
+      @apply flex justify-end space-x-3 pt-4;
+    }
+  }
+
+  // Form styles
+  .form-group {
+    @apply space-y-1;
+
+    label {
+      @apply block text-sm font-medium text-gray-700 mb-1;
+    }
+
+    input, textarea, select {
+      @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200;
+
+      &:invalid {
+        @apply border-red-300;
+      }
+    }
+
+    .error-message {
+      @apply text-red-600 text-sm mt-1;
+    }
+  }
+
+  // Checkbox and radio styles
+  input[type="checkbox"], input[type="radio"] {
+    @apply rounded border-gray-300 text-blue-600 focus:ring-blue-500;
+  }
+
+  // Loading states
+  .loading {
+    @apply p-8 text-center;
+
+    .spinner {
+      @apply inline-flex items-center;
+
+      svg {
+        @apply animate-spin -ml-1 mr-3 h-5 w-5 text-blue-600;
+      }
+    }
+  }
+
+  // Empty states
+  .empty-state {
+    @apply p-8 text-center text-gray-500;
+
+    svg {
+      @apply mx-auto h-12 w-12 text-gray-400;
+    }
+
+    h3 {
+      @apply mt-2 text-sm font-medium text-gray-900;
+    }
+
+    p {
+      @apply mt-1 text-sm text-gray-500;
+    }
+  }
+
+  // Pagination styles
+  .pagination-container {
+    @apply px-6 py-3 border-t border-gray-200;
+  }
+
+  // Responsive design
+  @media (max-width: 768px) {
+    .modal-content {
+      @apply w-11/12;
+    }
+
+    table {
+      @apply text-sm;
+
+      th, td {
+        @apply px-3 py-2;
+      }
+    }
+  }
+
+  // Animation classes
+  .fade-in {
+    @apply transition-opacity duration-300 ease-in-out;
+  }
+
+  .slide-in {
+    @apply transition-transform duration-300 ease-in-out;
+  }
+
+  // Custom scrollbar
+  .custom-scrollbar {
+    &::-webkit-scrollbar {
+      @apply w-2;
+    }
+
+    &::-webkit-scrollbar-track {
+      @apply bg-gray-100 rounded;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      @apply bg-gray-300 rounded hover:bg-gray-400;
+    }
+  }
+
+  // Workflow step styles
+  .workflow-step {
+    @apply border rounded-lg p-3 transition-colors duration-200;
+
+    &:hover {
+      @apply bg-gray-50;
+    }
+
+    .step-header {
+      @apply flex justify-between items-start;
+
+      .step-info {
+        h5 {
+          @apply text-sm font-medium text-gray-900;
+        }
+
+        p {
+          @apply text-xs text-gray-500;
+        }
+      }
+    }
+
+    .step-content {
+      @apply mt-2 text-sm text-gray-600;
+    }
+
+    .step-meta {
+      @apply mt-1 text-xs text-gray-500;
+    }
+  }
+
+  // Grid layouts
+  .grid-layout {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-6;
+  }
+
+  // Definition list styles
+  dl {
+    @apply space-y-2;
+
+    dt {
+      @apply text-sm font-medium text-gray-500;
+    }
+
+    dd {
+      @apply text-sm text-gray-900;
+    }
+  }
+} 

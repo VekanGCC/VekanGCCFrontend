@@ -1,0 +1,219 @@
+<img src="assets/icons/lucide/lucide/x.svg" alt="x" class="w-4 h-4" />
+<img src="assets/icons/lucide/lucide/user.svg" alt="user" class="w-4 h-4" />
+<img src="assets/icons/lucide/lucide/clock.svg" alt="clock" class="w-4 h-4" />
+
+<!-- Application History Modal -->
+<div class="modal-overlay" 
+     *ngIf="isVisible"
+     (click)="handleBackdropClick($event)">
+  
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <div class="header-content">
+        <h2 class="modal-title">
+          Application History
+          <span class="debug-info" *ngIf="applicationId">(ID: {{applicationId}})</span>
+        </h2>
+        
+        <!-- Application Details -->
+        <div *ngIf="applicationDetails" class="application-details">
+          <div class="detail-row">
+            <div class="detail-item">
+              <span class="detail-label">Resource:</span>
+              <span class="detail-value">{{applicationDetails.resource?.name || 'Unknown'}}</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Requirement:</span>
+              <span class="detail-value">{{applicationDetails.requirement?.title || 'Unknown'}}</span>
+            </div>
+          </div>
+          <div class="detail-row">
+            <div class="detail-item">
+              <span class="detail-label">Current Status:</span>
+              <span class="status-badge" [class]="'status-' + (applicationDetails.status || 'unknown').toLowerCase()">
+                {{formatStatus(applicationDetails.status || 'Unknown')}}
+              </span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">Created:</span>
+              <span class="detail-value">{{applicationDetails.createdAt | date:'short'}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <button class="close-button" (click)="closeModal()" type="button" title="Close">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="loading-container">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Loading application history...</p>
+      </div>
+
+      <!-- Content State -->
+      <div *ngIf="!isLoading" class="content-container">
+        <!-- No History State -->
+        <div *ngIf="!history || history.length === 0" class="no-data-container">
+          <div class="no-data-icon">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 12l2 2 4-4"></path>
+              <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3z"></path>
+              <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3z"></path>
+              <path d="M12 3c0 1-1 3-3 3s-3-2-3-3 1-3 3-3 3 2 3 3z"></path>
+              <path d="M12 21c0-1 1-3 3-3s3 2 3 3-1 3-3 3-3-2-3-3z"></path>
+            </svg>
+          </div>
+          <h3 class="no-data-title">No History Available</h3>
+          <p class="no-data-message">This application doesn't have any history records yet.</p>
+        </div>
+
+        <!-- History List -->
+        <div *ngIf="history && history.length > 0" class="history-container">
+          <div class="history-list">
+            <div *ngFor="let item of history; trackBy: trackByHistoryItem" class="history-item">
+              <!-- History Header -->
+              <div class="history-header">
+                <div class="history-status">
+                  <span class="status-badge" [class]="'status-' + (item.status || 'unknown').toLowerCase()">
+                    {{formatStatus(item.status || 'Unknown')}}
+                  </span>
+                  <span *ngIf="item.previousStatus" class="status-change-indicator">
+                    <svg class="w-4 h-4 mx-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                    </svg>
+                    {{formatStatus(item.previousStatus)}}
+                  </span>
+                </div>
+                <div class="history-date">
+                  {{item.createdAt | date:'medium'}}
+                </div>
+              </div>
+              
+              <!-- History Content -->
+              <div class="history-content">
+                <!-- Basic Information -->
+                <div class="history-section">
+                  <div class="history-field" *ngIf="item.updatedBy">
+                    <label class="field-label">Updated by:</label>
+                    <p class="field-value">{{item.updatedBy.firstName}} {{item.updatedBy.lastName}}</p>
+                  </div>
+                  
+                  <div class="history-field" *ngIf="item.notes">
+                    <label class="field-label">Notes:</label>
+                    <p class="field-value">{{item.notes}}</p>
+                  </div>
+                </div>
+
+                <!-- Decision Reason Section -->
+                <div class="history-section" *ngIf="item.decisionReason">
+                  <h4 class="section-title">Decision Details</h4>
+                  
+                  <div class="history-field" *ngIf="item.decisionReason.category">
+                    <label class="field-label">Category:</label>
+                    <p class="field-value">{{formatDecisionCategory(item.decisionReason.category)}}</p>
+                  </div>
+                  
+                  <div class="history-field" *ngIf="item.decisionReason.details">
+                    <label class="field-label">Details:</label>
+                    <p class="field-value">{{item.decisionReason.details}}</p>
+                  </div>
+                  
+                  <div class="history-field" *ngIf="item.decisionReason.rating">
+                    <label class="field-label">Rating:</label>
+                    <div class="rating-display">
+                      <div class="stars">
+                        <span *ngFor="let star of [1,2,3,4,5]" 
+                              [class]="star <= item.decisionReason.rating ? 'star-filled' : 'star-empty'">
+                          ★
+                        </span>
+                      </div>
+                      <span class="rating-text">{{item.decisionReason.rating}}/5</span>
+                    </div>
+                  </div>
+                  
+                  <div class="history-field" *ngIf="item.decisionReason.criteria && item.decisionReason.criteria.length > 0">
+                    <label class="field-label">Criteria:</label>
+                    <div class="criteria-tags">
+                      <span *ngFor="let criterion of item.decisionReason.criteria" 
+                            class="criteria-tag">
+                        {{formatDecisionCriteria(criterion)}}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div class="history-field" *ngIf="item.decisionReason.notes">
+                    <label class="field-label">Decision Notes:</label>
+                    <p class="field-value">{{item.decisionReason.notes}}</p>
+                  </div>
+                </div>
+
+                <!-- Notification Section -->
+                <div class="history-section" *ngIf="item.notifyCandidate !== undefined || item.notifyClient !== undefined">
+                  <h4 class="section-title">Notifications</h4>
+                  
+                  <div class="notification-status">
+                    <div class="notification-item" *ngIf="item.notifyCandidate !== undefined">
+                      <span class="notification-label">Candidate:</span>
+                      <span [class]="item.notifyCandidate ? 'notification-sent' : 'notification-not-sent'">
+                        {{item.notifyCandidate ? 'Notified' : 'Not Notified'}}
+                      </span>
+                    </div>
+                    
+                    <div class="notification-item" *ngIf="item.notifyClient !== undefined">
+                      <span class="notification-label">Client:</span>
+                      <span [class]="item.notifyClient ? 'notification-sent' : 'notification-not-sent'">
+                        {{item.notifyClient ? 'Notified' : 'Not Notified'}}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Follow-up Section -->
+                <div class="history-section" *ngIf="item.followUpRequired || item.followUpDate || item.followUpNotes">
+                  <h4 class="section-title">Follow-up Actions</h4>
+                  
+                  <div class="history-field" *ngIf="item.followUpRequired !== undefined">
+                    <label class="field-label">Follow-up Required:</label>
+                    <span [class]="item.followUpRequired ? 'follow-up-required' : 'follow-up-not-required'">
+                      {{item.followUpRequired ? 'Yes' : 'No'}}
+                    </span>
+                  </div>
+                  
+                  <div class="history-field" *ngIf="item.followUpDate">
+                    <label class="field-label">Follow-up Date:</label>
+                    <p class="field-value">{{item.followUpDate | date:'medium'}}</p>
+                  </div>
+                  
+                  <div class="history-field" *ngIf="item.followUpNotes">
+                    <label class="field-label">Follow-up Notes:</label>
+                    <p class="field-value">{{item.followUpNotes}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeModal()" type="button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+        Close
+      </button>
+    </div>
+  </div>
+</div> 

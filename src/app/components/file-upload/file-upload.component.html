@@ -1,0 +1,128 @@
+<div class="file-upload-container">
+  <!-- Error Display -->
+  <div *ngIf="error" class="error-message">
+    <div class="flex items-center p-4 mb-4 text-red-800 border border-red-300 rounded-lg bg-red-50">
+      <img src="assets/icons/lucide/lucide/alert-triangle.svg" alt="error" class="w-5 h-5 mr-2" />
+      <span>{{ error }}</span>
+    </div>
+  </div>
+
+  <!-- Upload Area -->
+  <div 
+    class="upload-area"
+    [class.dragging]="isDragging"
+    [class.uploading]="isUploading"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)"
+    *ngIf="dragDropEnabled">
+    
+    <div class="upload-content">
+      <img src="assets/icons/lucide/lucide/upload-cloud.svg" alt="upload" class="upload-icon" />
+      <h3 class="upload-title">Drop files here or click to upload</h3>
+      <p class="upload-description">
+        Supported formats: PDF, DOC, DOCX, JPG, PNG<br>
+        Maximum file size: {{ formatFileSize(maxFileSize) }}
+      </p>
+      
+      <input 
+        type="file" 
+        [multiple]="multiple"
+        [accept]="allowedTypes.join(',')"
+        (change)="onFileSelected($event)"
+        class="file-input"
+        [disabled]="isUploading" />
+      
+      <button 
+        type="button"
+        class="upload-button"
+        [disabled]="isUploading"
+        (click)="$event.target.nextElementSibling.click()">
+        <img src="assets/icons/lucide/lucide/upload.svg" alt="upload" class="w-4 h-4 mr-2" />
+        Choose Files
+      </button>
+    </div>
+  </div>
+
+  <!-- Progress Bar -->
+  <div *ngIf="isUploading" class="progress-container">
+    <div class="progress-bar">
+      <div class="progress-fill" [style.width.%]="uploadProgressValue"></div>
+    </div>
+    <p class="progress-text">Uploading... {{ uploadProgressValue }}%</p>
+  </div>
+
+  <!-- File List -->
+  <div *ngIf="files.length > 0" class="file-list">
+    <h4 class="file-list-title">Selected Files</h4>
+    <div class="file-items">
+      <div *ngFor="let file of files; let i = index" class="file-item">
+        <div class="file-info">
+          <img [src]="getFileIcon(file)" alt="file type" class="file-icon" />
+          <div class="file-details">
+            <p class="file-name">{{ file.name }}</p>
+            <p class="file-size">{{ formatFileSize(file.size) }}</p>
+          </div>
+        </div>
+        <button 
+          type="button"
+          class="remove-button"
+          (click)="removeFile(i)"
+          [disabled]="isUploading">
+          <img src="assets/icons/lucide/lucide/x.svg" alt="remove" class="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Previews -->
+  <div *ngIf="showPreview && files.length > 0" class="image-previews">
+    <h4 class="preview-title">Image Previews</h4>
+    <div class="preview-grid">
+      <div *ngFor="let file of files" class="preview-item" *ngIf="isImageFile(file)">
+        <img [src]="getImagePreview(file)" [alt]="file.name" class="preview-image" />
+        <p class="preview-name">{{ file.name }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Uploaded Files -->
+  <div *ngIf="uploadedFiles.length > 0" class="uploaded-files">
+    <h4 class="uploaded-title">Uploaded Files</h4>
+    <div class="uploaded-items">
+      <div *ngFor="let file of uploadedFiles" class="uploaded-item">
+        <div class="file-info">
+          <img [src]="fileService.getFileIcon(file.extension)" alt="file type" class="file-icon" />
+          <div class="file-details">
+            <p class="file-name">{{ file.originalName }}</p>
+            <p class="file-size">{{ formatFileSize(file.size) }}</p>
+            <p class="file-status" [class]="'status-' + file.approvalStatus">
+              {{ file.approvalStatus | titlecase }}
+            </p>
+          </div>
+        </div>
+        <div class="file-actions">
+          <button 
+            type="button"
+            class="download-button"
+            (click)="fileService.downloadFile(file._id).subscribe(blob => {
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = file.originalName;
+              a.click();
+              window.URL.revokeObjectURL(url);
+            })">
+            <img src="assets/icons/lucide/lucide/download.svg" alt="download" class="w-4 h-4" />
+          </button>
+          <button 
+            type="button"
+            class="remove-button"
+            (click)="removeUploadedFile(file._id)">
+            <img src="assets/icons/lucide/lucide/trash-2.svg" alt="delete" class="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

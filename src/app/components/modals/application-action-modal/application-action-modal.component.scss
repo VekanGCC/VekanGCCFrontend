@@ -1,0 +1,95 @@
+// Application Action Modal Styles
+:host {
+  display: block;
+}
+
+// Animation for modal appearance
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+// Form validation styles
+.form-error {
+  @apply text-red-500 text-xs mt-1;
+}
+
+.form-success {
+  @apply text-green-500 text-xs mt-1;
+}
+
+// Button loading state
+.btn-loading {
+  @apply opacity-75 cursor-not-allowed;
+  
+  &:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+}
+
+// Custom scrollbar for modal content
+.max-h-\[90vh\] {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+  }
+}
+
+// Checkbox and radio button custom styles
+input[type="checkbox"], input[type="radio"] {
+  &:focus {
+    @apply ring-2 ring-blue-500 ring-offset-2;
+  }
+}
+
+// Select dropdown custom styles
+select {
+  &:focus {
+    @apply ring-2 ring-blue-500 ring-offset-2;
+  }
+}
+
+// Textarea custom styles
+textarea {
+  resize: vertical;
+  min-height: 80px;
+  
+  &:focus {
+    @apply ring-2 ring-blue-500 ring-offset-2;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 640px) {
+  .max-w-2xl {
+    max-width: 95vw;
+  }
+  
+  .grid-cols-2 {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal-dialog {
+    margin: 0.5rem;
+    max-width: calc(100vw - 1rem);
+  }
+} 

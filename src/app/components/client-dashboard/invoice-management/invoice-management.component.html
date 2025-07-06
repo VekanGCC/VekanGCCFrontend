@@ -1,0 +1,205 @@
+<div class="invoice-management-container">
+  <!-- Header -->
+  <div class="header-section mb-6">
+    <div class="flex justify-between items-center">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Invoice Management</h1>
+        <p class="text-gray-600 mt-1">Review and manage vendor invoices</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-section mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="bg-white p-4 rounded-lg shadow border">
+        <div class="flex items-center">
+          <div class="p-2 bg-blue-100 rounded-lg">
+            <span class="text-blue-600 text-xl">📄</span>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-600">Total Invoices</p>
+            <p class="text-2xl font-bold text-gray-900">{{ totalInvoices }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white p-4 rounded-lg shadow border">
+        <div class="flex items-center">
+          <div class="p-2 bg-yellow-100 rounded-lg">
+            <span class="text-yellow-600 text-xl">⏳</span>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-600">Pending Review</p>
+            <p class="text-2xl font-bold text-gray-900">{{ pendingInvoicesCount }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white p-4 rounded-lg shadow border">
+        <div class="flex items-center">
+          <div class="p-2 bg-green-100 rounded-lg">
+            <span class="text-green-600 text-xl">✅</span>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-600">Approved</p>
+            <p class="text-2xl font-bold text-gray-900">{{ approvedInvoicesCount }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white p-4 rounded-lg shadow border">
+        <div class="flex items-center">
+          <div class="p-2 bg-purple-100 rounded-lg">
+            <span class="text-purple-600 text-xl">💰</span>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-600">Pending Amount</p>
+            <p class="text-2xl font-bold text-gray-900">${{ totalAmountPending.toLocaleString() }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Grid -->
+  <div class="data-grid-section">
+    <div class="bg-white rounded-lg shadow border">
+      <div class="p-4 border-b border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-900">Invoices</h2>
+      </div>
+      
+      <div class="ag-grid-container" style="height: 600px;">
+        <ag-grid-angular
+          [rowData]="invoices"
+          [columnDefs]="columnDefs"
+          [defaultColDef]="defaultColDef"
+          [gridOptions]="gridOptions"
+          [loadingOverlayComponent]="'loadingOverlay'"
+          [loadingOverlayComponentParams]="{ loadingMessage: 'Loading invoices...' }"
+          class="ag-theme-alpine w-full h-full">
+        </ag-grid-angular>
+      </div>
+      
+      <!-- Pagination -->
+      <div class="p-4 border-t border-gray-200">
+        <app-pagination
+          [paginationState]="paginationState"
+          (pageChange)="onPageChange($event)">
+        </app-pagination>
+      </div>
+    </div>
+  </div>
+
+  <!-- View Invoice Modal -->
+  <div *ngIf="showViewModal && selectedInvoice" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">Invoice Details</h3>
+        <button 
+          (click)="onCloseModal()"
+          class="text-gray-400 hover:text-gray-600">
+          <span class="text-xl">×</span>
+        </button>
+      </div>
+      
+      <div class="space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-600">Invoice ID</label>
+            <p class="text-sm text-gray-900">#{{ selectedInvoice._id.slice(-6) }}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600">Status</label>
+            <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + getStatusClass(selectedInvoice.paymentStatus)">
+              {{ formatStatus(selectedInvoice.paymentStatus) }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-600">Vendor</label>
+            <p class="text-sm text-gray-900">
+              {{ getVendorDisplayName(selectedInvoice.vendorId) }}
+            </p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600">PO Reference</label>
+            <p class="text-sm text-gray-900">
+              {{ getPODisplayName(selectedInvoice.poId) }}
+            </p>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-600">Amount</label>
+            <p class="text-sm text-gray-900">
+              {{ getAmountDisplay(selectedInvoice.invoiceAmount) }}
+            </p>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600">Due Date</label>
+            <p class="text-sm text-gray-900">{{ selectedInvoice.dueDate | date }}</p>
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-600">Work Summary</label>
+          <p class="text-sm text-gray-900">{{ selectedInvoice.workSummary || 'No description provided' }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Modal -->
+  <div *ngIf="showActionModal && selectedInvoice" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">
+          {{ actionType === 'approve' ? 'Approve' : 'Reject' }} Invoice
+        </h3>
+        <button 
+          (click)="onCloseModal()"
+          class="text-gray-400 hover:text-gray-600">
+          <span class="text-xl">×</span>
+        </button>
+      </div>
+      
+      <div class="mb-4 p-3 bg-gray-50 rounded-lg">
+        <p class="text-sm text-gray-600">Invoice: #{{ selectedInvoice._id.slice(-6) }}</p>
+        <p class="text-sm font-medium text-gray-900">
+          {{ getAmountDisplay(selectedInvoice.invoiceAmount) }}
+        </p>
+      </div>
+      
+      <form [formGroup]="actionForm" (ngSubmit)="onActionSubmit()" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Comments</label>
+          <textarea 
+            formControlName="comments"
+            rows="3"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Add comments for this action">
+          </textarea>
+        </div>
+        
+        <div class="flex justify-end space-x-3 pt-4">
+          <button 
+            type="button"
+            (click)="onCloseModal()"
+            class="px-4 py-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
+            Cancel
+          </button>
+          <button 
+            type="submit"
+            [disabled]="isLoading"
+            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50">
+            {{ isLoading ? 'Processing...' : (actionType === 'approve' ? 'Approve Invoice' : 'Reject Invoice') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div> 

@@ -1,0 +1,62 @@
+[
+  {
+    "id": "1",
+    "resourceId": "1",
+    "requirementId": "1",
+    "vendorId": "1",
+    "clientId": "2",
+    "status": "shortlisted",
+    "appliedBy": "client",
+    "createdAt": "2024-01-20",
+    "updatedAt": "2024-01-21",
+    "notes": "Great match for React skills and AWS experience"
+  },
+  {
+    "id": "2",
+    "resourceId": "2",
+    "requirementId": "3",
+    "vendorId": "3",
+    "clientId": "2",
+    "status": "under-interview",
+    "appliedBy": "vendor",
+    "createdAt": "2024-01-21",
+    "updatedAt": "2024-01-22",
+    "notes": "Perfect Python and Django background"
+  },
+  {
+    "id": "3",
+    "resourceId": "3",
+    "requirementId": "5",
+    "vendorId": "1",
+    "clientId": "2",
+    "status": "selected",
+    "appliedBy": "client",
+    "createdAt": "2024-01-22",
+    "updatedAt": "2024-01-23",
+    "notes": "Excellent Java and microservices experience"
+  },
+  {
+    "id": "4",
+    "resourceId": "4",
+    "requirementId": "4",
+    "vendorId": "3",
+    "clientId": "4",
+    "status": "pending",
+    "appliedBy": "vendor",
+    "createdAt": "2024-01-23",
+    "updatedAt": "2024-01-23",
+    "notes": "Strong Vue.js skills and design background"
+  },
+  {
+    "id": "5",
+    "resourceId": "6",
+    "requirementId": "6",
+    "vendorId": "3",
+    "clientId": "4",
+    "status": "shortlisted",
+    "appliedBy": "client",
+    "createdAt": "2024-01-24",
+    "updatedAt": "2024-01-24",
+    "notes": "Good Laravel experience and location match"
+  }
+]

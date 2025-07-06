@@ -1,0 +1,429 @@
+<header class="header" [ngClass]="{'scrolled': isScrolled}">
+  <div class="container">
+    <div class="header-content">
+      <div class="logo">
+        <a href="#">
+          <span>IT</span>Connect
+        </a>
+      </div>
+      <nav [ngClass]="{'open': isMobileMenuOpen}">
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#how-it-works">How It Works</a></li>
+          <li><a href="#testimonials">Testimonials</a></li>
+        </ul>
+        <div class="nav-buttons">
+          <a routerLink="/login" class="btn btn-outline">Sign In</a>
+          <a (click)="navigateToSignUp()" class="btn btn-primary">Sign Up</a>
+        </div>
+      </nav>
+      <button class="mobile-menu-toggle" (click)="toggleMobileMenu()" [ngClass]="{'open': isMobileMenuOpen}">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero-section">
+  <div class="hero-background"></div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-text fade-in">
+        <h1><span class="gradient-text">Connect with the Perfect IT Talent & Clients</span></h1>
+        <p class="hero-subtitle">
+          TechConnect brings together top IT vendors and clients on one powerful platform.
+          Find the right match for your technical needs or showcase your services to potential clients.
+        </p>
+        <div class="hero-cta">
+          <a (click)="navigateToSignUp()" class="btn btn-primary">Get Started</a>
+          <a href="#how-it-works" class="btn btn-outline">Learn More</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-value">500+</span>
+            <span class="stat-label">Verified Vendors</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat">
+            <span class="stat-value">1,200+</span>
+            <span class="stat-label">Successful Matches</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat">
+            <span class="stat-value">98%</span>
+            <span class="stat-label">Satisfaction Rate</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-image slide-up">
+        <div class="hero-image-container">
+          <img src="https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=1"
+               alt="IT professionals collaborating"
+               class="main-image" />
+          <div class="floating-card card-1">
+            <div class="floating-card-icon">✓</div>
+            <div class="floating-card-text">Matched with ideal client</div>
+          </div>
+          <div class="floating-card card-2">
+            <div class="floating-card-icon">🔍</div>
+            <div class="floating-card-text">10+ new vendors found</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features" class="features-section section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Why Choose TechConnect?</h2>
+      <p class="section-subtitle">
+        A comprehensive platform designed to streamline IT vendor-client relationships
+      </p>
+    </div>
+    <div class="audience-tabs">
+      <button class="tab-btn" [class.active]="featuresActiveTab === 'client'" (click)="setFeaturesActiveTab('client')">For Clients</button>
+      <button class="tab-btn" [class.active]="featuresActiveTab === 'vendor'" (click)="setFeaturesActiveTab('vendor')">For Vendors</button>
+    </div>
+    <div class="features-grid" *ngIf="featuresActiveTab === 'client'">
+      <div class="feature-card">
+        <div class="feature-icon" style="background-color: var(--primary-100);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+        <h3>Verified Vendors</h3>
+        <p>Access a network of pre-vetted IT service providers with verified credentials, experience, and track records.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon" style="background-color: var(--secondary-100);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--secondary-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09A1.65 1.65 0 0 0 15.4 9a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09A1.65 1.65 0 0 0 19.4 15z"></path>
+          </svg>
+        </div>
+        <h3>AI-Powered Matching</h3>
+        <p>Our intelligent algorithm matches you with vendors based on your specific requirements, industry, and project scope.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon" style="background-color: var(--accent-100);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+        </div>
+        <h3>Transparent Pricing</h3>
+        <p>Clear, upfront pricing with detailed breakdowns. No hidden fees or surprise costs in your vendor engagements.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon" style="background-color: var(--success-100);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--success-500)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+        </div>
+        <h3>Compliance Verification</h3>
+        <p>All vendors undergo rigorous compliance checks including security certifications, insurance, and legal requirements.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon" style="background-color: var(--warning-100);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--warning-500)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        <h3>Diverse Expertise</h3>
+        <p>Access vendors across multiple IT domains including development, cybersecurity, cloud services, and managed IT.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon" style="background-color: var(--error-100);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--error-500)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+        </div>
+        <h3>Dedicated Support</h3>
+        <p>Get personalized assistance throughout your vendor selection and project management process.</p>
+      </div>
+    </div>
+
+    <div class="features-grid" *ngIf="featuresActiveTab === 'vendor'">
+      <div class="feature-card">
+        <div class="feature-icon" style="background-color: var(--primary-100);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="8" r="7"></circle>
+            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+          </svg>
+        </div>
+        <h3>Verified Badge</h3>
+        <p>Stand out with our verified vendor badge, showcasing your credibility and trustworthiness to potential clients.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon" style="background-color: var(--secondary-100);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--secondary-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+        </div>
+        <h3>Quality Leads</h3>
+        <p>Receive pre-qualified project opportunities matched to your expertise and preferences.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon" style="background-color: var(--accent-100);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-600)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.2 7.8l-7.7 7.7-4-4-5.7 5.7"></path>
+            <path d="M15 7h6v6"></path>
+          </svg>
+        </div>
+        <h3>Business Growth</h3>
+        <p>Expand your client base and increase revenue through our platform's extensive network of businesses.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon" style="background-color: var(--success-100);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--success-500)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="3" y1="9" x2="21" y2="9"></line>
+            <line x1="9" y1="21" x2="9" y2="9"></line>
+          </svg>
+        </div>
+        <h3>Project Management</h3>
+        <p>Access integrated tools for seamless project management, communication, and payment processing.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon" style="background-color: var(--warning-100);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--warning-500)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+            <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+          </svg>
+        </div>
+        <h3>Performance Analytics</h3>
+        <p>Track your success with detailed analytics on project performance, client satisfaction, and revenue.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon" style="background-color: var(--error-100);">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--error-500)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <h3>Resource Center</h3>
+        <p>Access training materials, best practices, and industry insights to enhance your service delivery.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how-it-works" class="how-it-works-section section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <h2>How TechConnect Works</h2>
+      <p class="section-subtitle">
+        Our streamlined process makes it easy to find and connect with the right IT partners.
+      </p>
+    </div>
+    <div class="process-tabs">
+      <div class="tab-headers">
+        <button class="tab-btn" [class.active]="howItWorksActiveTab === 'clients'" (click)="setHowItWorksActiveTab('clients')">For Clients</button>
+        <button class="tab-btn" [class.active]="howItWorksActiveTab === 'vendors'" (click)="setHowItWorksActiveTab('vendors')">For Vendors</button>
+      </div>
+      <div class="tab-content">
+        <div class="tab-pane" [class.active]="howItWorksActiveTab === 'vendors'">
+          <div class="steps-container">
+            <div class="step">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <h3>Create your Vendor Profile</h3>
+                <p>Sign up and build your comprehensive profile highlighting your IT services, skills, experience, and portfolio.</p>
+              </div>
+            </div>
+            
+            <div class="step">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <h3>Set Your Preferences</h3>
+                <p>Specify your service areas, availability, pricing models, and the types of clients you want to work with.</p>
+              </div>
+            </div>
+            
+            <div class="step">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <h3>Get Matched with Clients</h3>
+                <p>Our algorithm matches you with clients whose requirements align with your expertise and preferences.</p>
+              </div>
+            </div>
+            
+            <div class="step">
+              <div class="step-number">4</div>
+              <div class="step-content">
+                <h3>Collaborate and Grow</h3>
+                <p>Connect with clients, deliver exceptional service, earn positive reviews, and expand your business.</p>
+              </div>
+            </div>
+          </div>
+          <div class="tab-image">
+            <img src="https://images.pexels.com/photos/3182759/pexels-photo-3182759.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=1" alt="IT vendor working" />
+          </div>
+        </div>
+        
+        <div class="tab-pane" [class.active]="howItWorksActiveTab === 'clients'">
+          <div class="steps-container">
+            <div class="step">
+              <div class="step-number">1</div>
+              <div class="step-content">
+                <h3>Post Your IT Requirements</h3>
+                <p>Create a detailed description of your IT needs, project scope, budget, and timeline.</p>
+              </div>
+            </div>
+            
+            <div class="step">
+              <div class="step-number">2</div>
+              <div class="step-content">
+                <h3>Review Matched Vendors</h3>
+                <p>Browse through a curated list of pre-vetted vendors that match your specific requirements.</p>
+              </div>
+            </div>
+            
+            <div class="step">
+              <div class="step-number">3</div>
+              <div class="step-content">
+                <h3>Connect and Communicate</h3>
+                <p>Reach out to your selected vendors, discuss project details, and finalize agreements securely on our platform.</p>
+              </div>
+            </div>
+            
+            <div class="step">
+              <div class="step-number">4</div>
+              <div class="step-content">
+                <h3>Manage and Review</h3>
+                <p>Track project progress, communicate efficiently, and provide feedback upon completion to help the community.</p>
+              </div>
+            </div>
+          </div>
+          <div class="tab-image">
+            <img src="https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&dpr=1" alt="Client reviewing IT proposals" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="testimonials" class="testimonials section">
+  <div class="container">
+    <div class="section-header">
+      <h2>What Our Users Say</h2>
+      <p class="section-subtitle">Hear from the clients and vendors who have transformed their IT partnerships through our platform.</p>
+    </div>
+    <div class="testimonial-slider">
+      <div class="testimonial-navigation">
+        <button (click)="prevTestimonial()" class="nav-btn prev">
+          <span class="arrow-left"></span>
+        </button>
+        <button (click)="nextTestimonial()" class="nav-btn next">
+          <span class="arrow-right"></span>
+        </button>
+      </div>
+      <div class="testimonial-wrapper">
+        <div class="testimonial-track" [style.transform]="'translateX(-' + (activeIndex * 100) + '%)'">
+          <div class="testimonial-slide" *ngFor="let testimonial of testimonials; let i = index">
+            <div class="testimonial-content">
+              <div class="quote-mark">"</div>
+              <p class="quote">{{testimonial.quote}}</p>
+              <div class="testimonial-author">
+                <div class="author-image">
+                  <img [src]="testimonial.image" alt="{{testimonial.name}}">
+                </div>
+                <div class="author-info">
+                  <h4>{{testimonial.name}}</h4>
+                  <p>{{testimonial.position}}</p>
+                  <span class="badge" [class.vendor]="testimonial.type === 'vendor'">{{testimonial.type}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-indicators">
+        <button *ngFor="let testimonial of testimonials; let i = index" [class.active]="i === activeIndex" (click)="setActiveTestimonial(i)"></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-logo">
+        <a href="#">
+          <span>IT</span>Connect
+        </a>
+        <p>The premier platform connecting IT vendors with clients worldwide.</p>
+      </div>
+      <div class="footer-links">
+        <div class="link-group">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="#how-it-works">How it Works</a></li>
+            <li><a href="#features">For Vendors</a></li>
+            <li><a href="#features">For Clients</a></li>
+            <li><a href="#">Pricing</a></li>
+          </ul>
+        </div>
+        <div class="link-group">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Press</a></li>
+            <li><a href="#">Blog</a></li>
+          </ul>
+        </div>
+        <div class="link-group">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="#">Support</a></li>
+            <li><a href="#">Documentation</a></li>
+            <li><a href="#">FAQs</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        <div class="link-group">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Security</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; {{currentYear}} IT Connect. All rights reserved.</p>
+      <div class="footer-social">
+        <a href="#" class="social-icon linkedin"></a>
+        <a href="#" class="social-icon twitter"></a>
+        <a href="#" class="social-icon facebook"></a>
+      </div>
+    </div>
+  </div>
+</footer>

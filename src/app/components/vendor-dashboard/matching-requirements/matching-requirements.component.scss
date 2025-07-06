@@ -1,0 +1,110 @@
+:host {
+  display: block;
+}
+
+.ag-theme-alpine {
+  --ag-header-height: 50px;
+  --ag-row-height: 80px;
+  --ag-header-background-color: #f9fafb;
+  --ag-header-foreground-color: #374151;
+  --ag-border-color: #e5e7eb;
+  --ag-row-border-color: #f3f4f6;
+  --ag-odd-row-background-color: #f9fafb;
+  --ag-row-hover-color: #f3f4f6;
+  --ag-selected-row-background-color: #dbeafe;
+  --ag-font-size: 14px;
+  --ag-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.ag-theme-alpine .ag-header-cell {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+}
+
+.ag-theme-alpine .ag-cell {
+  padding: 8px 12px;
+  line-height: 1.4;
+}
+
+.ag-theme-alpine .ag-row {
+  border-bottom: 1px solid var(--ag-row-border-color);
+}
+
+.ag-theme-alpine .ag-row:hover {
+  background-color: var(--ag-row-hover-color);
+}
+
+.ag-theme-alpine .ag-row-selected {
+  background-color: var(--ag-selected-row-background-color);
+}
+
+// Custom button styles
+.download-btn {
+  transition: all 0.2s ease-in-out;
+  
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.toggle-btn, .edit-btn {
+  transition: all 0.2s ease-in-out;
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .ag-theme-alpine {
+    --ag-header-height: 40px;
+    --ag-row-height: 60px;
+    --ag-font-size: 12px;
+  }
+  
+  .ag-theme-alpine .ag-cell {
+    padding: 4px 8px;
+  }
+}
+
+// Loading animation
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+// Match percentage indicator
+.match-percentage {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-weight: 600;
+  font-size: 12px;
+  
+  &.high {
+    background-color: #dcfce7;
+    color: #166534;
+  }
+  
+  &.medium {
+    background-color: #fef3c7;
+    color: #92400e;
+  }
+  
+  &.low {
+    background-color: #fee2e2;
+    color: #991b1b;
+  }
+} 

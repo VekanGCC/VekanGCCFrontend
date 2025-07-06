@@ -1,0 +1,56 @@
+/* Apply Requirement Modal Styles */
+.modal-overlay {
+  backdrop-filter: blur(4px);
+}
+
+.resource-card {
+  transition: all 0.2s ease-in-out;
+}
+
+.resource-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.resource-card.selected {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.checkbox-custom {
+  transition: all 0.2s ease-in-out;
+}
+
+.checkbox-custom.checked {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+/* Loading animation */
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Form focus states */
+.form-input:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Button hover effects */
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn-secondary:hover {
+  background-color: #f3f4f6;
+} 

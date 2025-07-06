@@ -1,0 +1,215 @@
+<div class="audit-trail-container bg-white rounded-lg shadow-sm border border-gray-200">
+  <!-- Header -->
+  <div class="px-6 py-4 border-b border-gray-200">
+    <div class="flex items-center justify-between">
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900">
+          <span class="mr-2">📋</span>
+          Audit Trail
+        </h3>
+        <p class="text-sm text-gray-600 mt-1">
+          Complete history of {{ entityType.toUpperCase() }} #{{ entityId }}
+        </p>
+      </div>
+      
+      <div class="flex items-center space-x-3">
+        <!-- Export buttons -->
+        <div class="flex items-center space-x-2">
+          <button 
+            (click)="exportAuditTrail('csv')"
+            class="px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            📊 Export CSV
+          </button>
+          <button 
+            (click)="exportAuditTrail('pdf')"
+            class="px-3 py-1.5 text-xs font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            📄 Export PDF
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <!-- Action Type Filter -->
+      <div>
+        <label class="block text-xs font-medium text-gray-700 mb-1">Action Type</label>
+        <select 
+          [(ngModel)]="selectedActionType"
+          (change)="onActionTypeChange($event)"
+          class="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          <option *ngFor="let actionType of actionTypes" [value]="actionType.value">
+            {{ actionType.label }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Date Range Filter -->
+      <div>
+        <label class="block text-xs font-medium text-gray-700 mb-1">Date Range</label>
+        <div class="flex space-x-2">
+          <input 
+            type="date" 
+            [ngModel]="dateRange.start"
+            (ngModelChange)="onDateRangeChange({ start: $event, end: dateRange.end })"
+            class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Start date">
+          <input 
+            type="date" 
+            [ngModel]="dateRange.end"
+            (ngModelChange)="onDateRangeChange({ start: dateRange.start, end: $event })"
+            class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="End date">
+        </div>
+      </div>
+
+      <!-- Clear Filters -->
+      <div class="flex items-end">
+        <button 
+          (click)="clearFilters()"
+          class="w-full px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+          🗑️ Clear Filters
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audit Summary -->
+  <div *ngIf="showSummary && auditSummary" class="px-6 py-4 bg-blue-50 border-b border-blue-200">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="text-center">
+        <div class="text-2xl font-bold text-blue-900">{{ auditSummary.totalActions }}</div>
+        <div class="text-xs text-blue-700">Total Actions</div>
+      </div>
+      <div class="text-center">
+        <div class="text-sm font-medium text-blue-900">{{ formatDate(auditSummary.lastAction.performedAt) }}</div>
+        <div class="text-xs text-blue-700">Last Action</div>
+      </div>
+      <div class="text-center">
+        <div class="text-sm font-medium text-blue-900">{{ auditSummary.lastAction.action }}</div>
+        <div class="text-xs text-blue-700">Last Action Type</div>
+      </div>
+      <div class="text-center">
+        <div class="text-sm font-medium text-blue-900">{{ getUserDisplayName(auditSummary.lastAction.performedBy) }}</div>
+        <div class="text-xs text-blue-700">Last Performed By</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="px-6 py-8 text-center">
+    <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-sm shadow rounded-md text-white bg-blue-500 hover:bg-blue-400 transition ease-in-out duration-150 cursor-not-allowed">
+      <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      Loading audit trail...
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="px-6 py-8 text-center">
+    <div class="inline-flex items-center px-4 py-2 font-semibold leading-6 text-sm shadow rounded-md text-white bg-red-500">
+      ❌ {{ error }}
+    </div>
+  </div>
+
+  <!-- Audit Logs -->
+  <div *ngIf="!isLoading && !error" class="divide-y divide-gray-200">
+    <div *ngFor="let auditLog of auditLogs; trackBy: trackById" class="px-6 py-4 hover:bg-gray-50">
+      <div class="flex items-start space-x-4">
+        <!-- Action Icon -->
+        <div class="flex-shrink-0">
+          <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-sm">
+            {{ getActionIcon(auditLog.actionType) }}
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="text-sm font-medium text-gray-900">{{ auditLog.action }}</span>
+              <span 
+                [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + getActionClass(auditLog.actionType)">
+                {{ auditLog.actionType.replace('_', ' ').toUpperCase() }}
+              </span>
+              <span *ngIf="isSystemGenerated(auditLog)" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                🤖 SYSTEM
+              </span>
+            </div>
+            <div class="text-sm text-gray-500">
+              {{ formatDate(auditLog.performedAt) }}
+            </div>
+          </div>
+
+          <!-- User Info -->
+          <div class="mt-1 text-sm text-gray-600">
+            <span class="font-medium">Performed by:</span> 
+            {{ getUserDisplayName(auditLog.performedBy) }}
+            <span *ngIf="auditLog.ipAddress" class="ml-2 text-gray-500">
+              (IP: {{ auditLog.ipAddress }})
+            </span>
+          </div>
+
+          <!-- Comments -->
+          <div *ngIf="auditLog.comments" class="mt-2 text-sm text-gray-700 bg-yellow-50 p-3 rounded-md">
+            <span class="font-medium">Comments:</span> {{ auditLog.comments }}
+          </div>
+
+          <!-- Changes -->
+          <div *ngIf="hasChanges(auditLog)" class="mt-2">
+            <div class="text-sm font-medium text-gray-700 mb-1">Changes:</div>
+            <div class="bg-gray-50 p-3 rounded-md">
+              <div class="text-sm text-gray-600">{{ formatChanges(auditLog.changes || []) }}</div>
+            </div>
+          </div>
+
+          <!-- Metadata -->
+          <div *ngIf="auditLog.metadata && getObjectKeys(auditLog.metadata).length > 0" class="mt-2">
+            <div class="text-sm font-medium text-gray-700 mb-1">Additional Info:</div>
+            <div class="bg-blue-50 p-3 rounded-md">
+              <div class="text-sm text-gray-600">
+                <div *ngFor="let key of getObjectKeys(auditLog.metadata)" class="mb-1">
+                  <span class="font-medium">{{ key }}:</span> {{ formatValue(auditLog.metadata[key]) }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Related Entities -->
+          <div *ngIf="auditLog.relatedEntities && auditLog.relatedEntities.length > 0" class="mt-2">
+            <div class="text-sm font-medium text-gray-700 mb-1">Related Entities:</div>
+            <div class="flex flex-wrap gap-2">
+              <span 
+                *ngFor="let entity of auditLog.relatedEntities"
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                {{ entity.entityType.toUpperCase() }}: {{ entity.entityId.slice(-6) }}
+                <span class="ml-1 text-purple-600">({{ entity.relationship }})</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="auditLogs.length === 0" class="px-6 py-8 text-center">
+      <div class="text-gray-500">
+        <div class="text-4xl mb-2">📋</div>
+        <div class="text-lg font-medium">No audit logs found</div>
+        <div class="text-sm">No actions have been recorded for this {{ entityType }} yet.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="!isLoading && !error && auditLogs.length > 0" class="px-6 py-4 border-t border-gray-200">
+    <app-pagination
+      [paginationState]="paginationState"
+      (pageChange)="onPageChange($event)">
+    </app-pagination>
+  </div>
+</div> 

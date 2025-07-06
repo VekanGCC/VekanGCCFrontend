@@ -1,0 +1,83 @@
+<div class="space-y-6">
+  <!-- Applications Table -->
+  <div class="bg-white rounded-lg shadow">
+    <div class="p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-semibold text-gray-900">Vendor Applications</h2>
+        
+        <!-- Filter Indicator -->
+        <div *ngIf="resourceFilter" class="flex items-center gap-2">
+          <span class="text-sm text-gray-600">Filtered by resource</span>
+          <button 
+            (click)="onClearFilter()"
+            class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors">
+            Clear Filter
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="flex justify-center items-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+
+      <!-- No Applications State -->
+      <div *ngIf="!isLoading && filteredApplications.length === 0" class="text-center py-8">
+        <div class="h-12 w-12 text-gray-400 mx-auto mb-4 text-4xl">📋</div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">
+          {{ resourceFilter ? 'No Applications for Selected Resource' : 'No Applications Yet' }}
+        </h3>
+        <p class="text-gray-500 mb-4">
+          {{ resourceFilter ? 'This resource has no applications yet' : 'Your applications will appear here once you apply for requirements' }}
+        </p>
+      </div>
+
+      <!-- AG Grid -->
+      <div *ngIf="!isLoading && filteredApplications.length > 0" class="ag-grid-container">
+        <ag-grid-angular 
+          #agGrid
+          class="ag-theme-alpine w-full"
+          [rowData]="filteredApplications" 
+          [columnDefs]="columnDefs"
+          [defaultColDef]="defaultColDef" 
+          [pagination]="false" 
+          [gridOptions]="gridOptions"
+          [domLayout]="'autoHeight'"
+          [rowSelection]="'single'"
+          [animateRows]="true"
+          [enableCellTextSelection]="true"
+          [overlayNoRowsTemplate]="'<span>No applications found</span>'"
+          (gridReady)="onGridReady($event)">
+        </ag-grid-angular>
+      </div>
+
+      <!-- Custom Pagination -->
+      <div *ngIf="!isLoading && filteredApplications.length > 0 && paginationState.totalPages > 1" class="mt-4">
+        <app-pagination 
+          [paginationState]="paginationState"
+          (pageChange)="onPageChange($event)">
+        </app-pagination>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Action Modal -->
+  <app-application-action-modal
+    [isVisible]="showActionModal"
+    [application]="selectedApplication"
+    [actionType]="selectedActionType"
+    (close)="onActionModalClose()"
+    (confirm)="onActionModalConfirm($event)">
+  </app-application-action-modal>
+
+  <!-- Application History Modal -->
+  <app-application-history-modal
+    [applicationId]="selectedApplicationId"
+    [isVisible]="showHistoryModal"
+    [isLoading]="isLoadingHistory"
+    [history]="applicationHistory"
+    [applicationDetails]="applicationDetails"
+    (close)="closeHistoryModal()">
+  </app-application-history-modal>
+
+</div> 

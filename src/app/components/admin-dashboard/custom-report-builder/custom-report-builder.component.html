@@ -1,0 +1,261 @@
+<div class="custom-report-builder">
+  <!-- Header -->
+  <div class="builder-header">
+    <div class="header-content">
+      <h1 class="text-3xl font-bold text-gray-900">Custom Report Builder</h1>
+      <p class="text-gray-600 mt-2">Create custom reports with flexible data sources, filters, and visualizations</p>
+    </div>
+    
+    <div class="header-actions">
+      <button 
+        (click)="generateReport()" 
+        [disabled]="!reportForm.valid || isLoading"
+        class="generate-btn">
+        <img src="assets/icons/lucide/lucide/play.svg" alt="generate" class="w-4 h-4 mr-2">
+        {{ isLoading ? 'Generating...' : 'Generate Report' }}
+      </button>
+      
+      <button 
+        (click)="saveTemplate()" 
+        [disabled]="!reportForm.valid"
+        class="save-btn">
+        <img src="assets/icons/lucide/lucide/save.svg" alt="save" class="w-4 h-4 mr-2">
+        Save Template
+      </button>
+      
+      <button 
+        (click)="exportReport()" 
+        [disabled]="!reportData"
+        class="export-btn">
+        <img src="assets/icons/lucide/lucide/download.svg" alt="export" class="w-4 h-4 mr-2">
+        Export CSV
+      </button>
+    </div>
+  </div>
+
+  <div class="builder-content">
+    <!-- Templates Section -->
+    <div class="templates-section">
+      <h2 class="section-title">Report Templates</h2>
+      <div class="templates-grid">
+        <div 
+          *ngFor="let template of templates"
+          (click)="loadTemplate(template)"
+          [class]="'template-card ' + (selectedTemplate?.id === template.id ? 'selected' : '')">
+          <div class="template-icon">
+            <img [src]="'assets/icons/lucide/lucide/' + getDataSourceIcon(template.dataSource) + '.svg'" 
+                 [alt]="template.dataSource">
+          </div>
+          <div class="template-content">
+            <h3 class="template-name">{{template.name}}</h3>
+            <p class="template-description">{{template.description}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Report Configuration -->
+    <div class="configuration-section">
+      <h2 class="section-title">Report Configuration</h2>
+      
+      <form [formGroup]="reportForm" class="config-form">
+        <!-- Basic Settings -->
+        <div class="form-section">
+          <h3 class="form-section-title">Basic Settings</h3>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>Data Source</label>
+              <select formControlName="dataSource" class="form-select">
+                <option *ngFor="let source of dataSources" [value]="source.value">
+                  {{source.label}}
+                </option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label>Time Range</label>
+              <select formControlName="timeRange" class="form-select">
+                <option *ngFor="let range of timeRanges" [value]="range.value">
+                  {{range.label}}
+                </option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-row" *ngIf="reportForm.get('timeRange')?.value === 'custom'">
+            <div class="form-group">
+              <label>Start Date</label>
+              <input type="date" formControlName="startDate" class="form-input">
+            </div>
+            
+            <div class="form-group">
+              <label>End Date</label>
+              <input type="date" formControlName="endDate" class="form-input">
+            </div>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="form-section">
+          <div class="section-header">
+            <h3 class="form-section-title">Filters</h3>
+            <button type="button" (click)="addFilter()" class="add-btn">
+              <img src="assets/icons/lucide/lucide/plus.svg" alt="add" class="w-4 h-4 mr-1">
+              Add Filter
+            </button>
+          </div>
+          
+          <div class="filters-container">
+            <div *ngFor="let filter of filters.controls; let i = index" class="filter-item" [formGroupName]="i">
+              <div class="filter-row">
+                <input formControlName="field" placeholder="Field name" class="form-input">
+                <select formControlName="operator" class="form-select">
+                  <option *ngFor="let op of operators" [value]="op.value">
+                    {{op.label}}
+                  </option>
+                </select>
+                <input formControlName="value" placeholder="Value" class="form-input">
+                <button type="button" (click)="removeFilter(i)" class="remove-btn">
+                  <img src="assets/icons/lucide/lucide/x.svg" alt="remove" class="w-4 h-4">
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Group By -->
+        <div class="form-section">
+          <div class="section-header">
+            <h3 class="form-section-title">Group By</h3>
+            <button type="button" (click)="addGroupBy()" class="add-btn">
+              <img src="assets/icons/lucide/lucide/plus.svg" alt="add" class="w-4 h-4 mr-1">
+              Add Group
+            </button>
+          </div>
+          
+          <div class="groupby-container">
+            <div *ngFor="let group of groupBy.controls; let i = index" class="group-item">
+              <input [formControlName]="i" placeholder="Field name" class="form-input">
+              <button type="button" (click)="removeGroupBy(i)" class="remove-btn">
+                <img src="assets/icons/lucide/lucide/x.svg" alt="remove" class="w-4 h-4">
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Aggregations -->
+        <div class="form-section">
+          <div class="section-header">
+            <h3 class="form-section-title">Aggregations</h3>
+            <button type="button" (click)="addAggregation()" class="add-btn">
+              <img src="assets/icons/lucide/lucide/plus.svg" alt="add" class="w-4 h-4 mr-1">
+              Add Aggregation
+            </button>
+          </div>
+          
+          <div class="aggregations-container">
+            <div *ngFor="let agg of aggregations.controls; let i = index" class="agg-item" [formGroupName]="i">
+              <div class="agg-row">
+                <input formControlName="field" placeholder="Result field name" class="form-input">
+                <select formControlName="type" class="form-select">
+                  <option *ngFor="let type of aggregationTypes" [value]="type.value">
+                    {{type.label}}
+                  </option>
+                </select>
+                <input formControlName="sourceField" placeholder="Source field (optional)" class="form-input">
+                <button type="button" (click)="removeAggregation(i)" class="remove-btn">
+                  <img src="assets/icons/lucide/lucide/x.svg" alt="remove" class="w-4 h-4">
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sorting -->
+        <div class="form-section">
+          <h3 class="form-section-title">Sorting</h3>
+          <div class="form-row" formGroupName="sortBy">
+            <div class="form-group">
+              <label>Sort Field</label>
+              <input formControlName="field" placeholder="Field name" class="form-input">
+            </div>
+            
+            <div class="form-group">
+              <label>Sort Order</label>
+              <select formControlName="order" class="form-select">
+                <option *ngFor="let order of sortOrders" [value]="order.value">
+                  {{order.label}}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Limit -->
+        <div class="form-section">
+          <h3 class="form-section-title">Limit Results</h3>
+          <div class="form-group">
+            <label>Maximum Results</label>
+            <input type="number" formControlName="limit" min="1" max="1000" class="form-input">
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Results Section -->
+    <div class="results-section" *ngIf="reportData">
+      <h2 class="section-title">Report Results</h2>
+      
+      <!-- Metadata -->
+      <div class="metadata-card">
+        <h3 class="metadata-title">Report Summary</h3>
+        <div class="metadata-grid">
+          <div class="metadata-item">
+            <span class="metadata-label">Data Source:</span>
+            <span class="metadata-value">{{reportData.metadata.dataSource}}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Time Range:</span>
+            <span class="metadata-value">{{reportData.metadata.timeRange}}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Total Records:</span>
+            <span class="metadata-value">{{reportData.metadata.totalCount}}</span>
+          </div>
+          <div class="metadata-item">
+            <span class="metadata-label">Filtered Records:</span>
+            <span class="metadata-value">{{reportData.metadata.filteredCount}}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart -->
+      <div class="chart-container">
+        <h3 class="chart-title">Visualization</h3>
+        <canvas id="customReportChart"></canvas>
+      </div>
+
+      <!-- Data Table -->
+      <div class="table-container">
+        <h3 class="table-title">Data Table</h3>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th *ngFor="let key of getTableHeaders()">{{key}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of reportData.report">
+                <td *ngFor="let key of getTableHeaders()">
+                  {{formatTableCell(row[key])}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

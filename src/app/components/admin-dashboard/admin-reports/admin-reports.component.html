@@ -1,0 +1,505 @@
+<div class="admin-reports-container">
+  <!-- Header -->
+  <div class="reports-header">
+    <div class="header-content">
+      <h1 class="text-3xl font-bold text-gray-900">Admin Reports & Analytics</h1>
+      <p class="text-gray-600 mt-2">Comprehensive insights into platform performance and user activity</p>
+    </div>
+    
+    <!-- Controls -->
+    <div class="controls-section">
+      <div class="date-range-controls">
+        <label class="control-label">Date Range:</label>
+        <select [(ngModel)]="dateRange" (change)="onDateRangeChange()" class="date-select">
+          <option value="week">Last Week</option>
+          <option value="month">Last Month</option>
+          <option value="quarter">Last Quarter</option>
+          <option value="year">Last Year</option>
+          <option value="custom">Custom Range</option>
+        </select>
+        
+        <div *ngIf="dateRange === 'custom'" class="custom-date-inputs">
+          <input type="date" [(ngModel)]="startDate" (change)="onDateRangeChange()" class="date-input">
+          <span class="date-separator">to</span>
+          <input type="date" [(ngModel)]="endDate" (change)="onDateRangeChange()" class="date-input">
+        </div>
+      </div>
+      
+      <button (click)="exportReport()" class="export-btn">
+        <img src="assets/icons/lucide/lucide/download.svg" alt="export" class="w-4 h-4 mr-2">
+        Export Report
+      </button>
+    </div>
+  </div>
+
+  <!-- Report Type Selector -->
+  <div class="report-selector">
+    <div class="selector-tabs">
+      <button 
+        *ngFor="let report of reportTypes"
+        (click)="selectedReport = report.id; onReportChange()"
+        [class]="'tab-btn ' + (selectedReport === report.id ? 'active' : '')">
+        <img [src]="'assets/icons/lucide/lucide/' + report.icon + '.svg'" [alt]="report.icon" class="w-5 h-5 mr-2">
+        {{report.label}}
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="loading-spinner"></div>
+    <p class="loading-text">Loading report data...</p>
+  </div>
+
+  <!-- Report Content -->
+  <div *ngIf="!isLoading" class="report-content">
+    
+    <!-- User Registration Report -->
+    <div *ngIf="selectedReport === 'user-registration'" class="report-section">
+      <div class="section-header">
+        <h2 class="section-title">User Registration & Approval Analytics</h2>
+        <p class="section-description">Track user growth, registration trends, and approval processes</p>
+      </div>
+      
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card">
+          <div class="card-icon bg-blue-100">
+            <img src="assets/icons/lucide/lucide/users.svg" alt="users" class="w-6 h-6 text-blue-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Total Users</h3>
+            <p class="card-value">{{userRegistrationData.totals?.users || 0}}</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon bg-green-100">
+            <img src="assets/icons/lucide/lucide/briefcase.svg" alt="vendors" class="w-6 h-6 text-green-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Total Vendors</h3>
+            <p class="card-value">{{userRegistrationData.totals?.vendors || 0}}</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon bg-orange-100">
+            <img src="assets/icons/lucide/lucide/building.svg" alt="clients" class="w-6 h-6 text-orange-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Total Clients</h3>
+            <p class="card-value">{{userRegistrationData.totals?.clients || 0}}</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon bg-yellow-100">
+            <img src="assets/icons/lucide/lucide/clock.svg" alt="pending" class="w-6 h-6 text-yellow-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Pending Approvals</h3>
+            <p class="card-value">{{userRegistrationData.approvalStats?.pending || 0}}</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Charts -->
+      <div class="charts-grid">
+        <div class="chart-container">
+          <h3 class="chart-title">User Registration Trends</h3>
+          <canvas id="userRegistrationChart"></canvas>
+        </div>
+        
+        <div class="chart-container">
+          <h3 class="chart-title">User Approval Status</h3>
+          <canvas id="userApprovalChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resources Report -->
+    <div *ngIf="selectedReport === 'resources'" class="report-section">
+      <div class="section-header">
+        <h2 class="section-title">Resources Analytics</h2>
+        <p class="section-description">Analyze resource distribution, vendor contributions, and skill coverage</p>
+      </div>
+      
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card">
+          <div class="card-icon bg-blue-100">
+            <img src="assets/icons/lucide/lucide/briefcase.svg" alt="resources" class="w-6 h-6 text-blue-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Total Resources</h3>
+            <p class="card-value">{{resourcesData.totalResources || 0}}</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon bg-green-100">
+            <img src="assets/icons/lucide/lucide/users.svg" alt="vendors" class="w-6 h-6 text-green-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Active Vendors</h3>
+            <p class="card-value">{{resourcesData.activeVendors || 0}}</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon bg-purple-100">
+            <img src="assets/icons/lucide/lucide/award.svg" alt="skills" class="w-6 h-6 text-purple-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Unique Skills</h3>
+            <p class="card-value">{{resourcesData.uniqueSkills || 0}}</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon bg-orange-100">
+            <img src="assets/icons/lucide/lucide/trending-up.svg" alt="growth" class="w-6 h-6 text-orange-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Monthly Growth</h3>
+            <p class="card-value">{{resourcesData.monthlyGrowth || 0}}%</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Charts -->
+      <div class="charts-grid">
+        <div class="chart-container">
+          <h3 class="chart-title">Resources by Vendor</h3>
+          <canvas id="resourcesByVendorChart"></canvas>
+        </div>
+        
+        <div class="chart-container">
+          <h3 class="chart-title">Resources by Skill</h3>
+          <canvas id="resourcesBySkillChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Requirements Report -->
+    <div *ngIf="selectedReport === 'requirements'" class="report-section">
+      <div class="section-header">
+        <h2 class="section-title">Requirements Analytics</h2>
+        <p class="section-description">Monitor requirement creation, client activity, and status distribution</p>
+      </div>
+      
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card">
+          <div class="card-icon bg-blue-100">
+            <img src="assets/icons/lucide/lucide/file-text.svg" alt="requirements" class="w-6 h-6 text-blue-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Total Requirements</h3>
+            <p class="card-value">{{requirementsData.totalRequirements || 0}}</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon bg-green-100">
+            <img src="assets/icons/lucide/lucide/building.svg" alt="clients" class="w-6 h-6 text-green-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Active Clients</h3>
+            <p class="card-value">{{requirementsData.activeClients || 0}}</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon bg-yellow-100">
+            <img src="assets/icons/lucide/lucide/clock.svg" alt="open" class="w-6 h-6 text-yellow-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Open Requirements</h3>
+            <p class="card-value">{{requirementsData.openRequirements || 0}}</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon bg-purple-100">
+            <img src="assets/icons/lucide/lucide/check-circle.svg" alt="completed" class="w-6 h-6 text-purple-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Completed</h3>
+            <p class="card-value">{{requirementsData.completedRequirements || 0}}</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Charts -->
+      <div class="charts-grid">
+        <div class="chart-container">
+          <h3 class="chart-title">Requirements by Client</h3>
+          <canvas id="requirementsByClientChart"></canvas>
+        </div>
+        
+        <div class="chart-container">
+          <h3 class="chart-title">Requirements by Status</h3>
+          <canvas id="requirementsByStatusChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Applications Report -->
+    <div *ngIf="selectedReport === 'applications'" class="report-section">
+      <div class="section-header">
+        <h2 class="section-title">Applications Analytics</h2>
+        <p class="section-description">Track application volume, status distribution, and processing efficiency</p>
+      </div>
+      
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card">
+          <div class="card-icon bg-blue-100">
+            <img src="assets/icons/lucide/lucide/clipboard-list.svg" alt="applications" class="w-6 h-6 text-blue-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Total Applications</h3>
+            <p class="card-value">{{applicationsData.totalApplications || 0}}</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon bg-yellow-100">
+            <img src="assets/icons/lucide/lucide/clock.svg" alt="pending" class="w-6 h-6 text-yellow-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Pending Review</h3>
+            <p class="card-value">{{applicationsData.pendingApplications || 0}}</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon bg-green-100">
+            <img src="assets/icons/lucide/lucide/check-circle.svg" alt="approved" class="w-6 h-6 text-green-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Approved</h3>
+            <p class="card-value">{{applicationsData.approvedApplications || 0}}</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon bg-red-100">
+            <img src="assets/icons/lucide/lucide/x-circle.svg" alt="rejected" class="w-6 h-6 text-red-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Rejected</h3>
+            <p class="card-value">{{applicationsData.rejectedApplications || 0}}</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Charts -->
+      <div class="charts-grid">
+        <div class="chart-container">
+          <h3 class="chart-title">Applications by Status</h3>
+          <canvas id="applicationsByStatusChart"></canvas>
+        </div>
+        
+        <div class="chart-container">
+          <h3 class="chart-title">Applications Timeline</h3>
+          <canvas id="applicationsTimelineChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skills Report -->
+    <div *ngIf="selectedReport === 'skills'" class="report-section">
+      <div class="section-header">
+        <h2 class="section-title">Skills Analytics</h2>
+        <p class="section-description">Analyze skill demand, resource availability, and market trends</p>
+      </div>
+      
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card">
+          <div class="card-icon bg-blue-100">
+            <img src="assets/icons/lucide/lucide/award.svg" alt="skills" class="w-6 h-6 text-blue-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Total Skills</h3>
+            <p class="card-value">{{skillsData.totalSkills || 0}}</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon bg-green-100">
+            <img src="assets/icons/lucide/lucide/trending-up.svg" alt="demand" class="w-6 h-6 text-green-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">High Demand Skills</h3>
+            <p class="card-value">{{skillsData.highDemandSkills || 0}}</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon bg-purple-100">
+            <img src="assets/icons/lucide/lucide/users.svg" alt="resources" class="w-6 h-6 text-purple-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Skills with Resources</h3>
+            <p class="card-value">{{skillsData.skillsWithResources || 0}}</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon bg-orange-100">
+            <img src="assets/icons/lucide/lucide/alert-triangle.svg" alt="shortage" class="w-6 h-6 text-orange-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Skill Shortages</h3>
+            <p class="card-value">{{skillsData.skillShortages || 0}}</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Charts -->
+      <div class="charts-grid">
+        <div class="chart-container">
+          <h3 class="chart-title">Top Skills for Resources</h3>
+          <canvas id="topSkillsForResourcesChart"></canvas>
+        </div>
+        
+        <div class="chart-container">
+          <h3 class="chart-title">Top Skills for Requirements</h3>
+          <canvas id="topSkillsForRequirementsChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Financial Report -->
+    <div *ngIf="selectedReport === 'financial'" class="report-section">
+      <div class="section-header">
+        <h2 class="section-title">Financial Reports</h2>
+        <p class="section-description">Monitor SOWs, POs, invoices, and payment status</p>
+      </div>
+      
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card">
+          <div class="card-icon bg-blue-100">
+            <img src="assets/icons/lucide/lucide/file-text.svg" alt="sow" class="w-6 h-6 text-blue-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Total SOWs</h3>
+            <p class="card-value">{{financialData.sowCount || 0}}</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon bg-green-100">
+            <img src="assets/icons/lucide/lucide/shopping-cart.svg" alt="po" class="w-6 h-6 text-green-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Total POs</h3>
+            <p class="card-value">{{financialData.poCount || 0}}</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon bg-purple-100">
+            <img src="assets/icons/lucide/lucide/receipt.svg" alt="invoices" class="w-6 h-6 text-purple-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Total Invoices</h3>
+            <p class="card-value">{{financialData.invoiceCount || 0}}</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon bg-red-100">
+            <img src="assets/icons/lucide/lucide/alert-triangle.svg" alt="past-due" class="w-6 h-6 text-red-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Past Due Invoices</h3>
+            <p class="card-value">{{financialData.invoiceStats?.pastDue || 0}}</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Charts -->
+      <div class="charts-grid">
+        <div class="chart-container">
+          <h3 class="chart-title">Financial Document Counts</h3>
+          <canvas id="financialCountsChart"></canvas>
+        </div>
+        
+        <div class="chart-container">
+          <h3 class="chart-title">Invoice Status Distribution</h3>
+          <canvas id="invoiceStatusChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Monthly Growth Report -->
+    <div *ngIf="selectedReport === 'monthly-growth'" class="report-section">
+      <div class="section-header">
+        <h2 class="section-title">Monthly Growth Trends</h2>
+        <p class="section-description">Track platform growth across all key metrics over time</p>
+      </div>
+      
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="summary-card">
+          <div class="card-icon bg-blue-100">
+            <img src="assets/icons/lucide/lucide/trending-up.svg" alt="growth" class="w-6 h-6 text-blue-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Overall Growth</h3>
+            <p class="card-value">{{monthlyGrowthData.overallGrowth || 0}}%</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon bg-green-100">
+            <img src="assets/icons/lucide/lucide/users.svg" alt="users" class="w-6 h-6 text-green-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">User Growth</h3>
+            <p class="card-value">{{monthlyGrowthData.userGrowth || 0}}%</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon bg-purple-100">
+            <img src="assets/icons/lucide/lucide/briefcase.svg" alt="resources" class="w-6 h-6 text-purple-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Resource Growth</h3>
+            <p class="card-value">{{monthlyGrowthData.resourceGrowth || 0}}%</p>
+          </div>
+        </div>
+        
+        <div class="summary-card">
+          <div class="card-icon bg-orange-100">
+            <img src="assets/icons/lucide/lucide/file-text.svg" alt="requirements" class="w-6 h-6 text-orange-600">
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">Requirement Growth</h3>
+            <p class="card-value">{{monthlyGrowthData.requirementGrowth || 0}}%</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Charts -->
+      <div class="charts-grid">
+        <div class="chart-container full-width">
+          <h3 class="chart-title">Monthly Growth Trends</h3>
+          <canvas id="monthlyGrowthChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom Report Builder -->
+    <div *ngIf="selectedReport === 'custom-builder'" class="report-section">
+      <app-custom-report-builder></app-custom-report-builder>
+    </div>
+  </div>
+</div> 

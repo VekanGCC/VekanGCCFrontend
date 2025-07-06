@@ -1,0 +1,77 @@
+:host {
+  display: block;
+}
+
+.ag-grid-container {
+  height: auto;
+  min-height: 400px;
+}
+
+// Custom AG Grid styling
+::ng-deep .ag-theme-alpine {
+  --ag-header-height: 50px;
+  --ag-row-height: 80px;
+  --ag-header-background-color: #f8fafc;
+  --ag-header-foreground-color: #374151;
+  --ag-border-color: #e5e7eb;
+  --ag-row-border-color: #f3f4f6;
+  
+  .ag-header-cell {
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+  
+  .ag-row {
+    border-bottom: 1px solid var(--ag-row-border-color);
+  }
+  
+  .ag-row:hover {
+    background-color: #f9fafb;
+  }
+}
+
+// Match percentage styling
+.match-percentage {
+  &-high {
+    @apply text-green-600 font-semibold;
+  }
+  
+  &-medium {
+    @apply text-yellow-600 font-semibold;
+  }
+  
+  &-low {
+    @apply text-red-600 font-semibold;
+  }
+}
+
+// Skill tags styling
+.skill-tag {
+  @apply inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mr-1 mb-1;
+}
+
+// Availability status styling
+.availability-status {
+  &-available {
+    @apply bg-green-100 text-green-800;
+  }
+  
+  &-partially_available {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+  
+  &-unavailable {
+    @apply bg-red-100 text-red-800;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .ag-grid-container {
+    min-height: 300px;
+  }
+  
+  ::ng-deep .ag-theme-alpine {
+    --ag-row-height: 100px;
+  }
+} 

@@ -1,0 +1,134 @@
+<div class="space-y-6">
+  <!-- Header with Back Button and Requirement Info -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center space-x-4">
+        <button 
+          (click)="onBackClick()"
+          class="inline-flex items-center px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          <img src="assets/icons/lucide/lucide/arrow-left.svg" class="w-4 h-4 mr-2" alt="Back">
+          Back to Requirements
+        </button>
+        <h1 class="text-2xl font-bold text-gray-900">Matching Resources</h1>
+      </div>
+      <div class="text-right">
+        <div class="text-sm text-gray-500">Total Matching Resources</div>
+        <div class="text-2xl font-bold text-blue-600">{{totalCount}}</div>
+      </div>
+    </div>
+
+    <!-- Requirement Details -->
+    <div *ngIf="requirement" class="bg-gray-50 rounded-lg p-4 mb-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-3">{{requirement.title}}</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <div class="text-sm font-medium text-gray-500">Category</div>
+          <div class="text-sm text-gray-900">{{requirement.category?.name || 'N/A'}}</div>
+        </div>
+        <div>
+          <div class="text-sm font-medium text-gray-500">Budget</div>
+          <div class="text-sm text-gray-900" *ngIf="requirement.budget?.charge">${{requirement.budget?.charge}}/hr</div>
+          <div class="text-sm text-gray-500" *ngIf="!requirement.budget?.charge">Not specified</div>
+        </div>
+        <div>
+          <div class="text-sm font-medium text-gray-500">Start Date</div>
+          <div class="text-sm text-gray-900" *ngIf="requirement.startDate">{{requirement.startDate | date:'mediumDate'}}</div>
+          <div class="text-sm text-gray-500" *ngIf="!requirement.startDate">Not specified</div>
+        </div>
+      </div>
+      
+      <!-- Skills -->
+      <div class="mt-4">
+        <div class="text-sm font-medium text-gray-500 mb-2">Required Skills</div>
+        <div class="flex flex-wrap gap-2">
+          <span 
+            *ngFor="let skill of requirement.skills" 
+            class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded"
+          >
+            {{skill.name}}
+          </span>
+        </div>
+      </div>
+
+      <!-- Experience -->
+      <div class="mt-4" *ngIf="requirement.experience?.minYears">
+        <div class="text-sm font-medium text-gray-500">Minimum Experience</div>
+        <div class="text-sm text-gray-900">{{requirement.experience?.minYears}} years</div>
+      </div>
+    </div>
+
+    <!-- Matching Criteria Summary -->
+    <div *ngIf="matchingCriteria" class="bg-blue-50 rounded-lg p-4">
+      <h3 class="text-sm font-medium text-blue-900 mb-2">Matching Criteria</h3>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+        <div>
+          <div class="text-blue-700">Min Skills to Match</div>
+          <div class="text-blue-900 font-medium">{{matchingCriteria.minSkillsToMatch}}</div>
+        </div>
+        <div>
+          <div class="text-blue-700">Max Budget</div>
+          <div class="text-blue-900 font-medium" *ngIf="matchingCriteria.maxBudget">${{matchingCriteria.maxBudget}}/hr</div>
+          <div class="text-blue-500" *ngIf="!matchingCriteria.maxBudget">Not specified</div>
+        </div>
+        <div>
+          <div class="text-blue-700">Min Experience</div>
+          <div class="text-blue-900 font-medium" *ngIf="matchingCriteria.minExperienceYears">{{matchingCriteria.minExperienceYears}} years</div>
+          <div class="text-blue-500" *ngIf="!matchingCriteria.minExperienceYears">Not specified</div>
+        </div>
+        <div>
+          <div class="text-blue-700">Required Start Date</div>
+          <div class="text-blue-900 font-medium" *ngIf="matchingCriteria.requiredStartDate">{{matchingCriteria.requiredStartDate | date:'mediumDate'}}</div>
+          <div class="text-blue-500" *ngIf="!matchingCriteria.requiredStartDate">Not specified</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Matching Resources Table -->
+  <div class="bg-white rounded-lg shadow">
+    <div class="p-6">
+      <!-- Loading State -->
+      <div *ngIf="isLoading" class="flex justify-center items-center py-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      </div>
+
+      <!-- No Resources State -->
+      <div *ngIf="!isLoading && matchingResources.length === 0" class="text-center py-8">
+        <div class="h-12 w-12 text-gray-400 mx-auto mb-4 text-4xl">🔍</div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">No Matching Resources Found</h3>
+        <p class="text-gray-500 mb-4">No resources match the criteria for this requirement</p>
+        <button 
+          (click)="onBackClick()"
+          class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          Back to Requirements
+        </button>
+      </div>
+
+      <!-- AG Grid -->
+      <div *ngIf="!isLoading && matchingResources.length > 0" class="ag-grid-container">
+        <ag-grid-angular
+          class="ag-theme-alpine w-full"
+          [columnDefs]="columnDefs"
+          [defaultColDef]="defaultColDef"
+          [gridOptions]="gridOptions"
+          [rowData]="matchingResources"
+          [domLayout]="'autoHeight'"
+          [rowSelection]="'single'"
+          [animateRows]="true"
+          [enableCellTextSelection]="true"
+        >
+        </ag-grid-angular>
+      </div>
+
+      <!-- Custom Pagination -->
+      <div *ngIf="!isLoading && matchingResources.length > 0" class="mt-4">
+        <app-pagination
+          [paginationState]="paginationState"
+          (pageChange)="onPageChange($event)">
+        </app-pagination>
+      </div>
+    </div>
+  </div>
+</div> 

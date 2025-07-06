@@ -1,0 +1,74 @@
+[
+  {
+    "id": "1",
+    "vendorId": "1",
+    "name": "John Smith",
+    "email": "john.smith@techcorp.com",
+    "role": "admin",
+    "department": "Management",
+    "phone": "+1 (555) 123-4567",
+    "status": "active",
+    "createdAt": "2024-01-10",
+    "createdBy": "System"
+  },
+  {
+    "id": "2",
+    "vendorId": "1",
+    "name": "Sarah Wilson",
+    "email": "sarah.wilson@techcorp.com",
+    "role": "manager",
+    "department": "Engineering",
+    "phone": "+1 (555) 234-5678",
+    "status": "active",
+    "createdAt": "2024-01-12",
+    "createdBy": "John Smith"
+  },
+  {
+    "id": "3",
+    "vendorId": "1",
+    "name": "Mike Johnson",
+    "email": "mike.johnson@techcorp.com",
+    "role": "user",
+    "department": "Engineering",
+    "phone": "+1 (555) 345-6789",
+    "status": "active",
+    "createdAt": "2024-01-15",
+    "createdBy": "Sarah Wilson"
+  },
+  {
+    "id": "4",
+    "vendorId": "3",
+    "name": "Mike Chen",
+    "email": "mike.chen@devstudio.com",
+    "role": "admin",
+    "department": "Management",
+    "phone": "+1 (555) 456-7890",
+    "status": "active",
+    "createdAt": "2024-01-08",
+    "createdBy": "System"
+  },
+  {
+    "id": "5",
+    "vendorId": "1",
+    "name": "Lisa Anderson",
+    "email": "lisa.anderson@techcorp.com",
+    "role": "manager",
+    "department": "Sales",
+    "phone": "+1 (555) 567-8901",
+    "status": "active",
+    "createdAt": "2024-01-14",
+    "createdBy": "John Smith"
+  },
+  {
+    "id": "6",
+    "vendorId": "3",
+    "name": "Robert Taylor",
+    "email": "robert.taylor@devstudio.com",
+    "role": "user",
+    "department": "Engineering",
+    "phone": "+1 (555) 678-9012",
+    "status": "inactive",
+    "createdAt": "2024-01-16",
+    "createdBy": "Mike Chen"
+  }
+]

@@ -1,0 +1,135 @@
+// Vendor Resources Component Styles
+.vendor-resources {
+  // Add any specific styles here if needed
+}
+
+// AG Grid Container with horizontal scroll
+.ag-grid-container {
+  .overflow-x-auto {
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    
+    // Custom scrollbar styling
+    &::-webkit-scrollbar {
+      height: 8px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 4px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+      
+      &:hover {
+        background: #94a3b8;
+      }
+    }
+  }
+}
+
+// AG Grid Custom Styles
+.ag-theme-alpine {
+  --ag-font-size: 14px;
+  --ag-font-family: inherit;
+  --ag-header-height: 48px;
+  --ag-row-height: 48px;
+  --ag-header-background-color: #f9fafb;
+  --ag-header-foreground-color: #374151;
+  --ag-border-color: #e5e7eb;
+  --ag-row-hover-color: #f3f4f6;
+  --ag-selected-row-background-color: #dbeafe;
+  --ag-cell-horizontal-border: solid #e5e7eb;
+  --ag-cell-horizontal-border-width: 1px;
+  
+  // Ensure minimum width for proper display
+  min-width: 1200px;
+  
+  // Remove border radius from grid since container has it
+  border-radius: 0;
+}
+
+// Custom cell styles
+.ag-cell-custom {
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .ag-theme-alpine {
+    --ag-font-size: 12px;
+    --ag-header-height: 40px;
+    --ag-row-height: 40px;
+  }
+  
+  .ag-header-cell-text {
+    font-size: 11px;
+  }
+}
+
+// Hide columns on mobile using CSS
+@media (max-width: 640px) {
+  .ag-theme-alpine .ag-header-cell[col-id="skills"],
+  .ag-theme-alpine .ag-cell[col-id="skills"] {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .ag-theme-alpine .ag-header-cell[col-id="experience"],
+  .ag-theme-alpine .ag-cell[col-id="experience"] {
+    display: none !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ag-theme-alpine .ag-header-cell[col-id="rate"],
+  .ag-theme-alpine .ag-cell[col-id="rate"] {
+    display: table-cell !important;
+  }
+}
+
+// Button styles within AG Grid cells
+.ag-cell button {
+  min-height: 32px;
+  min-width: 32px;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.ag-cell button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+// Status badge styles
+.ag-cell .inline-flex {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+// Skills tags styles
+.ag-cell .flex.flex-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.ag-cell .inline-flex.items-center {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 500;
+} 

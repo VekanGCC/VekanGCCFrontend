@@ -1,0 +1,156 @@
+<app-layout>
+  <div class="flex h-screen bg-gray-50">
+    <!-- Mobile Menu Button -->
+    <div class="lg:hidden fixed top-20 left-4 z-50">
+      <button
+        (click)="toggleSidebar()"
+        class="bg-white p-2 rounded-lg shadow-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+        <img 
+          [src]="'assets/icons/lucide/lucide/' + (isSidebarOpen ? 'x' : 'menu') + '.svg'" 
+          class="w-5 h-5 text-gray-600" 
+          [alt]="isSidebarOpen ? 'Close menu' : 'Open menu'">
+      </button>
+    </div>
+
+    <!-- Sidebar -->
+    <div 
+      [class]="'sidebar shadow-sm border-r border-gray-200 flex flex-col z-30 transition-all duration-300 ease-in-out ' + 
+        (isSidebarOpen ? 'w-64 translate-x-0' : 'w-64 -translate-x-full') + 
+        ' lg:translate-x-0 lg:relative fixed lg:static top-0 left-0 h-full z-40'">
+      
+      <!-- Header -->
+      <div class="logo-section">
+        <div class="logo">
+          <img src="assets/icons/lucide/lucide/briefcase.svg" alt="Client Portal">
+          <span>Client Portal</span>
+        </div>
+        <p class="text-xs text-gray-400 mt-1">{{currentUser?.firstName}} {{currentUser?.lastName}}</p>
+      </div>
+
+      <!-- Navigation Menu -->
+      <nav class="nav-menu">
+        <div *ngFor="let tab of getAvailableMenuItems()">
+          <!-- Regular menu item -->
+          <button
+            *ngIf="!tab.hasSubmenu"
+            (click)="navigateToTab(tab.id)"
+            [class]="'nav-item ' + 
+              (isActiveRoute(tab.route) ? 'active' : '')">
+            <img [src]="'assets/icons/lucide/lucide/' + tab.icon" [alt]="tab.label">
+            <span>{{tab.label}}</span>
+          </button>
+
+          <!-- Finance Management menu with submenu -->
+          <div *ngIf="tab.hasSubmenu">
+            <!-- Main Finance Management button -->
+            <button
+              (click)="toggleFinanceManagementSubmenu()"
+              [class]="'nav-item ' + 
+                (showFinanceManagementSubmenu ? 'active' : '')">
+              <img [src]="'assets/icons/lucide/lucide/' + tab.icon" [alt]="tab.label">
+              <span>{{tab.label}}</span>
+              <img 
+                [src]="'assets/icons/lucide/lucide/' + (showFinanceManagementSubmenu ? 'chevron-up.svg' : 'chevron-down.svg')" 
+                class="chevron-rotate" 
+                [class.expanded]="showFinanceManagementSubmenu"
+                [alt]="showFinanceManagementSubmenu ? 'Collapse' : 'Expand'">
+            </button>
+
+            <!-- Submenu items -->
+            <div *ngIf="showFinanceManagementSubmenu" class="submenu-container">
+              <button
+                *ngFor="let submenuItem of tab.submenu"
+                (click)="navigateToTab(submenuItem.id)"
+                [class]="'submenu-item ' + 
+                  (isActiveRoute(submenuItem.route) ? 'active' : '')">
+                <div class="submenu-dot"></div>
+                <span>{{submenuItem.label}}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Stats Summary -->
+      <div class="stats-section">
+        <div class="space-y-2 lg:space-y-3">
+          <div *ngFor="let stat of stats" class="stat-item">
+            <div class="stat-content">
+              <div [class]="'stat-icon ' + stat.bg">
+                <img [src]="'assets/icons/lucide/lucide/' + stat.icon + '.svg'" [class]="'w-3 h-3 lg:w-4 lg:h-4 ' + stat.color" [alt]="stat.title">
+              </div>
+              <span class="stat-title">{{stat.title}}</span>
+            </div>
+            <span class="stat-value">{{stat.value}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Overlay -->
+    <div 
+      *ngIf="isSidebarOpen" 
+      (click)="closeSidebar()"
+      class="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30">
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col overflow-hidden w-full lg:w-auto">
+      <!-- Content Area with Router Outlet -->
+      <div class="flex-1 overflow-y-auto">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+
+  <!-- Requirement Modal -->
+  <app-requirement-modal 
+    *ngIf="showRequirementModal" 
+    (close)="showRequirementModal = false"
+    (confirm)="handleRequirementCreated($event)">
+  </app-requirement-modal>
+
+  <!-- Close Requirement Modal -->
+  <app-requirement-modal
+    *ngIf="showCloseRequirementModal"
+    [requirement]="requirementToClose"
+    [mode]="'close'"
+    (close)="closeCloseRequirementModal()"
+    (confirm)="confirmCloseRequirement()">
+  </app-requirement-modal>
+
+  <!-- Edit Requirement Modal -->
+  <app-requirement-modal
+    *ngIf="showEditRequirementModal"
+    [requirement]="requirementToEdit"
+    [mode]="'edit'"
+    (close)="closeEditRequirementModal()"
+    (confirm)="handleRequirementUpdate($event)">
+  </app-requirement-modal>
+
+  <!-- Application History Modal -->
+  <app-application-history-modal
+    *ngIf="showHistoryModal"
+    [applicationId]="selectedApplicationId"
+    [isVisible]="showHistoryModal"
+    [isLoading]="isLoadingHistory"
+    [history]="applicationHistory"
+    [applicationDetails]="applicationDetails"
+    (close)="closeHistoryModal()">
+  </app-application-history-modal>
+
+  <!-- Application Details Modal -->
+  <app-application-details-modal
+    *ngIf="showApplicationDetailsModal"
+    [application]="selectedApplication"
+    (closeModal)="closeApplicationDetailsModal()">
+  </app-application-details-modal>
+
+  <!-- Add User Modal -->
+  <app-add-user-modal 
+    *ngIf="showAddUserModal" 
+    [userType]="'client'"
+    (close)="showAddUserModal = false"
+    (userAdded)="onUserAdded($event)">
+  </app-add-user-modal>
+</app-layout>

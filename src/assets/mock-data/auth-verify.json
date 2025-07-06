@@ -1,0 +1,10 @@
+{
+  "success": true,
+  "user": {
+    "id": "1",
+    "email": "vendor@techcorp.com",
+    "name": "John Smith",
+    "role": "vendor",
+    "company": "TechCorp Solutions"
+  }
+}

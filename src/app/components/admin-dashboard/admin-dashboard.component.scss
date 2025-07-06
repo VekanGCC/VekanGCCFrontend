@@ -1,0 +1,31 @@
+/* Minimal custom styles for admin dashboard */
+/* Most styling is now handled by Tailwind CSS classes */
+
+/* Custom modal overlay */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+/* Custom status badge variants */
+.status-badge {
+  &.pending {
+    @apply bg-yellow-100 text-yellow-800;
+  }
+
+  &.approved {
+    @apply bg-green-100 text-green-800;
+  }
+
+  &.rejected {
+    @apply bg-red-100 text-red-800;
+  }
+} 

@@ -1,0 +1,55 @@
+<div class="space-y-6">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+    <span class="ml-3 text-gray-600">Loading overview data...</span>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!isLoading" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Recent Applications -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+      <div class="p-6 border-b border-gray-100">
+        <h3 class="text-lg font-semibold text-gray-900">Recent Applications</h3>
+      </div>
+      <div class="p-6">
+        <div *ngFor="let app of applications.slice(0, 5)" 
+             class="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+          <div>
+            <p class="font-medium text-gray-900">{{getApplicationResourceName(app)}}</p>
+            <p class="text-sm text-gray-600">{{getApplicationRequirementTitle(app)}}</p>
+          </div>
+          <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + getStatusBadge(app.status).color">
+            {{formatStatus(app.status)}}
+          </span>
+        </div>
+        <p *ngIf="applications.length === 0" class="text-gray-500 text-center py-8">No applications yet</p>
+      </div>
+    </div>
+
+    <!-- Top Resources -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+      <div class="p-6 border-b border-gray-100">
+        <h3 class="text-lg font-semibold text-gray-900">Top Resources</h3>
+      </div>
+      <div class="p-6">
+        <div *ngFor="let resource of resources.slice(0, 5)" 
+             class="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+          <div class="flex items-center">
+            <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+              <img src="assets/icons/lucide/lucide/user.svg" class="w-5 h-5 text-gray-500" alt="User">
+            </div>
+            <div class="ml-3">
+              <p class="font-medium text-gray-900">{{resource.name}}</p>
+              <p class="text-sm text-gray-600">{{ resource.skills && resource.skills.length > 0 ? resource.skills[0].name : 'No skill listed' }}</p>
+            </div>
+          </div>
+          <button class="text-purple-600 hover:text-purple-700">
+            <img src="assets/icons/lucide/lucide/eye.svg" class="w-5 h-5" alt="Eye">
+          </button>
+        </div>
+        <p *ngIf="resources.length === 0" class="text-gray-500 text-center py-8">No resources available</p>
+      </div>
+    </div>
+  </div>
+</div> 

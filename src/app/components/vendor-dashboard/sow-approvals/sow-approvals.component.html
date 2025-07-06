@@ -1,0 +1,320 @@
+<div class="sow-approvals-container">
+  <!-- Header -->
+  <div class="header-section mb-6">
+    <div class="flex justify-between items-center">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">SOW Approvals</h1>
+        <p class="text-gray-600 mt-1">Review and approve/reject SOWs from clients</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-section mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="bg-white p-4 rounded-lg shadow border">
+        <div class="flex items-center">
+          <div class="p-2 bg-purple-100 rounded-lg">
+            <span class="text-purple-600 text-xl">📋</span>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-600">Pending SOWs</p>
+            <p class="text-2xl font-bold text-gray-900">{{ getPendingSOWsCount() }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white p-4 rounded-lg shadow border">
+        <div class="flex items-center">
+          <div class="p-2 bg-green-100 rounded-lg">
+            <span class="text-green-600 text-xl">✅</span>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-600">Approved</p>
+            <p class="text-2xl font-bold text-gray-900">{{ getApprovedSOWsCount() }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white p-4 rounded-lg shadow border">
+        <div class="flex items-center">
+          <div class="p-2 bg-red-100 rounded-lg">
+            <span class="text-red-600 text-xl">❌</span>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-600">Rejected</p>
+            <p class="text-2xl font-bold text-gray-900">{{ getRejectedSOWsCount() }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="bg-white p-4 rounded-lg shadow border">
+        <div class="flex items-center">
+          <div class="p-2 bg-blue-100 rounded-lg">
+            <span class="text-blue-600 text-xl">💰</span>
+          </div>
+          <div class="ml-3">
+            <p class="text-sm font-medium text-gray-600">Total Value</p>
+            <p class="text-2xl font-bold text-gray-900">
+              {{ getTotalValue() | currency:'USD' }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Grid -->
+  <div class="data-grid-section">
+    <div class="bg-white rounded-lg shadow border">
+      <div class="p-4 border-b border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-900">SOW Approval Queue</h2>
+      </div>
+      
+      <div class="ag-grid-container" style="height: 600px;">
+        <ag-grid-angular
+          [rowData]="sows"
+          [columnDefs]="columnDefs"
+          [defaultColDef]="defaultColDef"
+          [gridOptions]="gridOptions"
+          [loadingOverlayComponent]="'loadingOverlay'"
+          [loadingOverlayComponentParams]="{ loadingMessage: 'Loading SOWs...' }"
+          [noRowsOverlayComponent]="'noRowsOverlay'"
+          [noRowsOverlayComponentParams]="{ noRowsMessageFunc: getNoRowsMessage }"
+          class="ag-theme-alpine w-full h-full">
+        </ag-grid-angular>
+      </div>
+      
+      <!-- Pagination -->
+      <div class="p-4 border-t border-gray-200">
+        <app-pagination
+          [paginationState]="paginationState"
+          (pageChange)="onPageChange($event)">
+        </app-pagination>
+      </div>
+    </div>
+  </div>
+
+  <!-- Approval Modal -->
+  <div *ngIf="showApprovalModal && selectedSOW" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">
+          {{ approvalForm.get('status')?.value === 'accepted' ? 'Approve' : 'Reject' }} SOW
+        </h3>
+        <button 
+          (click)="onCloseModal()"
+          class="text-gray-400 hover:text-gray-600">
+          <span class="text-xl">×</span>
+        </button>
+      </div>
+      
+      <div class="mb-4 p-4 bg-gray-50 rounded-lg">
+        <h4 class="font-medium text-gray-900 mb-2">SOW Details</h4>
+        <div class="grid grid-cols-2 gap-4 text-sm">
+          <div>
+            <span class="font-medium text-gray-600">Title:</span>
+            <p class="text-gray-900">{{ selectedSOW.title }}</p>
+          </div>
+          <div>
+            <span class="font-medium text-gray-600">Estimated Cost:</span>
+            <p class="text-gray-900">
+              {{ selectedSOW.estimatedCost?.currency }} {{ selectedSOW.estimatedCost?.amount?.toLocaleString() }}
+            </p>
+          </div>
+          <div>
+            <span class="font-medium text-gray-600">Start Date:</span>
+            <p class="text-gray-900">{{ selectedSOW.startDate | date }}</p>
+          </div>
+          <div>
+            <span class="font-medium text-gray-600">End Date:</span>
+            <p class="text-gray-900">{{ selectedSOW.endDate | date }}</p>
+          </div>
+        </div>
+      </div>
+      
+      <form [formGroup]="approvalForm" (ngSubmit)="onSubmitApproval()" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Decision *</label>
+          <div class="flex space-x-4">
+            <label class="flex items-center">
+              <input 
+                type="radio" 
+                formControlName="status" 
+                value="accepted"
+                class="mr-2 text-blue-600 focus:ring-blue-500">
+              <span class="text-sm text-gray-700">Accept</span>
+            </label>
+            <label class="flex items-center">
+              <input 
+                type="radio" 
+                formControlName="status" 
+                value="rejected"
+                class="mr-2 text-red-600 focus:ring-red-500">
+              <span class="text-sm text-gray-700">Reject</span>
+            </label>
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Comments</label>
+          <textarea 
+            formControlName="comments"
+            rows="3"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Add your comments for this decision">
+          </textarea>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Proposed Changes (Optional)</label>
+          <textarea 
+            formControlName="proposedChanges"
+            rows="3"
+            class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Suggest any changes to the SOW terms or conditions">
+          </textarea>
+        </div>
+        
+        <div class="flex justify-end space-x-3 pt-4">
+          <button 
+            type="button"
+            (click)="onCloseModal()"
+            class="px-4 py-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500">
+            Cancel
+          </button>
+          <button 
+            type="submit"
+            [disabled]="isLoading || !approvalForm.valid"
+            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50">
+            {{ isLoading ? 'Processing...' : (approvalForm.get('status')?.value === 'accepted' ? 'Approve SOW' : 'Reject SOW') }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- View SOW Modal -->
+  <div *ngIf="showViewModal && selectedSOW" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold text-gray-900">SOW Details</h3>
+        <div class="flex items-center space-x-2">
+          <button 
+            (click)="showAuditTrail(selectedSOW)"
+            class="px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            📋 View Audit Trail
+          </button>
+          <button 
+            (click)="onCloseModal()"
+            class="text-gray-400 hover:text-gray-600">
+            <span class="text-xl">×</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <h4 class="font-medium text-gray-900 mb-2">Basic Information</h4>
+          <div class="space-y-3">
+            <div>
+              <label class="block text-sm font-medium text-gray-600">SOW ID</label>
+              <p class="text-sm text-gray-900">#{{ selectedSOW._id?.slice(-6) }}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-600">Title</label>
+              <p class="text-sm text-gray-900">{{ selectedSOW.title }}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-600">Description</label>
+              <p class="text-sm text-gray-900">{{ selectedSOW.description }}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-600">Status</label>
+              <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + getStatusClass(selectedSOW.status)">
+                {{ formatStatus(selectedSOW.status) }}
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="font-medium text-gray-900 mb-2">Financial Information</h4>
+          <div class="space-y-3">
+            <div>
+              <label class="block text-sm font-medium text-gray-600">Estimated Cost</label>
+              <p class="text-sm text-gray-900">
+                {{ selectedSOW.estimatedCost?.currency }} {{ selectedSOW.estimatedCost?.amount?.toLocaleString() }}
+              </p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-600">Start Date</label>
+              <p class="text-sm text-gray-900">{{ selectedSOW.startDate | date }}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-600">End Date</label>
+              <p class="text-sm text-gray-900">{{ selectedSOW.endDate | date }}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-600">Created Date</label>
+              <p class="text-sm text-gray-900">{{ selectedSOW.createdAt | date }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Vendor Response Section -->
+      <div *ngIf="selectedSOW.vendorResponse" class="mt-6">
+        <h4 class="font-medium text-gray-900 mb-2">Vendor Response</h4>
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-600">Status</label>
+              <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + 
+                (selectedSOW.vendorResponse.status === 'accepted' ? 'bg-green-100 text-green-800' : 
+                 selectedSOW.vendorResponse.status === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800')">
+                {{ selectedSOW.vendorResponse.status?.toUpperCase() }}
+              </span>
+            </div>
+            <div *ngIf="selectedSOW.vendorResponse.responseDate">
+              <label class="block text-sm font-medium text-gray-600">Response Date</label>
+              <p class="text-sm text-gray-900">{{ selectedSOW.vendorResponse.responseDate | date }}</p>
+            </div>
+          </div>
+          <div *ngIf="selectedSOW.vendorResponse.comments" class="mt-3">
+            <label class="block text-sm font-medium text-gray-600">Comments</label>
+            <p class="text-sm text-gray-900">{{ selectedSOW.vendorResponse.comments }}</p>
+          </div>
+          <div *ngIf="selectedSOW.vendorResponse.proposedChanges" class="mt-3">
+            <label class="block text-sm font-medium text-gray-600">Proposed Changes</label>
+            <p class="text-sm text-gray-900">{{ selectedSOW.vendorResponse.proposedChanges }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audit Trail Modal -->
+  <div *ngIf="showAuditTrailModal && selectedSOWForAudit" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden">
+      <div class="flex justify-between items-center p-4 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900">
+          📋 Audit Trail - SOW #{{ selectedSOWForAudit._id?.slice(-6) }}
+        </h3>
+        <button 
+          (click)="closeAuditTrailModal()"
+          class="text-gray-400 hover:text-gray-600">
+          <span class="text-xl">×</span>
+        </button>
+      </div>
+      
+      <div class="p-4 overflow-y-auto max-h-[calc(90vh-80px)]">
+        <app-audit-trail
+          entityType="sow"
+          [entityId]="selectedSOWForAudit._id"
+          [showSummary]="true">
+        </app-audit-trail>
+      </div>
+    </div>
+  </div>
+</div> 

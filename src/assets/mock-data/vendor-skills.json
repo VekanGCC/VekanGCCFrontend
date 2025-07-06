@@ -1,0 +1,67 @@
+[
+  {
+    "id": "1",
+    "vendorId": "1",
+    "skillName": "React",
+    "category": "Frameworks & Libraries",
+    "proficiencyLevel": "expert",
+    "description": "Extensive experience building complex React applications with hooks, context, and state management",
+    "status": "approved",
+    "submittedBy": "John Smith",
+    "submittedAt": "2024-01-10",
+    "reviewedBy": "Admin",
+    "reviewedAt": "2024-01-11",
+    "reviewNotes": "Approved - Strong portfolio and experience demonstrated"
+  },
+  {
+    "id": "2",
+    "vendorId": "1",
+    "skillName": "Node.js",
+    "category": "Programming Languages",
+    "proficiencyLevel": "advanced",
+    "description": "Backend development with Express, API design, and microservices architecture",
+    "status": "approved",
+    "submittedBy": "John Smith",
+    "submittedAt": "2024-01-10",
+    "reviewedBy": "Admin",
+    "reviewedAt": "2024-01-11"
+  },
+  {
+    "id": "3",
+    "vendorId": "1",
+    "skillName": "Kubernetes",
+    "category": "DevOps & Tools",
+    "proficiencyLevel": "intermediate",
+    "description": "Container orchestration and deployment automation",
+    "status": "pending",
+    "submittedBy": "Sarah Wilson",
+    "submittedAt": "2024-01-20"
+  },
+  {
+    "id": "4",
+    "vendorId": "3",
+    "skillName": "Python",
+    "category": "Programming Languages",
+    "proficiencyLevel": "expert",
+    "description": "Full-stack Python development with Django, Flask, and data science libraries",
+    "status": "approved",
+    "submittedBy": "Mike Chen",
+    "submittedAt": "2024-01-12",
+    "reviewedBy": "Admin",
+    "reviewedAt": "2024-01-13"
+  },
+  {
+    "id": "5",
+    "vendorId": "1",
+    "skillName": "GraphQL",
+    "category": "Web Development",
+    "proficiencyLevel": "intermediate",
+    "description": "API development and client-side integration",
+    "status": "rejected",
+    "submittedBy": "Mike Johnson",
+    "submittedAt": "2024-01-18",
+    "reviewedBy": "Admin",
+    "reviewedAt": "2024-01-19",
+    "reviewNotes": "Insufficient experience demonstrated - please provide more portfolio examples"
+  }
+]
