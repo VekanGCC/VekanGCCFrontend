@@ -3,14 +3,16 @@ name: Azure Static Web Apps CI/CD
 on:
   push:
     branches:
-      - master  # Or 'main' if that’s your branch
+      - master  # or 'main' if that's your default branch
 
 jobs:
   build_and_deploy_job:
     runs-on: ubuntu-latest
     name: Build and Deploy Angular App
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -29,5 +31,5 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
-          app_location: "/"                # Angular project root ('.' or 'frontend' or 'src')
-          output_location: "dist"          # Change this to your actual Angular build output folder
+          app_location: "."                                   # root of Angular app (your frontend folder)
+          output_location: "dist/staff-augmentation-platform" # 🔥 this is your actual Angular build output
