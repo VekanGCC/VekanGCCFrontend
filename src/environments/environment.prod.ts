@@ -1,12 +1,11 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:5000/api',
-  useMockData: false, // Disable mock data to use real API
-  // Connection management settings
+  apiUrl: 'https://vekangcc-effpa2gjbfgafmds.centralindia-01.azurewebsites.net/api',
+  useMockData: false,
   connectionSettings: {
-    maxRetries: 2, // Slightly more retries in production
-    retryDelay: 2000, // 2 second delay between retries
-    serverCheckInterval: 60000, // 1 minute between server availability checks
+    maxRetries: 2,
+    retryDelay: 2000,
+    serverCheckInterval: 60000,
     enableOfflineDetection: true,
     preventExcessiveRequests: true
   }
