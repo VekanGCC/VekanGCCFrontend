@@ -313,7 +313,6 @@ export class POManagementComponent implements OnInit, OnDestroy {
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
       paymentTerms: ['net_30', Validators.required],
-      customPaymentTerms: [''],
       justification: ['']
     });
 
@@ -630,8 +629,7 @@ export class POManagementComponent implements OnInit, OnDestroy {
           amount: parseFloat(formValue.poAmount.amount),
           currency: formValue.poAmount.currency
         },
-        paymentTerms: formValue.paymentTerms,
-        customPaymentTerms: formValue.customPaymentTerms || null
+        paymentTerms: formValue.paymentTerms
       };
 
       console.log('🔧 Submitting PO data:', poData);

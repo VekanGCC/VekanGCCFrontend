@@ -3,6 +3,13 @@
   <div class="mb-8">
     <h1 class="text-2xl font-bold text-gray-900 mb-2">Skills Management</h1>
     <p class="text-gray-600">Manage skills and categories for resources and requirements</p>
+    
+    <!-- Test button to verify component is working -->
+    <button 
+      (click)="testMethod()" 
+      style="background: red; color: white; padding: 10px; margin: 10px 0; border: none; border-radius: 5px;">
+      TEST BUTTON - Click me to verify component is working
+    </button>
   </div>
 
   <!-- Alerts -->
@@ -100,7 +107,7 @@
                 <img src="assets/icons/lucide/lucide/file-text.svg" alt="edit" class="w-4 h-4" />
               </button>
               <button
-                (click)="deleteCategory(category._id!)"
+                (click)="deleteCategory(category)"
                 class="text-gray-400 hover:text-red-500">
                 <img src="assets/icons/lucide/lucide/trash-2.svg" alt="trash-2" class="w-4 h-4" />
               </button>
@@ -206,12 +213,12 @@
                 {{skill.isActive ? 'Active' : 'Inactive'}}
               </button>
               <button
-                (click)="editSkill(skill)"
+                (click)="editSkill(skill); console.log('Edit button clicked for skill:', skill.name); debugger;"
                 class="text-gray-400 hover:text-gray-500">
                 <img src="assets/icons/lucide/lucide/file-text.svg" alt="edit" class="w-4 h-4" />
               </button>
               <button
-                (click)="deleteSkill(skill._id!)"
+                (click)="deleteSkill(skill)"
                 class="text-gray-400 hover:text-red-500">
                 <img src="assets/icons/lucide/lucide/trash-2.svg" alt="trash-2" class="w-4 h-4" />
               </button>
@@ -221,4 +228,39 @@
       </div>
     </div>
   </div>
+
+  <!-- Delete Confirmation Modal -->
+  <app-delete-confirmation-modal
+    *ngIf="showDeleteModal"
+    [title]="'Delete ' + (itemToDelete?.type === 'skill' ? 'Skill' : 'Category')"
+    [message]="'Are you sure you want to delete \"' + (itemToDelete?.name || '') + '\"? This action cannot be undone.'"
+    (confirm)="confirmDelete()"
+    (cancel)="closeDeleteModal()">
+  </app-delete-confirmation-modal>
+
+  <!-- Edit Skill Modal -->
+  <!-- DEBUG: showEditSkillModal = {{showEditSkillModal}}, editingSkill = {{editingSkill?.name}} -->
+  
+  <!-- Test div to see if template is working -->
+  <div style="position: fixed; top: 10px; right: 10px; background: red; color: white; padding: 10px; z-index: 10000;">
+    Modal State: {{showEditSkillModal ? 'OPEN' : 'CLOSED'}}
+  </div>
+  
+  <app-edit-skill-modal
+    *ngIf="showEditSkillModal"
+    [skill]="editingSkill"
+    [categories]="categories"
+    [isLoading]="isLoading"
+    (save)="onEditSkillSave($event)"
+    (cancel)="closeEditSkillModal()">
+  </app-edit-skill-modal>
+
+  <!-- Edit Category Modal -->
+  <app-edit-category-modal
+    *ngIf="showEditCategoryModal"
+    [category]="editingCategory"
+    [isLoading]="isLoading"
+    (save)="onEditCategorySave($event)"
+    (cancel)="closeEditCategoryModal()">
+  </app-edit-category-modal>
 </div> 

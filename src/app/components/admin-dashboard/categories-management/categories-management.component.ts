@@ -26,9 +26,9 @@ import { ApiResponse } from '../../../models/api-response.model';
 })
 export class CategoriesManagementComponent implements OnInit {
   @Input() categories: Category[] = [];
+  @Input() isLoading = false;
   @Output() openAddModal = new EventEmitter<void>();
   @Output() openEditModal = new EventEmitter<Category>();
-  @Output() categoryDeleted = new EventEmitter<string>();
   @Output() categoryUpdated = new EventEmitter<Category>();
   @Output() categoryAdded = new EventEmitter<Category>();
   
@@ -36,9 +36,7 @@ export class CategoriesManagementComponent implements OnInit {
   currentPage = 1;
   searchTerm = '';
   statusFilter = '';
-  showDeleteModal = false;
   isSubmitting = false;
-  deletingCategoryId: string | null = null;
   
   categoryForm: FormGroup;
   Math = Math;
@@ -78,33 +76,9 @@ export class CategoriesManagementComponent implements OnInit {
     this.openEditModal.emit(category);
   }
 
-  deleteCategory(categoryId: string): void {
-    this.deletingCategoryId = categoryId;
-    this.showDeleteModal = true;
-  }
 
-  confirmDelete(): void {
-    if (this.deletingCategoryId) {
-      this.adminService.deleteCategory(this.deletingCategoryId).subscribe({
-        next: () => {
-          const deletedId = this.deletingCategoryId;
-          this.showDeleteModal = false;
-          this.deletingCategoryId = null;
-          if (deletedId) {
-            this.categoryDeleted.emit(deletedId);
-          }
-        },
-        error: (error) => {
-          console.error('Error deleting category:', error);
-          this.showDeleteModal = false;
-        }
-      });
-    }
-  }
 
   closeModal(): void {
-    this.showDeleteModal = false;
-    this.deletingCategoryId = null;
     this.isSubmitting = false;
     this.categoryForm.reset({ isActive: true });
   }

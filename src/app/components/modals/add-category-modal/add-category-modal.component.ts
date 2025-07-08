@@ -48,8 +48,17 @@ import { ApiResponse } from '../../../models/api-response.model';
               <textarea 
                 formControlName="description"
                 rows="3"
+                maxlength="500"
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                placeholder="Enter category description (optional)"></textarea>
+                placeholder="Enter category description (optional, max 500 characters)"></textarea>
+              <div class="flex justify-between items-center mt-1">
+                <div *ngIf="categoryForm.get('description')?.invalid && categoryForm.get('description')?.touched" class="text-red-500 text-sm">
+                  <span *ngIf="categoryForm.get('description')?.errors?.['maxlength']">Description cannot exceed 500 characters</span>
+                </div>
+                <div class="text-gray-500 text-sm text-right">
+                  {{(categoryForm.get('description')?.value?.length || 0)}}/500
+                </div>
+              </div>
             </div>
 
             <!-- Active Status -->
@@ -103,7 +112,7 @@ export class AddCategoryModalComponent {
   ) {
     this.categoryForm = this.fb.group({
       name: ['', Validators.required],
-      description: [''],
+      description: ['', [Validators.maxLength(500)]],
       isActive: [true]
     });
   }

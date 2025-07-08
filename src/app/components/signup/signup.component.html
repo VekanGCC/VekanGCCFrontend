@@ -107,6 +107,14 @@
         <div *ngIf="currentStep === 1">
           <h2 class="text-2xl font-bold text-gray-900 mb-6">Company Information</h2>
           
+          <!-- Success Message -->
+          <div *ngIf="success" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div class="flex items-center">
+              <img src="assets/icons/lucide/lucide/circle-check.svg" alt="check-circle" class="w-5 h-5 text-green-600 mr-2" />
+              <span class="text-green-800">{{success}}</span>
+            </div>
+          </div>
+          
           <form [formGroup]="step1Form" class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -232,6 +240,14 @@
         <div *ngIf="currentStep === 2">
           <h2 class="text-2xl font-bold text-gray-900 mb-6">Email Verification</h2>
           
+          <!-- Success Message -->
+          <div *ngIf="success" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div class="flex items-center">
+              <img src="assets/icons/lucide/lucide/circle-check.svg" alt="check-circle" class="w-5 h-5 text-green-600 mr-2" />
+              <span class="text-green-800">{{success}}</span>
+            </div>
+          </div>
+          
           <div class="text-center mb-8">
             <div class="bg-blue-50 rounded-lg p-6 mb-6">
               <img src="assets/icons/lucide/lucide/mail.svg" alt="mail" class="w-12 h-12 text-blue-600 mx-auto mb-4" />
@@ -283,6 +299,14 @@
           <h2 class="text-2xl font-bold text-gray-900 mb-6">
             {{isVendor ? 'Address & Bank Details' : 'Address Details'}}
           </h2>
+          
+          <!-- Success Message -->
+          <div *ngIf="success" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div class="flex items-center">
+              <img src="assets/icons/lucide/lucide/circle-check.svg" alt="check-circle" class="w-5 h-5 text-green-600 mr-2" />
+              <span class="text-green-800">{{success}}</span>
+            </div>
+          </div>
           
           <form [formGroup]="step3Form" class="space-y-8">
             <!-- Address Section -->
@@ -419,11 +443,16 @@
 
                 <div>
                   <label class="block text-sm font-medium text-gray-700 mb-2">Payment Terms *</label>
-                  <input
-                    type="text"
+                  <select
                     formControlName="paymentTerms"
-                    class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="e.g., Net 30 days">
+                    class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">Select Payment Terms</option>
+                    <option value="net_15">Net 15 Days</option>
+                    <option value="net_30">Net 30 Days</option>
+                    <option value="net_45">Net 45 Days</option>
+                    <option value="net_60">Net 60 Days</option>
+                    <option value="net_90">Net 90 Days</option>
+                  </select>
                   <div class="text-red-600 text-sm mt-1">{{getFieldError(step3Form, 'paymentTerms')}}</div>
                 </div>
               </div>
@@ -434,6 +463,14 @@
         <!-- Step 4: Legal & Compliance -->
         <div *ngIf="currentStep === 4">
           <h2 class="text-2xl font-bold text-gray-900 mb-6">Legal & Compliance</h2>
+          
+          <!-- Success Message -->
+          <div *ngIf="success" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div class="flex items-center">
+              <img src="assets/icons/lucide/lucide/circle-check.svg" alt="check-circle" class="w-5 h-5 text-green-600 mr-2" />
+              <span class="text-green-800">{{success}}</span>
+            </div>
+          </div>
           
           <form [formGroup]="step4Form" class="space-y-6">
             <div>
@@ -513,6 +550,14 @@
         <!-- Step 5: Declarations -->
         <div *ngIf="currentStep === 5">
           <h2 class="text-2xl font-bold text-gray-900 mb-6">Declarations</h2>
+          
+          <!-- Success Message -->
+          <div *ngIf="success" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div class="flex items-center">
+              <img src="assets/icons/lucide/lucide/circle-check.svg" alt="check-circle" class="w-5 h-5 text-green-600 mr-2" />
+              <span class="text-green-800">{{success}}</span>
+            </div>
+          </div>
           
           <form [formGroup]="step5Form" class="space-y-6">
             <div class="space-y-6">
@@ -598,18 +643,11 @@
           </form>
         </div>
 
-        <!-- Error/Success Messages -->
+        <!-- Error Messages -->
         <div *ngIf="error" class="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg">
           <div class="flex items-center">
             <img src="assets/icons/lucide/lucide/triangle-alert.svg" alt="alert-triangle" class="w-5 h-5 text-red-600 mr-2" />
             <span class="text-red-800">{{error}}</span>
-          </div>
-        </div>
-
-        <div *ngIf="success" class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-          <div class="flex items-center">
-            <img src="assets/icons/lucide/lucide/circle-check.svg" alt="check-circle" class="w-5 h-5 text-green-600 mr-2" />
-            <span class="text-green-800">{{success}}</span>
           </div>
         </div>
 

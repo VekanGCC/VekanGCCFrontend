@@ -434,7 +434,7 @@ export class SignupComponent implements OnInit, OnDestroy {
 
   async nextStep(): Promise<void> {
     if (this.currentStep <= this.totalSteps) {
-      // Clear any existing errors before proceeding
+      // Clear any existing errors and success messages before proceeding
       this.error = '';
       this.success = '';
       
@@ -481,7 +481,7 @@ export class SignupComponent implements OnInit, OnDestroy {
           if (response.success) {
             this.clearFormErrors();
             this.otpVerified = true;
-            this.success = 'OTP verified successfully';
+            this.showSuccessMessage('OTP verified successfully');
             this.currentStep++;
           } else {
             this.error = response.message || 'Invalid OTP. Please try again.';
@@ -516,7 +516,7 @@ export class SignupComponent implements OnInit, OnDestroy {
           console.log('Step 5 response:', response);
           
           if (response.success) {
-            this.success = 'Registration complete! Redirecting to login...';
+            this.showSuccessMessage('Registration complete! Redirecting to login...', 2000);
             // Redirect to login after a short delay
             setTimeout(() => {
               this.router.navigate(['/login']);
@@ -567,7 +567,7 @@ export class SignupComponent implements OnInit, OnDestroy {
       if (response.success) {
         this.otpSent = true;
         this.startOtpTimer();
-        this.success = 'OTP sent successfully';
+        this.showSuccessMessage('OTP sent successfully');
       } else {
         this.error = response.message || 'Failed to send OTP';
       }
@@ -629,6 +629,16 @@ export class SignupComponent implements OnInit, OnDestroy {
         this.step1Form.setErrors(null);
       }
     }
+  }
+
+  private showSuccessMessage(message: string, duration: number = 3000): void {
+    this.success = message;
+    // Auto-dismiss the success message after the specified duration
+    setTimeout(() => {
+      if (this.success === message) {
+        this.success = '';
+      }
+    }, duration);
   }
 
   getFieldError(form: FormGroup, fieldName: string): string {

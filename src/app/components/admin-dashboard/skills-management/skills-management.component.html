@@ -1,31 +1,120 @@
-<div class="bg-white rounded-xl shadow-sm border border-gray-100">
-  <div class="p-6">
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div *ngFor="let skill of adminSkills; trackBy: trackById" 
-           class="p-6 border border-gray-200 rounded-lg hover:border-red-200 hover:bg-red-50 transition-colors">
-        <div class="flex items-start justify-between">
-          <div>
-            <h4 class="font-medium text-gray-900">{{skill.name}}</h4>
-            <p class="text-sm text-gray-600 mt-1">{{skill.category}}</p>
-            <p class="text-sm text-gray-500 mt-2">{{skill.description}}</p>
-          </div>
-          <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + 
-            (skill.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800')">
-            {{skill.isActive ? 'Active' : 'Inactive'}}
-          </span>
-        </div>
-        <div class="flex gap-2 mt-4">
-          <button (click)="onEditSkill(skill)"
-                  class="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors">
-            Edit
-          </button>
-          <button (click)="onDeleteSkill(skill.id)"
-                  class="px-3 py-1 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors">
-            Delete
-          </button>
-        </div>
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h3 class="text-lg font-semibold text-gray-900">Skills</h3>
+      <p class="text-sm text-gray-600">Manage platform skills</p>
+    </div>
+    <button 
+      (click)="openAddModal.emit()"
+      class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 flex items-center">
+      <img src="assets/icons/lucide/lucide/plus.svg" alt="plus" class="w-4 h-4 mr-2" />
+      Add Skill
+    </button>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <input 
+          type="text" 
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          placeholder="Search skills..."
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+        >
+      </div>
+      <div>
+        <select 
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          [(ngModel)]="statusFilter">
+          <option value="">All Status</option>
+          <option value="true">Active</option>
+          <option value="false">Inactive</option>
+        </select>
+      </div>
+      <div>
+        <button 
+          class="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center">
+          <img src="assets/icons/lucide/lucide/refresh-cw.svg" alt="refresh" class="w-4 h-4 mr-2" />
+          Refresh
+        </button>
       </div>
     </div>
-    <p *ngIf="adminSkills.length === 0" class="text-gray-500 text-center py-8">No skills found</p>
   </div>
+
+  <!-- Loading indicator -->
+  <div *ngIf="isLoading" class="flex justify-center items-center py-8">
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+    <span class="ml-2 text-gray-600">Updating skill...</span>
+  </div>
+
+  <!-- Skills Table -->
+  <div *ngIf="!isLoading" class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr *ngFor="let skill of adminSkills; trackBy: trackById" class="hover:bg-gray-50">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-medium text-gray-900">{{ skill.name }}</div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="text-sm text-gray-900" 
+                   [title]="skill.description.length > 40 ? skill.description : ''"
+                   style="cursor: help;">
+                {{ skill.description.length > 40 ? (skill.description | slice:0:40) + '...' : skill.description }}
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                    [class]="skill.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'">
+                {{ skill.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              {{ skill.createdAt | date:'MMM dd, yyyy' }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <div class="flex items-center space-x-2">
+                <button 
+                  (click)="onEditSkill(skill)"
+                  class="text-indigo-600 hover:text-indigo-900 transition-colors"
+                  title="Edit skill">
+                  <img src="assets/icons/lucide/lucide/edit.svg" alt="edit" class="w-4 h-4" />
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="!isLoading && adminSkills.length === 0">
+            <td colspan="5" class="px-6 py-12 text-center">
+              <div class="flex flex-col items-center">
+                <img src="assets/icons/lucide/lucide/briefcase.svg" alt="briefcase" class="w-12 h-12 text-gray-400 mb-4" />
+                <h3 class="text-lg font-medium text-gray-900 mb-2">No skills found</h3>
+                <p class="text-gray-500">Get started by adding your first skill. Use the Edit button to modify skill details and status.</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Edit Skill Modal -->
+  <app-edit-skill-modal
+    *ngIf="showEditSkillModal"
+    [skill]="selectedSkillForEdit"
+    [isLoading]="isLoading"
+    (save)="onEditSkillSave($event)"
+    (cancel)="closeEditSkillModal()">
+  </app-edit-skill-modal>
 </div> 

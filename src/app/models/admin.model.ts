@@ -29,7 +29,6 @@ export interface AdminSkill {
   _id: string;
   id: string;
   name: string;
-  category: string;
   description: string;
   isActive: boolean;
   createdBy: string;

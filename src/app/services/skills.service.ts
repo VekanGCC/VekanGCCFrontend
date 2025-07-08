@@ -22,7 +22,7 @@ export class SkillsService {
   // Skills
   getSkills(): Observable<Skill[]> {
     return this.http.get<ApiResponse<Skill[]>>(this.apiUrl).pipe(
-      map(response => response.data)
+      map(response => response.data || response)
     );
   }
 
@@ -55,13 +55,15 @@ export class SkillsService {
   }
 
   toggleSkillStatus(id: string, isActive: boolean): Observable<Skill> {
-    return this.http.patch<Skill>(`${this.apiUrl}/${id}/status`, { isActive });
+    return this.http.patch<ApiResponse<Skill>>(`${this.apiUrl}/${id}/status`, { isActive }).pipe(
+      map(response => response.data || response)
+    );
   }
 
   // Categories
   getCategories(): Observable<SkillCategory[]> {
     return this.http.get<ApiResponse<SkillCategory[]>>(`${this.apiUrl}/categories`).pipe(
-      map(response => response.data)
+      map(response => response.data || response)
     );
   }
 
@@ -88,6 +90,8 @@ export class SkillsService {
   }
 
   toggleCategoryStatus(id: string, isActive: boolean): Observable<SkillCategory> {
-    return this.http.patch<SkillCategory>(`${this.apiUrl}/categories/${id}/status`, { isActive });
+    return this.http.patch<ApiResponse<SkillCategory>>(`${this.apiUrl}/categories/${id}/status`, { isActive }).pipe(
+      map(response => response.data || response)
+    );
   }
 } 

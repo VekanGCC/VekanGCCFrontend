@@ -327,7 +327,7 @@ export class POManagementComponent implements OnInit, OnDestroy {
   }
 
   getPaymentTermsDisplay(po: PO): string {
-    return po.customPaymentTerms || (po.paymentTerms ? po.paymentTerms.replace('_', ' ').toUpperCase() : 'N/A');
+    return po.paymentTerms ? po.paymentTerms.replace('_', ' ').toUpperCase() : 'N/A';
   }
 
   get currentUser() {

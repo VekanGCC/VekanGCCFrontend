@@ -44,8 +44,14 @@
     </div>
   </div>
 
+  <!-- Loading indicator -->
+  <div *ngIf="isLoading" class="flex justify-center items-center py-8">
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+    <span class="ml-2 text-gray-600">Updating category...</span>
+  </div>
+
   <!-- Categories Table -->
-  <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+  <div *ngIf="!isLoading" class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
     <div class="overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
@@ -63,7 +69,11 @@
               <div class="text-sm font-medium text-gray-900">{{ category.name }}</div>
             </td>
             <td class="px-6 py-4">
-              <div class="text-sm text-gray-900">{{ category.description || 'No description' }}</div>
+              <div class="text-sm text-gray-900" 
+                   [title]="category.description && category.description.length > 40 ? category.description : ''"
+                   style="cursor: help;">
+                {{ category.description && category.description.length > 40 ? (category.description | slice:0:40) + '...' : (category.description || 'No description') }}
+              </div>
             </td>
             <td class="px-6 py-4 whitespace-nowrap">
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
@@ -78,23 +88,19 @@
               <div class="flex items-center space-x-2">
                 <button 
                   (click)="editCategory(category)"
-                  class="text-indigo-600 hover:text-indigo-900 transition-colors">
+                  class="text-indigo-600 hover:text-indigo-900 transition-colors"
+                  title="Edit category">
                   <img src="assets/icons/lucide/lucide/edit.svg" alt="edit" class="w-4 h-4" />
-                </button>
-                <button 
-                  (click)="deleteCategory(category._id)"
-                  class="text-red-600 hover:text-red-900 transition-colors">
-                  <img src="assets/icons/lucide/lucide/trash-2.svg" alt="delete" class="w-4 h-4" />
                 </button>
               </div>
             </td>
           </tr>
-          <tr *ngIf="categories.length === 0">
+          <tr *ngIf="!isLoading && categories.length === 0">
             <td colspan="5" class="px-6 py-12 text-center">
               <div class="flex flex-col items-center">
                 <img src="assets/icons/lucide/lucide/folder.svg" alt="folder" class="w-12 h-12 text-gray-400 mb-4" />
                 <h3 class="text-lg font-medium text-gray-900 mb-2">No categories found</h3>
-                <p class="text-gray-500">Get started by adding your first category.</p>
+                <p class="text-gray-500">Get started by adding your first category. Use the Edit button to modify category details and status.</p>
               </div>
             </td>
           </tr>

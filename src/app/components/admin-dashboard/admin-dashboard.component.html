@@ -78,13 +78,6 @@
         </div>
         <div class="flex items-center space-x-3">
           <button
-            *ngIf="activeTab === 'skills'"
-            (click)="showAddSkillModal = true"
-            class="bg-gradient-to-r from-red-600 to-pink-600 text-white px-4 py-2 rounded-lg hover:from-red-700 hover:to-pink-700 transition-all duration-200 flex items-center">
-            <img src="assets/icons/lucide/lucide/plus.svg" alt="plus" class="w-4 h-4 mr-2" />
-            Add Skill
-          </button>
-          <button
             (click)="logout()"
             class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-all duration-200 flex items-center">
             <img src="assets/icons/lucide/lucide/log-out.svg" alt="logout" class="w-4 h-4 mr-2" />
@@ -119,17 +112,20 @@
       <app-skills-management 
         *ngIf="activeTab === 'skills'"
         [adminSkills]="adminSkills"
+        [categories]="categories"
+        [isLoading]="loadingStates.skills"
         (editSkill)="editSkill($event)"
-        (deleteSkill)="deleteSkill($event)">
+        (skillUpdated)="onSkillUpdated($event)"
+        (openAddModal)="showAddSkillModal = true">
       </app-skills-management>
 
       <!-- Categories Tab -->
       <app-categories-management 
         *ngIf="activeTab === 'categories'"
         [categories]="categories"
+        [isLoading]="loadingStates.categories"
         (openAddModal)="showAddCategoryModal = true"
         (openEditModal)="editCategory($event)"
-        (categoryDeleted)="onCategoryDeleted($event)"
         (categoryUpdated)="onCategoryUpdated($event)"
         (categoryAdded)="onCategoryAdded($event)">
       </app-categories-management>
@@ -188,6 +184,15 @@
     (close)="showAddCategoryModal = false"
     (categoryAdded)="onCategoryAdded($event)">
   </app-add-category-modal>
+
+  <!-- Edit Category Modal -->
+  <app-edit-category-modal
+    *ngIf="showEditCategoryModal"
+    [category]="selectedCategoryForEdit"
+    [isLoading]="loadingStates.categories"
+    (save)="onEditCategorySave($event)"
+    (cancel)="closeEditCategoryModal()">
+  </app-edit-category-modal>
 
   <!-- Skill Approval Modal -->
   <div *ngIf="showSkillApprovalModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -259,4 +264,5 @@
       </div>
     </div>
   </div>
+
 </div>

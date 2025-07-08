@@ -45,13 +45,20 @@ import { AdminSkill } from '../../../models/admin.model';
               id="description" 
               formControlName="description"
               rows="4"
+              maxlength="500"
               class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
-              placeholder="Enter skill description"
+              placeholder="Enter skill description (max 500 characters)"
             ></textarea>
-            <div *ngIf="skillForm.get('description')?.invalid && skillForm.get('description')?.touched" 
-                 class="text-sm text-red-500 flex items-center mt-1">
-              <img src="assets/icons/lucide/lucide/info.svg" alt="alert-circle" class="w-4 h-4 mr-1" />
-              Description is required
+            <div class="flex justify-between items-center mt-1">
+              <div *ngIf="skillForm.get('description')?.invalid && skillForm.get('description')?.touched" 
+                   class="text-sm text-red-500 flex items-center">
+                <img src="assets/icons/lucide/lucide/info.svg" alt="alert-circle" class="w-4 h-4 mr-1" />
+                <span *ngIf="skillForm.get('description')?.errors?.['required']">Description is required</span>
+                <span *ngIf="skillForm.get('description')?.errors?.['maxlength']">Description cannot exceed 500 characters</span>
+              </div>
+              <div class="text-sm text-gray-500">
+                {{(skillForm.get('description')?.value?.length || 0)}}/500
+              </div>
             </div>
           </div>
 
@@ -105,7 +112,7 @@ export class AddAdminSkillModalComponent implements OnInit {
   ) {
     this.skillForm = this.fb.group({
       name: ['', Validators.required],
-      description: ['', Validators.required],
+      description: ['', [Validators.required, Validators.maxLength(500)]],
       isActive: [true]
     });
   }

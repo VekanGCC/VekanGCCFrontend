@@ -10,8 +10,7 @@ export interface PO {
     amount: number;
     currency: 'USD' | 'EUR' | 'GBP' | 'INR';
   };
-  paymentTerms: 'net_15' | 'net_30' | 'net_45' | 'net_60' | 'immediate' | 'custom';
-  customPaymentTerms?: string;
+  paymentTerms: 'net_15' | 'net_30' | 'net_45' | 'net_60' | 'net_90';
   status: 'draft' | 'submitted' | 'finance_approved' | 'sent_to_vendor' | 'vendor_accepted' | 'vendor_rejected' | 'cancelled' | 'active' | 'completed';
   financeApproval: {
     userId?: string;
@@ -59,8 +58,7 @@ export interface CreatePORequest {
     amount: number;
     currency: 'USD' | 'EUR' | 'GBP' | 'INR';
   };
-  paymentTerms: 'net_15' | 'net_30' | 'net_45' | 'net_60' | 'immediate' | 'custom';
-  customPaymentTerms?: string;
+  paymentTerms: 'net_15' | 'net_30' | 'net_45' | 'net_60' | 'net_90';
 }
 
 export interface UpdatePORequest {
@@ -70,8 +68,7 @@ export interface UpdatePORequest {
     amount: number;
     currency: 'USD' | 'EUR' | 'GBP' | 'INR';
   };
-  paymentTerms?: 'net_15' | 'net_30' | 'net_45' | 'net_60' | 'immediate' | 'custom';
-  customPaymentTerms?: string;
+  paymentTerms?: 'net_15' | 'net_30' | 'net_45' | 'net_60' | 'net_90';
 }
 
 export interface POResponse {

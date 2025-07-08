@@ -5,6 +5,7 @@ import { LucideAngularModule } from 'lucide-angular';
 import { LayoutComponent } from '../layout/layout.component';
 import { AddAdminSkillModalComponent } from '../modals/add-admin-skill-modal/add-admin-skill-modal.component';
 import { AddCategoryModalComponent } from '../modals/add-category-modal/add-category-modal.component';
+import { EditCategoryModalComponent } from '../modals/edit-category-modal/edit-category-modal.component';
 import { AuthService } from '../../services/auth.service';
 import { AdminService } from '../../services/admin.service';
 import { AppService } from '../../services/app.service';
@@ -63,6 +64,7 @@ interface NavigationTab {
     LayoutComponent,
     AddAdminSkillModalComponent,
     AddCategoryModalComponent,
+    EditCategoryModalComponent,
     PaginationComponent,
     // Import new tab components
     AdminOverviewComponent,
@@ -115,10 +117,12 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   // Modals
   showAddSkillModal = false;
   showAddCategoryModal = false;
+  showEditCategoryModal = false;
   showSkillApprovalModal = false;
   showSkillRejectModal = false;
   selectedVendorSkill: VendorSkill | null = null;
   selectedUserForProfile: User | null = null;
+  selectedCategoryForEdit: Category | null = null;
   skillRejectNotes = '';
   profileRefreshTrigger = 0; // Trigger to refresh profile data
 
@@ -137,6 +141,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   loadingStates = {
     skillApprovals: false,
     skills: false,
+    categories: false,
     stats: false,
     transactions: false,
     applications: false,
@@ -605,13 +610,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  async deleteSkill(skillId: string): Promise<void> {
-    try {
-      await this.adminService.deleteSkill(skillId).toPromise();
-    } catch (error) {
-      console.error('Error deleting skill:', error);
-    }
-  }
+
 
   // Utility Methods
   getApprovalTypeIcon(type: string): string {
@@ -670,7 +669,9 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     if (this.skillFilter === 'all') {
       return this.adminSkills;
     }
-    return this.adminSkills.filter(skill => skill.category === this.skillFilter);
+    // Since AdminSkill doesn't have category, just return all skills
+    // or filter by isActive if needed
+    return this.adminSkills.filter(skill => skill.isActive === (this.skillFilter === 'active'));
   }
 
   getFilteredVendorSkills(): VendorSkill[] {
@@ -805,8 +806,45 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   editSkill(skill: AdminSkill): void {
-    // TODO: Implement skill editing
-    console.log('Edit skill:', skill);
+    // This method is now handled by the Skills Management component
+    // The edit functionality is implemented in the child component
+    console.log('Edit skill event received from Skills Management:', skill);
+  }
+
+  onSkillUpdated(updateData: {skillId: string, skillData: Partial<AdminSkill>}): void {
+    console.log('=== ADMIN DASHBOARD SKILL UPDATED ===');
+    console.log('Skill updated from Skills Management:', updateData);
+    
+    // Set loading state for skills
+    this.loadingStates.skills = true;
+    
+    // Call the backend API to update the skill
+    this.subscriptions.push(
+      this.adminService.updateSkill(updateData.skillId, updateData.skillData).subscribe({
+        next: (response) => {
+          console.log('Skill updated successfully on backend:', response);
+          
+          // Refresh the admin skills data to ensure UI shows correct data
+          this.loadAdminSkills().then(() => {
+            this.loadingStates.skills = false;
+            this.changeDetectorRef.detectChanges();
+            
+            // Show success message (you can add a toast notification here)
+            console.log('Skill updated successfully and data refreshed');
+          });
+        },
+        error: (error) => {
+          console.error('Error updating skill on backend:', error);
+          this.loadingStates.skills = false;
+          this.changeDetectorRef.detectChanges();
+          
+          // Show error message (you can add a toast notification here)
+          console.error('Failed to update skill');
+        }
+      })
+    );
+    
+    console.log('=== END ADMIN DASHBOARD SKILL UPDATED ===');
   }
 
   editUser(user: User): void {
@@ -910,22 +948,78 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   editCategory(category: Category): void {
-    // TODO: Implement category editing
-    console.log('Edit category:', category);
+    console.log('=== ADMIN DASHBOARD EDIT CATEGORY ===');
+    console.log('Edit category called with:', category);
+    
+    this.selectedCategoryForEdit = category;
+    this.showEditCategoryModal = true;
+    
+    console.log('selectedCategoryForEdit set to:', this.selectedCategoryForEdit);
+    console.log('showEditCategoryModal set to:', this.showEditCategoryModal);
+    
+    this.changeDetectorRef.detectChanges();
+    console.log('=== END ADMIN DASHBOARD EDIT CATEGORY ===');
   }
 
-  onCategoryDeleted(categoryId: string): void {
-    // Remove the deleted category from the list
-    this.categories = this.categories.filter(cat => cat._id !== categoryId);
-    console.log('Category deleted:', categoryId);
-  }
+
 
   onCategoryUpdated(updatedCategory: Category): void {
-    // Update the category in the list
-    this.categories = this.categories.map(cat => 
-      cat._id === updatedCategory._id ? updatedCategory : cat
+    console.log('=== ADMIN DASHBOARD CATEGORY UPDATED ===');
+    console.log('Category updated from Categories Management:', updatedCategory);
+    
+    // Set loading state for categories
+    this.loadingStates.categories = true;
+    
+    // Call the backend API to update the category
+    this.subscriptions.push(
+      this.adminService.updateCategory(updatedCategory._id, updatedCategory).subscribe({
+        next: (response) => {
+          console.log('Category updated successfully on backend:', response);
+          
+          // Refresh the categories data to ensure UI shows correct data
+          this.loadCategories().then(() => {
+            this.loadingStates.categories = false;
+            this.changeDetectorRef.detectChanges();
+            
+            // Show success message (you can add a toast notification here)
+            console.log('Category updated successfully and data refreshed');
+          });
+        },
+        error: (error) => {
+          console.error('Error updating category on backend:', error);
+          this.loadingStates.categories = false;
+          this.changeDetectorRef.detectChanges();
+          
+          // Show error message (you can add a toast notification here)
+          console.error('Failed to update category');
+        }
+      })
     );
-    console.log('Category updated:', updatedCategory);
+    
+    console.log('=== END ADMIN DASHBOARD CATEGORY UPDATED ===');
+  }
+
+  closeEditCategoryModal(): void {
+    this.showEditCategoryModal = false;
+    this.selectedCategoryForEdit = null;
+    this.changeDetectorRef.detectChanges();
+  }
+
+  onEditCategorySave(updatedCategoryData: Partial<Category>): void {
+    console.log('Category updated in Admin Dashboard:', updatedCategoryData);
+    
+    if (this.selectedCategoryForEdit) {
+      const updatedCategory: Category = {
+        ...this.selectedCategoryForEdit,
+        name: updatedCategoryData.name || this.selectedCategoryForEdit.name,
+        description: updatedCategoryData.description || this.selectedCategoryForEdit.description,
+        isActive: updatedCategoryData.isActive !== undefined ? updatedCategoryData.isActive : this.selectedCategoryForEdit.isActive
+      };
+      
+      this.onCategoryUpdated(updatedCategory);
+    }
+    
+    this.closeEditCategoryModal();
   }
 
   getApplicationTitle(application: any): string {
