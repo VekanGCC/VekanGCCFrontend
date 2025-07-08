@@ -58,37 +58,6 @@ export class SignupComponent implements OnInit, OnDestroy {
   vendorRegistration: VendorRegistration | null = null;
   clientRegistration: ClientRegistration | null = null;
 
-  // Demo accounts
-  demoAccounts = {
-    vendor: {
-      email: 'demo.vendor@example.com',
-      password: 'Demo@123',
-      companyName: 'Demo Vendor Company',
-      firstName: 'John',
-      lastName: 'Doe',
-      contactPerson: 'John Doe',
-      numberOfResources: 10,
-      mobileNumber: '9876543210',
-      gstNumber: '22AAAAA0000A1Z5',
-      serviceProvided: 'IT Services'
-    },
-    client: {
-      email: 'demo.client@example.com',
-      password: 'Demo@123',
-      companyName: 'Demo Client Company',
-      firstName: 'Jane',
-      lastName: 'Smith',
-      contactPerson: 'Jane Smith',
-      numberOfResources: 5,
-      mobileNumber: '9876543211',
-      gstNumber: '22BBBBB0000B1Z5',
-      serviceProvided: 'IT Services'
-    }
-  };
-
-  // Demo OTP
-  demoOTP = '';
-
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -107,17 +76,18 @@ export class SignupComponent implements OnInit, OnDestroy {
       if (params['type'] === 'vendor' || params['type'] === 'client') {
         this.userType = params['type'];
         this.loadRegistrationData();
+      } else {
+        // If no user type specified, clear any existing registration data and start with selection
+        this.userType = null;
+        this.currentStep = 0; // User type selection step
+        this.vendorRegistrationService.clearRegistrationData();
+        this.clientRegistrationService.clearRegistrationData();
       }
     });
 
-    // If no user type specified, start with selection
-    if (!this.userType) {
-      this.currentStep = 0; // User type selection step
-    }
-
     // Subscribe to registration data changes
     this.vendorRegistrationService.registration$.subscribe(registration => {
-      if (registration) {
+      if (registration && this.userType === 'vendor') {
         this.vendorRegistration = registration;
         this.currentStep = registration.currentStep;
         this.otpVerified = registration.otpVerified;
@@ -125,7 +95,7 @@ export class SignupComponent implements OnInit, OnDestroy {
     });
 
     this.clientRegistrationService.registration$.subscribe(registration => {
-      if (registration) {
+      if (registration && this.userType === 'client') {
         this.clientRegistration = registration;
         this.currentStep = registration.currentStep;
         this.otpVerified = registration.otpVerified;
@@ -267,9 +237,9 @@ export class SignupComponent implements OnInit, OnDestroy {
 
     // Step 5: Declarations and Terms
     this.step5Form = this.fb.group({
-      compliesWithStatutoryRequirements: [false, Validators.requiredTrue],
+      compliesWithStatutoryRequirements: [false],
       hasCloseRelativesInCompany: [false],
-      hasAdequateSafetyStandards: [false, Validators.requiredTrue],
+      hasAdequateSafetyStandards: [false],
       hasOngoingLitigation: [false],
       termsAccepted: [false, Validators.requiredTrue],
       additionalNotes: ['']
@@ -464,6 +434,10 @@ export class SignupComponent implements OnInit, OnDestroy {
 
   async nextStep(): Promise<void> {
     if (this.currentStep <= this.totalSteps) {
+      // Clear any existing errors before proceeding
+      this.error = '';
+      this.success = '';
+      
       // Save the current step data
       const stepData = this.getCurrentStepData();
       
@@ -476,13 +450,21 @@ export class SignupComponent implements OnInit, OnDestroy {
           );
           
           if (response.success) {
+            // Clear any form errors before proceeding
+            this.clearFormErrors();
             // Send OTP after successful step 1 save
             await this.sendOTP();
             this.currentStep++;
           } else {
+            // Preserve form values and clear form errors when there's a server error
+            this.preserveFormValues();
+            this.clearFormErrors();
             this.error = response.message || 'Failed to save step 1 data';
           }
         } catch (error: any) {
+          // Preserve form values and clear form errors when there's a server error
+          this.preserveFormValues();
+          this.clearFormErrors();
           this.error = error.error?.message || 'Failed to save step 1 data';
         }
       } else if (this.currentStep === 2) {
@@ -497,6 +479,7 @@ export class SignupComponent implements OnInit, OnDestroy {
           );
 
           if (response.success) {
+            this.clearFormErrors();
             this.otpVerified = true;
             this.success = 'OTP verified successfully';
             this.currentStep++;
@@ -557,6 +540,7 @@ export class SignupComponent implements OnInit, OnDestroy {
           console.log(`Step ${this.currentStep} - Response:`, response);
           
           if (response.success) {
+            this.clearFormErrors();
             this.currentStep++;
           } else {
             this.error = response.message || `Failed to save step ${this.currentStep} data`;
@@ -584,10 +568,6 @@ export class SignupComponent implements OnInit, OnDestroy {
         this.otpSent = true;
         this.startOtpTimer();
         this.success = 'OTP sent successfully';
-        if (response.otp) {
-          this.demoOTP = response.otp;
-          this.success += '. For demo, use: ' + this.demoOTP;
-        }
       } else {
         this.error = response.message || 'Failed to send OTP';
       }
@@ -614,6 +594,41 @@ export class SignupComponent implements OnInit, OnDestroy {
       const control = formGroup.get(key);
       control?.markAsTouched();
     });
+  }
+
+  private clearFormErrors(): void {
+    // Clear errors from all forms without affecting values
+    this.step1Form.setErrors(null);
+    this.step2Form.setErrors(null);
+    this.step3Form.setErrors(null);
+    this.step4Form.setErrors(null);
+    this.step5Form.setErrors(null);
+    
+    // Clear individual field errors without affecting values
+    Object.keys(this.step1Form.controls).forEach(key => {
+      const control = this.step1Form.get(key);
+      if (control) {
+        control.setErrors(null);
+        // Ensure the field is not marked as touched to prevent showing validation errors
+        control.markAsUntouched();
+      }
+    });
+  }
+
+  private preserveFormValues(): void {
+    // This method ensures form values are preserved when there are server errors
+    // The form values are already preserved by Angular, we just need to ensure
+    // the password match validator doesn't trigger incorrectly
+    if (this.step1Form.get('password')?.value && this.step1Form.get('confirmPassword')?.value) {
+      // If both password fields have values, ensure they match for validation
+      const password = this.step1Form.get('password')?.value;
+      const confirmPassword = this.step1Form.get('confirmPassword')?.value;
+      
+      if (password === confirmPassword) {
+        // If passwords match, clear any password mismatch errors
+        this.step1Form.setErrors(null);
+      }
+    }
   }
 
   getFieldError(form: FormGroup, fieldName: string): string {
@@ -767,24 +782,7 @@ export class SignupComponent implements OnInit, OnDestroy {
     console.log('=== END DEBUG ===');
   }
 
-  populateDemoAccount(type: 'vendor' | 'client'): void {
-    const demoData = this.demoAccounts[type];
-    this.userType = type;
-    
-    // Populate Step 1 form with demo data
-    this.step1Form.patchValue({
-      companyName: demoData.companyName,
-      firstName: demoData.firstName,
-      lastName: demoData.lastName,
-      contactPerson: demoData.contactPerson,
-      gstNumber: demoData.gstNumber,
-      serviceType: demoData.serviceProvided,
-      numberOfResources: demoData.numberOfResources,
-      phone: demoData.mobileNumber,
-      password: demoData.password,
-      confirmPassword: demoData.password
-    });
-  }
+
 
   private getCurrentStepData(): any {
     switch (this.currentStep) {

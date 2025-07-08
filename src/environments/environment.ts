@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://vekangcc-effpa2gjbfgafmds.centralindia-01.azurewebsites.net/api',
+  apiUrl: 'http://localhost:5000/api',
   useMockData: false, // Disable mock data to use real API
   // Connection management settings
   connectionSettings: {
