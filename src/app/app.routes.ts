@@ -11,11 +11,7 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
 import { ClientDashboardComponent } from './components/client-dashboard/client-dashboard.component';
 import { ProfileComponent } from './components/profile/profile.component';
-import { CLIENT_ROUTES } from './components/client/client.routes';
-
-
 console.log('🔧 AppRoutes: Loading main app routes configuration');
-console.log('🔧 AppRoutes: CLIENT_ROUTES:', CLIENT_ROUTES);
 
 export const routes: Routes = [
   {
@@ -196,6 +192,11 @@ export const routes: Routes = [
         path: 'invoice-management', 
         loadComponent: () => import('./components/client-dashboard/invoice-management/invoice-management.component')
           .then(m => m.InvoiceManagementComponent)
+      },
+      { 
+        path: 'resources/:id', 
+        loadComponent: () => import('./components/client-dashboard/resource-details/resource-details.component')
+          .then(m => m.ResourceDetailsComponent)
       },
       { 
         path: 'payment-management', 

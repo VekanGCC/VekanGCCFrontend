@@ -1,6 +1,6 @@
-import { Component, EventEmitter, Output, OnInit, Input } from '@angular/core';
+import { Component, EventEmitter, Output, OnInit, Input, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
 import { AuthService } from '../../../services/auth.service';
 import { AppService } from '../../../services/app.service';
@@ -13,7 +13,7 @@ import { Resource } from '../../../models/resource.model';
 @Component({
   selector: 'app-resource-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, LucideAngularModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, LucideAngularModule],
   templateUrl: './resource-modal.component.html',
   styleUrls: ['./resource-modal.component.css']
 })
@@ -27,6 +27,14 @@ export class ResourceModalComponent implements OnInit {
   isSubmitting = false;
   isEditMode = false;
   formPopulated = false; // Flag to prevent multiple population calls
+  
+  // Search dropdown properties
+  showCategoryDropdown = false;
+  activeSkillDropdown: number | null = null;
+  categorySearchTerm = '';
+  skillSearchTerm = '';
+  filteredCategories: Category[] = [];
+  filteredSkills: AdminSkill[] = [];
   
   // File upload properties
   selectedFile: File | null = null;
@@ -504,5 +512,88 @@ export class ResourceModalComponent implements OnInit {
     console.log('🔧 ResourceModal: Category set to:', resource.category?._id || resource.category);
     console.log('🔧 ResourceModal: Skills set to:', resource.skills);
     console.log('🔧 ResourceModal: Start date set to:', formattedStartDate);
+  }
+
+  // Search dropdown methods
+  toggleCategoryDropdown(): void {
+    this.showCategoryDropdown = !this.showCategoryDropdown;
+    if (this.showCategoryDropdown) {
+      this.filteredCategories = [...this.availableCategories];
+      this.categorySearchTerm = '';
+    }
+    this.activeSkillDropdown = null; // Close skill dropdown
+  }
+
+  toggleSkillDropdown(index: number): void {
+    if (this.activeSkillDropdown === index) {
+      this.activeSkillDropdown = null;
+    } else {
+      this.activeSkillDropdown = index;
+      this.filteredSkills = [...this.availableSkills];
+      this.skillSearchTerm = '';
+    }
+    this.showCategoryDropdown = false; // Close category dropdown
+  }
+
+  onCategorySearch(event: any): void {
+    // This method is called when the main input is clicked
+    this.toggleCategoryDropdown();
+  }
+
+  filterCategories(): void {
+    if (!this.categorySearchTerm.trim()) {
+      this.filteredCategories = [...this.availableCategories];
+    } else {
+      this.filteredCategories = this.availableCategories.filter(category =>
+        category.name.toLowerCase().includes(this.categorySearchTerm.toLowerCase())
+      );
+    }
+  }
+
+  filterSkills(): void {
+    if (!this.skillSearchTerm.trim()) {
+      this.filteredSkills = [...this.availableSkills];
+    } else {
+      this.filteredSkills = this.availableSkills.filter(skill =>
+        skill.name.toLowerCase().includes(this.skillSearchTerm.toLowerCase())
+      );
+    }
+  }
+
+  selectCategory(category: Category): void {
+    this.resourceForm.patchValue({ category: category._id });
+    this.showCategoryDropdown = false;
+    this.categorySearchTerm = '';
+  }
+
+  selectSkill(index: number, skill: AdminSkill): void {
+    this.skills.at(index).setValue(this.getSkillId(skill));
+    this.activeSkillDropdown = null;
+    this.skillSearchTerm = '';
+  }
+
+  getCategoryDisplayName(): string {
+    const categoryId = this.resourceForm.get('category')?.value;
+    if (!categoryId) return '';
+    
+    const category = this.availableCategories.find(cat => cat._id === categoryId);
+    return category ? category.name : '';
+  }
+
+  getSkillDisplayName(index: number): string {
+    const skillId = this.skills.at(index).value;
+    if (!skillId) return '';
+    
+    const skill = this.availableSkills.find(s => this.getSkillId(s) === skillId);
+    return skill ? skill.name : '';
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: any): void {
+    // Close dropdowns when clicking outside
+    if (!event.target.closest('.relative')) {
+      this.showCategoryDropdown = false;
+      this.activeSkillDropdown = null;
+    }
   }
 }

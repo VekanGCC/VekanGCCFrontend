@@ -204,7 +204,14 @@
               <img src="assets/icons/lucide/lucide/chevron-down.svg" alt="dropdown" class="w-4 h-4 text-gray-500" [class.rotated]="showResourcesDropdown" />
             </div>
             
-            <div class="resources-dropdown" *ngIf="showResourcesDropdown">
+            <!-- Debug info -->
+            <div class="text-xs text-gray-500 mb-2">
+              Dropdown state: {{ showResourcesDropdown ? 'Open' : 'Closed' }} | 
+              Resources: {{ resources.length }} | 
+              Filtered: {{ filteredResources.length }}
+            </div>
+            
+            <div class="resources-dropdown" *ngIf="showResourcesDropdown" style="display: block !important;">
               <div class="search-box">
                 <input 
                   type="text" 

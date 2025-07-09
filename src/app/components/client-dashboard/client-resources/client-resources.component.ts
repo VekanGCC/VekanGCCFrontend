@@ -80,14 +80,32 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
       cellRenderer: (params: any) => {
         const resource = params.data;
         const categoryName = resource.category?.name || 'N/A';
+        const truncatedName = (resource.name || 'N/A').length > 20 ? (resource.name || 'N/A').substring(0, 20) + '...' : (resource.name || 'N/A');
+        const truncatedCategory = categoryName.length > 30 ? categoryName.substring(0, 30) + '...' : categoryName;
+
         return `
-          <div class="flex items-center justify-start text-left">
-            <div class="min-w-0 flex-1">
-              <div class="text-sm font-medium text-gray-900 truncate">${resource.name || 'N/A'}</div>
-              <div class="text-xs text-gray-500 truncate">${categoryName}</div>
+          <div class="flex items-center justify-start text-left w-full min-w-0">
+            <div class="min-w-0 flex-1 overflow-hidden">
+              <div class="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer underline resource-link"
+                   title="${resource.name || 'N/A'}"
+                   data-resource-id="${resource._id}">
+                ${truncatedName}
+              </div>
+              <div class="text-xs text-gray-500 truncate" title="${categoryName}">${truncatedCategory}</div>
             </div>
           </div>
         `;
+      },
+      onCellClicked: (params: any) => {
+        const target = params.event.target as HTMLElement;
+        const id = target?.getAttribute('data-resource-id');
+        if (id) {
+          // Use window object to get component reference
+          const component = (window as any).clientResourcesComponent;
+          if (component) {
+            component.onNavigateToResource(id);
+          }
+        }
       }
     },
     {
@@ -243,10 +261,16 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     this.loadAvailableSkills();
     this.loadResources();
     this.setupClickOutsideHandler();
+    
+    // Set component reference for AG Grid
+    (window as any).clientResourcesComponent = this;
   }
 
   ngOnDestroy(): void {
     document.removeEventListener('click', this.handleClickOutside);
+    
+    // Clean up component reference
+    delete (window as any).clientResourcesComponent;
   }
 
   private handleClickOutside = (event: Event) => {
@@ -294,7 +318,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
 
     // Add skill filters
     if (this.selectedSkillIds.length > 0) {
-      params.skillIds = this.selectedSkillIds.join(',');
+      params.skills = this.selectedSkillIds;
       params.skillLogic = this.skillLogic;
     }
 
@@ -536,5 +560,12 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     console.log('🔄 ClientResources: Page changed to:', page);
     this.paginationState.currentPage = page;
     this.loadResources();
+  }
+
+  onNavigateToResource(resourceId: string): void {
+    console.log('🔧 ClientResources: Navigating to resource details:', resourceId);
+    this.router.navigate(['/client/resources', resourceId])
+      .then(() => console.log('✅ Navigated to resource details:', this.router.url))
+      .catch(error => console.error('❌ Navigation error:', error));
   }
 }

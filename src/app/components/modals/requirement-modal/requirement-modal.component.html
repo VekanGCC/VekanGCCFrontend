@@ -76,9 +76,9 @@
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="space-y-2">
-            <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
-              <img src="assets/icons/lucide/lucide/tag.svg" alt="title" class="w-4 h-4 mr-2 text-blue-600" />
+          <div class="space-y-1">
+            <label class="block text-xs font-medium text-gray-600 mb-1 flex items-center">
+              <img src="assets/icons/lucide/lucide/tag.svg" alt="title" class="w-3 h-3 mr-1.5 text-blue-600" />
               Requirement Title *
             </label>
             <input
@@ -87,33 +87,58 @@
               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
               placeholder="e.g., Senior React Developer"
               required>
-            <div *ngIf="requirementForm.get('title')?.invalid && requirementForm.get('title')?.touched" class="text-red-500 text-xs mt-1">
+            <div *ngIf="requirementForm.get('title')?.invalid && requirementForm.get('title')?.touched" class="text-red-500 text-xs">
               Title is required
             </div>
           </div>
 
-          <div class="space-y-2">
-            <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
-              <img src="assets/icons/lucide/lucide/folder.svg" alt="category" class="w-4 h-4 mr-2 text-blue-600" />
+          <div class="space-y-1">
+            <label class="block text-xs font-medium text-gray-600 mb-1 flex items-center">
+              <img src="assets/icons/lucide/lucide/folder.svg" alt="category" class="w-3 h-3 mr-1.5 text-blue-600" />
               Category *
             </label>
-            <select
-              formControlName="category"
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
-              required>
-              <option value="">Select a category</option>
-              <option *ngFor="let category of availableCategories" [value]="category._id">
-                {{category.name}}
-              </option>
-            </select>
-            <div *ngIf="requirementForm.get('category')?.invalid && requirementForm.get('category')?.touched" class="text-red-500 text-xs mt-1">
+            <div class="relative">
+              <input
+                type="text"
+                [value]="getCategoryDisplayName()"
+                (click)="toggleCategoryDropdown()"
+                (input)="onCategorySearch($event)"
+                placeholder="Search and select a category"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm cursor-pointer"
+                readonly>
+              <img src="assets/icons/lucide/lucide/chevron-down.svg" alt="dropdown" class="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              
+              <!-- Category Dropdown -->
+              <div *ngIf="showCategoryDropdown" class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                <div class="p-2 border-b border-gray-200">
+                  <input
+                    type="text"
+                    [(ngModel)]="categorySearchTerm"
+                    (input)="filterCategories()"
+                    placeholder="Search categories..."
+                    class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <div class="max-h-32 overflow-y-auto">
+                  <div
+                    *ngFor="let category of filteredCategories"
+                    (click)="selectCategory(category)"
+                    class="px-3 py-2 text-sm hover:bg-blue-50 cursor-pointer transition-colors duration-150">
+                    {{category.name}}
+                  </div>
+                  <div *ngIf="filteredCategories.length === 0" class="px-3 py-2 text-sm text-gray-500">
+                    No categories found
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="requirementForm.get('category')?.invalid && requirementForm.get('category')?.touched" class="text-red-500 text-xs">
               Category is required
             </div>
           </div>
 
-          <div class="space-y-2">
-            <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
-              <img src="assets/icons/lucide/lucide/map-pin.svg" alt="location" class="w-4 h-4 mr-2 text-purple-600" />
+          <div class="space-y-1">
+            <label class="block text-xs font-medium text-gray-600 mb-1 flex items-center">
+              <img src="assets/icons/lucide/lucide/map-pin.svg" alt="location" class="w-3 h-3 mr-1.5 text-purple-600" />
               Location *
             </label>
             <input
@@ -122,7 +147,7 @@
               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
               placeholder="e.g., New York, NY"
               required>
-            <div *ngIf="requirementForm.get('location')?.invalid && requirementForm.get('location')?.touched" class="text-red-500 text-xs mt-1">
+            <div *ngIf="requirementForm.get('location')?.invalid && requirementForm.get('location')?.touched" class="text-red-500 text-xs">
               Location is required
             </div>
           </div>
@@ -136,17 +161,41 @@
           <h3 class="text-base font-semibold text-gray-800">Required Skills *</h3>
         </div>
         
-        <div class="space-y-2" formArrayName="skills">
+        <div class="space-y-1" formArrayName="skills">
           <div *ngFor="let skill of skills.controls; let i = index" class="flex items-center space-x-2">
-            <select
-              [formControlName]="i"
-              class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
-              required>
-              <option value="">Select a skill</option>
-              <option *ngFor="let adminSkill of availableSkills" [value]="getSkillId(adminSkill)">
-                {{adminSkill.name}}
-              </option>
-            </select>
+            <div class="relative flex-1">
+              <input
+                type="text"
+                [value]="getSkillDisplayName(i)"
+                (click)="toggleSkillDropdown(i)"
+                placeholder="Search and select a skill"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm cursor-pointer"
+                readonly>
+              <img src="assets/icons/lucide/lucide/chevron-down.svg" alt="dropdown" class="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              
+              <!-- Skill Dropdown -->
+              <div *ngIf="activeSkillDropdown === i" class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                <div class="p-2 border-b border-gray-200">
+                  <input
+                    type="text"
+                    [(ngModel)]="skillSearchTerm"
+                    (input)="filterSkills()"
+                    placeholder="Search skills..."
+                    class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-orange-500 focus:border-transparent">
+                </div>
+                <div class="max-h-32 overflow-y-auto">
+                  <div
+                    *ngFor="let adminSkill of filteredSkills"
+                    (click)="selectSkill(i, adminSkill)"
+                    class="px-3 py-2 text-sm hover:bg-orange-50 cursor-pointer transition-colors duration-150">
+                    {{adminSkill.name}}
+                  </div>
+                  <div *ngIf="filteredSkills.length === 0" class="px-3 py-2 text-sm text-gray-500">
+                    No skills found
+                  </div>
+                </div>
+              </div>
+            </div>
             <button
               *ngIf="skills.length > 1"
               type="button"
@@ -170,10 +219,6 @@
         <div *ngIf="requirementForm.get('skills')?.invalid && requirementForm.get('skills')?.touched" class="text-red-500 text-xs mt-1">
           At least one skill is required
         </div>
-        <p class="text-xs text-gray-600 mt-2 flex items-center">
-          <img src="assets/icons/lucide/lucide/info.svg" alt="info" class="w-3 h-3 mr-1" />
-          Skills are managed by administrators. Contact admin to add new skills.
-        </p>
       </div>
 
       <!-- Experience & Budget Section -->
@@ -184,9 +229,9 @@
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div formGroupName="experience" class="space-y-3">
-            <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
-              <img src="assets/icons/lucide/lucide/clock.svg" alt="experience" class="w-4 h-4 mr-2 text-green-600" />
+          <div formGroupName="experience" class="space-y-2">
+            <label class="block text-xs font-medium text-gray-600 mb-1 flex items-center">
+              <img src="assets/icons/lucide/lucide/clock.svg" alt="experience" class="w-3 h-3 mr-1.5 text-green-600" />
               Required Experience *
             </label>
             <div class="grid grid-cols-2 gap-4">
@@ -199,7 +244,7 @@
                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
                   placeholder="Years"
                   required>
-                <div *ngIf="experience.get('minYears')?.invalid && experience.get('minYears')?.touched" class="text-red-500 text-xs mt-1">
+                <div *ngIf="experience.get('minYears')?.invalid && experience.get('minYears')?.touched" class="text-red-500 text-xs">
                   Years of experience is required
                 </div>
               </div>
@@ -213,16 +258,16 @@
                   <option value="senior">Senior</option>
                   <option value="expert">Expert</option>
                 </select>
-                <div *ngIf="experience.get('level')?.invalid && experience.get('level')?.touched" class="text-red-500 text-xs mt-1">
+                <div *ngIf="experience.get('level')?.invalid && experience.get('level')?.touched" class="text-red-500 text-xs">
                   Experience level is required
                 </div>
               </div>
             </div>
           </div>
 
-          <div formGroupName="budget" class="space-y-3">
-            <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
-              <img src="assets/icons/lucide/lucide/dollar-sign.svg" alt="budget" class="w-4 h-4 mr-2 text-green-600" />
+          <div formGroupName="budget" class="space-y-2">
+            <label class="block text-xs font-medium text-gray-600 mb-1 flex items-center">
+              <img src="assets/icons/lucide/lucide/dollar-sign.svg" alt="budget" class="w-3 h-3 mr-1.5 text-green-600" />
               Budget ($/hour) *
             </label>
             <div>
@@ -234,7 +279,7 @@
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
                 placeholder="Hourly rate"
                 required>
-              <div *ngIf="requirementForm.get('budget')?.get('charge')?.invalid && requirementForm.get('budget')?.get('charge')?.touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="requirementForm.get('budget')?.get('charge')?.invalid && requirementForm.get('budget')?.get('charge')?.touched" class="text-red-500 text-xs">
                 Budget is required
               </div>
             </div>
@@ -250,9 +295,9 @@
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div formGroupName="timeline" class="space-y-3">
-            <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
-              <img src="assets/icons/lucide/lucide/clock.svg" alt="timeline" class="w-4 h-4 mr-2 text-purple-600" />
+          <div formGroupName="timeline" class="space-y-2">
+            <label class="block text-xs font-medium text-gray-600 mb-1 flex items-center">
+              <img src="assets/icons/lucide/lucide/clock.svg" alt="timeline" class="w-3 h-3 mr-1.5 text-purple-600" />
               Timeline *
             </label>
             <div class="space-y-2">
@@ -264,7 +309,7 @@
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
                 placeholder="Duration in months"
                 required>
-              <div *ngIf="timeline.get('duration')?.invalid && timeline.get('duration')?.touched" class="text-red-500 text-xs mt-1">
+              <div *ngIf="timeline.get('duration')?.invalid && timeline.get('duration')?.touched" class="text-red-500 text-xs">
                 Duration is required (1-36 months)
               </div>
               <input
@@ -275,9 +320,9 @@
             </div>
           </div>
 
-          <div formGroupName="work_preference" class="space-y-3">
-            <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
-              <img src="assets/icons/lucide/lucide/map-pin.svg" alt="work" class="w-4 h-4 mr-2 text-purple-600" />
+          <div formGroupName="work_preference" class="space-y-2">
+            <label class="block text-xs font-medium text-gray-600 mb-1 flex items-center">
+              <img src="assets/icons/lucide/lucide/map-pin.svg" alt="work" class="w-3 h-3 mr-1.5 text-purple-600" />
               Work Preference *
             </label>
             <div class="space-y-2">
@@ -315,9 +360,9 @@
 
       <!-- Description Section -->
       <div class="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-xl p-4 border border-teal-100">
-                  <div class="flex items-center space-x-2 mb-3">
-            <img src="assets/icons/lucide/lucide/file-text.svg" alt="description" class="w-5 h-5 text-teal-600" />
-            <h3 class="text-base font-semibold text-gray-800">Description *</h3>
+                  <div class="flex items-center space-x-2 mb-2">
+            <img src="assets/icons/lucide/lucide/file-text.svg" alt="description" class="w-4 h-4 text-teal-600" />
+            <h3 class="text-sm font-semibold text-gray-800">Description *</h3>
             <span class="text-xs text-gray-500 character-limit-badge px-2 py-1 rounded-full">Max 2000 characters</span>
           </div>
         
@@ -363,9 +408,9 @@
 
       <!-- File Upload Section -->
       <div class="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-4 border border-indigo-100">
-        <div class="flex items-center space-x-2 mb-3">
-          <img src="assets/icons/lucide/lucide/paperclip.svg" alt="attachment" class="w-5 h-5 text-indigo-600" />
-          <h3 class="text-base font-semibold text-gray-800">Attach Document (Optional)</h3>
+        <div class="flex items-center space-x-2 mb-2">
+          <img src="assets/icons/lucide/lucide/paperclip.svg" alt="attachment" class="w-4 h-4 text-indigo-600" />
+          <h3 class="text-sm font-semibold text-gray-800">Attach Document (Optional)</h3>
         </div>
         
         <div class="space-y-3">

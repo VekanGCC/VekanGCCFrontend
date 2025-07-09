@@ -35,6 +35,43 @@ export class VendorService {
     if (params.priority) httpParams = httpParams.set('priority', params.priority);
     if (params.requirementId) httpParams = httpParams.set('requirementId', params.requirementId);
     if (params.resourceId) httpParams = httpParams.set('resourceId', params.resourceId);
+    if (params.vendorId) httpParams = httpParams.set('vendorId', params.vendorId);
+    if (params.clientId) httpParams = httpParams.set('clientId', params.clientId);
+    
+    // Handle skills parameter
+    if (params.skills) {
+      if (Array.isArray(params.skills)) {
+        params.skills.forEach(skill => {
+          httpParams = httpParams.append('skills', skill);
+        });
+      } else {
+        httpParams = httpParams.set('skills', params.skills);
+      }
+    }
+    
+    // Handle skillLogic parameter
+    if (params.skillLogic) httpParams = httpParams.set('skillLogic', params.skillLogic);
+    
+    // Handle experience range
+    if (params.minExperience) httpParams = httpParams.set('minExperience', params.minExperience);
+    if (params.maxExperience) httpParams = httpParams.set('maxExperience', params.maxExperience);
+    
+    // Handle rate range
+    if (params.minRate) httpParams = httpParams.set('minRate', params.minRate);
+    if (params.maxRate) httpParams = httpParams.set('maxRate', params.maxRate);
+    
+    // Handle budget range
+    if (params.minBudget) httpParams = httpParams.set('minBudget', params.minBudget);
+    if (params.maxBudget) httpParams = httpParams.set('maxBudget', params.maxBudget);
+    
+    // Handle duration range
+    if (params.minDuration) httpParams = httpParams.set('minDuration', params.minDuration);
+    if (params.maxDuration) httpParams = httpParams.set('maxDuration', params.maxDuration);
+    
+    // Handle approved vendors only
+    if (params.approvedVendorsOnly !== undefined) {
+      httpParams = httpParams.set('approvedVendorsOnly', params.approvedVendorsOnly.toString());
+    }
     
     return httpParams;
   }

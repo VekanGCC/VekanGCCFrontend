@@ -20,70 +20,119 @@
       </div>
     </div>
 
-    <form [formGroup]="resourceForm" (ngSubmit)="onSubmit()" class="p-8 space-y-8">
+    <form [formGroup]="resourceForm" (ngSubmit)="onSubmit()" class="p-6 space-y-4">
       <!-- Basic Information Section -->
-      <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100">
-        <div class="flex items-center space-x-2 mb-4">
-          <img src="assets/icons/lucide/lucide/user.svg" alt="user" class="w-5 h-5 text-blue-600" />
-          <h3 class="text-lg font-semibold text-gray-800">Basic Information</h3>
+      <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+        <div class="flex items-center space-x-2 mb-2">
+          <img src="assets/icons/lucide/lucide/user.svg" alt="user" class="w-4 h-4 text-blue-600" />
+          <h3 class="text-sm font-semibold text-gray-800">Basic Information</h3>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="space-y-2">
-            <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
-              <img src="assets/icons/lucide/lucide/tag.svg" alt="name" class="w-4 h-4 mr-2 text-blue-600" />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label class="block text-xs font-medium text-gray-600 mb-1 flex items-center">
+              <img src="assets/icons/lucide/lucide/tag.svg" alt="name" class="w-3 h-3 mr-1.5 text-blue-600" />
               Resource Name *
             </label>
             <input
               type="text"
               formControlName="name"
-              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
               placeholder="e.g., John Doe"
               required>
           </div>
 
-          <div class="space-y-2">
-            <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
-              <img src="assets/icons/lucide/lucide/folder.svg" alt="category" class="w-4 h-4 mr-2 text-blue-600" />
+          <div class="space-y-1">
+            <label class="block text-xs font-medium text-gray-600 mb-1 flex items-center">
+              <img src="assets/icons/lucide/lucide/folder.svg" alt="category" class="w-3 h-3 mr-1.5 text-blue-600" />
               Category *
             </label>
-            <select
-              formControlName="category"
-              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
-              required>
-              <option value="">Select a category</option>
-              <option *ngFor="let category of availableCategories" [value]="category._id">
-                {{category.name}}
-              </option>
-            </select>
+            <div class="relative">
+              <input
+                type="text"
+                [value]="getCategoryDisplayName()"
+                (click)="toggleCategoryDropdown()"
+                (input)="onCategorySearch($event)"
+                placeholder="Search and select a category"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm cursor-pointer"
+                readonly>
+              <img src="assets/icons/lucide/lucide/chevron-down.svg" alt="dropdown" class="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              
+              <!-- Category Dropdown -->
+              <div *ngIf="showCategoryDropdown" class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                <div class="p-2 border-b border-gray-200">
+                  <input
+                    type="text"
+                    [(ngModel)]="categorySearchTerm"
+                    (input)="filterCategories()"
+                    placeholder="Search categories..."
+                    class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <div class="max-h-32 overflow-y-auto">
+                  <div
+                    *ngFor="let category of filteredCategories"
+                    (click)="selectCategory(category)"
+                    class="px-3 py-2 text-sm hover:bg-blue-50 cursor-pointer transition-colors duration-150">
+                    {{category.name}}
+                  </div>
+                  <div *ngIf="filteredCategories.length === 0" class="px-3 py-2 text-sm text-gray-500">
+                    No categories found
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- Skills Section -->
-      <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-6 border border-orange-100">
-        <div class="flex items-center space-x-2 mb-4">
-          <img src="assets/icons/lucide/lucide/award.svg" alt="skills" class="w-5 h-5 text-orange-600" />
-          <h3 class="text-lg font-semibold text-gray-800">Skills *</h3>
+      <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-100">
+        <div class="flex items-center space-x-2 mb-2">
+          <img src="assets/icons/lucide/lucide/award.svg" alt="skills" class="w-4 h-4 text-orange-600" />
+          <h3 class="text-sm font-semibold text-gray-800">Skills *</h3>
         </div>
         
-        <div class="space-y-3" formArrayName="skills">
-          <div *ngFor="let skill of skills.controls; let i = index" class="flex items-center space-x-3">
-            <select
-              [formControlName]="i"
-              class="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
-              required>
-              <option value="">Select a skill</option>
-              <option *ngFor="let adminSkill of availableSkills" [value]="getSkillId(adminSkill)">
-                {{adminSkill.name}}
-              </option>
-            </select>
+        <div class="space-y-2" formArrayName="skills">
+          <div *ngFor="let skill of skills.controls; let i = index" class="flex items-center space-x-2">
+            <div class="relative flex-1">
+              <input
+                type="text"
+                [value]="getSkillDisplayName(i)"
+                (click)="toggleSkillDropdown(i)"
+                placeholder="Search and select a skill"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm cursor-pointer"
+                readonly>
+              <img src="assets/icons/lucide/lucide/chevron-down.svg" alt="dropdown" class="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              
+              <!-- Skill Dropdown -->
+              <div *ngIf="activeSkillDropdown === i" class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                <div class="p-2 border-b border-gray-200">
+                  <input
+                    type="text"
+                    [(ngModel)]="skillSearchTerm"
+                    (input)="filterSkills()"
+                    placeholder="Search skills..."
+                    class="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-orange-500 focus:border-transparent">
+                </div>
+                <div class="max-h-32 overflow-y-auto">
+                  <div
+                    *ngFor="let adminSkill of filteredSkills"
+                    (click)="selectSkill(i, adminSkill)"
+                    class="px-3 py-2 text-sm hover:bg-orange-50 cursor-pointer transition-colors duration-150">
+                    {{adminSkill.name}}
+                  </div>
+                  <div *ngIf="filteredSkills.length === 0" class="px-3 py-2 text-sm text-gray-500">
+                    No skills found
+                  </div>
+                </div>
+              </div>
+            </div>
             <button
               *ngIf="skills.length > 1"
               type="button"
               (click)="removeSkill(i)"
-              class="p-3 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-xl transition-all duration-200">
-              <img src="assets/icons/lucide/lucide/minus.svg" alt="minus" class="w-5 h-5" />
+              class="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all duration-200">
+              <img src="assets/icons/lucide/lucide/minus.svg" alt="minus" class="w-4 h-4" />
             </button>
           </div>
           <button
@@ -98,23 +147,19 @@
           <img src="assets/icons/lucide/lucide/loader-2.svg" alt="loading" class="w-3 h-3 mr-1 animate-spin" />
           Loading skills...
         </div>
-        <p class="text-xs text-gray-600 mt-2 flex items-center">
-          <img src="assets/icons/lucide/lucide/info.svg" alt="info" class="w-3 h-3 mr-1" />
-          Skills are managed by administrators. Contact admin to add new skills.
-        </p>
       </div>
 
       <!-- Experience & Rate Section -->
-      <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-100">
-        <div class="flex items-center space-x-2 mb-4">
-          <img src="assets/icons/lucide/lucide/briefcase.svg" alt="experience" class="w-5 h-5 text-green-600" />
-          <h3 class="text-lg font-semibold text-gray-800">Experience & Rate</h3>
+      <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
+        <div class="flex items-center space-x-2 mb-2">
+          <img src="assets/icons/lucide/lucide/briefcase.svg" alt="experience" class="w-4 h-4 text-green-600" />
+          <h3 class="text-sm font-semibold text-gray-800">Experience & Rate</h3>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div formGroupName="experience" class="space-y-4">
-            <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
-              <img src="assets/icons/lucide/lucide/clock.svg" alt="experience" class="w-4 h-4 mr-2 text-green-600" />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div formGroupName="experience" class="space-y-2">
+            <label class="block text-xs font-medium text-gray-600 mb-1 flex items-center">
+              <img src="assets/icons/lucide/lucide/clock.svg" alt="experience" class="w-3 h-3 mr-1.5 text-green-600" />
               Experience *
             </label>
             <div class="grid grid-cols-2 gap-4">
@@ -124,14 +169,14 @@
                   formControlName="years"
                   min="0"
                   max="50"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
                   placeholder="Years"
                   required>
               </div>
               <div>
                 <select
                   formControlName="level"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
                   required>
                   <option value="junior">Junior</option>
                   <option value="mid">Mid</option>
@@ -142,9 +187,9 @@
             </div>
           </div>
 
-          <div formGroupName="rate" class="space-y-4">
-            <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
-              <img src="assets/icons/lucide/lucide/dollar-sign.svg" alt="rate" class="w-4 h-4 mr-2 text-green-600" />
+          <div formGroupName="rate" class="space-y-2">
+            <label class="block text-xs font-medium text-gray-600 mb-1 flex items-center">
+              <img src="assets/icons/lucide/lucide/dollar-sign.svg" alt="rate" class="w-3 h-3 mr-1.5 text-green-600" />
               Rate ($/hour) *
             </label>
             <div class="grid grid-cols-2 gap-4">
@@ -154,13 +199,13 @@
                   formControlName="hourly"
                   min="1"
                   max="500"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
                   required>
               </div>
               <div>
                 <select
                   formControlName="currency"
-                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm">
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm">
                   <option value="USD">USD</option>
                   <option value="EUR">EUR</option>
                   <option value="GBP">GBP</option>
@@ -172,55 +217,55 @@
       </div>
 
       <!-- Location & Availability Section -->
-      <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-100">
-        <div class="flex items-center space-x-2 mb-4">
-          <img src="assets/icons/lucide/lucide/map-pin.svg" alt="location" class="w-5 h-5 text-purple-600" />
-          <h3 class="text-lg font-semibold text-gray-800">Location & Availability</h3>
+      <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
+        <div class="flex items-center space-x-2 mb-2">
+          <img src="assets/icons/lucide/lucide/map-pin.svg" alt="location" class="w-4 h-4 text-purple-600" />
+          <h3 class="text-sm font-semibold text-gray-800">Location & Availability</h3>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div formGroupName="location" class="space-y-4">
-            <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
-              <img src="assets/icons/lucide/lucide/globe.svg" alt="location" class="w-4 h-4 mr-2 text-purple-600" />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div formGroupName="location" class="space-y-2">
+            <label class="block text-xs font-medium text-gray-600 mb-1 flex items-center">
+              <img src="assets/icons/lucide/lucide/globe.svg" alt="location" class="w-3 h-3 mr-1.5 text-purple-600" />
               Location
             </label>
-            <div class="space-y-3">
+            <div class="space-y-2">
               <input
                 type="text"
                 formControlName="city"
-                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
                 placeholder="City">
               <input
                 type="text"
                 formControlName="state"
-                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
                 placeholder="State">
               <input
                 type="text"
                 formControlName="country"
-                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
                 placeholder="Country">
-              <div class="flex items-center p-3 bg-white rounded-xl border border-gray-300">
+              <div class="flex items-center p-2 bg-white rounded-lg border border-gray-300">
                 <input
                   type="checkbox"
                   formControlName="remote"
-                  class="h-5 w-5 text-purple-600 focus:ring-purple-500 border-gray-300 rounded">
-                <label class="ml-3 block text-sm font-medium text-gray-700">
+                  class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded">
+                <label class="ml-2 block text-xs font-medium text-gray-700">
                   Remote Work Available
                 </label>
               </div>
             </div>
           </div>
 
-          <div formGroupName="availability" class="space-y-4">
-            <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center">
-              <img src="assets/icons/lucide/lucide/calendar.svg" alt="availability" class="w-4 h-4 mr-2 text-purple-600" />
+          <div formGroupName="availability" class="space-y-2">
+            <label class="block text-xs font-medium text-gray-600 mb-1 flex items-center">
+              <img src="assets/icons/lucide/lucide/calendar.svg" alt="availability" class="w-3 h-3 mr-1.5 text-purple-600" />
               Availability *
             </label>
-            <div class="space-y-3">
+            <div class="space-y-2">
               <select
                 formControlName="status"
-                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
                 required>
                 <option value="available">Available</option>
                 <option value="partially_available">Partially Available</option>
@@ -231,12 +276,12 @@
                 formControlName="hours_per_week"
                 min="0"
                 max="168"
-                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
                 placeholder="Hours per week">
               <input
                 type="date"
                 formControlName="start_date"
-                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm"
                 placeholder="Start date">
             </div>
           </div>
@@ -244,25 +289,25 @@
       </div>
 
       <!-- Description Section -->
-      <div class="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-xl p-6 border border-teal-100">
-        <div class="flex items-center space-x-2 mb-4">
-          <img src="assets/icons/lucide/lucide/file-text.svg" alt="description" class="w-5 h-5 text-teal-600" />
-          <h3 class="text-lg font-semibold text-gray-800">Description *</h3>
+      <div class="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-xl p-4 border border-teal-100">
+        <div class="flex items-center space-x-2 mb-2">
+          <img src="assets/icons/lucide/lucide/file-text.svg" alt="description" class="w-4 h-4 text-teal-600" />
+          <h3 class="text-sm font-semibold text-gray-800">Description *</h3>
         </div>
         
         <textarea
           formControlName="description"
           rows="4"
-          class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm resize-none"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200 bg-white shadow-sm resize-none"
           placeholder="Brief description of the resource's background and expertise..."
           required></textarea>
       </div>
 
       <!-- File Upload Section -->
-      <div class="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-6 border border-indigo-100">
-        <div class="flex items-center space-x-2 mb-4">
-          <img src="assets/icons/lucide/lucide/paperclip.svg" alt="attachment" class="w-5 h-5 text-indigo-600" />
-          <h3 class="text-lg font-semibold text-gray-800">Attach Document (Optional)</h3>
+      <div class="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl p-4 border border-indigo-100">
+        <div class="flex items-center space-x-2 mb-2">
+          <img src="assets/icons/lucide/lucide/paperclip.svg" alt="attachment" class="w-4 h-4 text-indigo-600" />
+          <h3 class="text-sm font-semibold text-gray-800">Attach Document (Optional)</h3>
         </div>
         
         <div class="space-y-4">

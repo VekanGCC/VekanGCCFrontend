@@ -72,8 +72,10 @@ export class VendorRequirementsComponent implements OnInit, OnChanges, OnDestroy
       cellRenderer: (params: any) => {
         const requirement = params.data;
         const title = requirement.title || 'No Title';
-        const description = requirement.description || 'No Description';
+        const category = requirement.category;
+        const categoryName = typeof category === 'string' ? category : category?.name || 'No Category';
         const truncatedTitle = title.length > 20 ? title.substring(0, 20) + '...' : title;
+        const truncatedCategory = categoryName.length > 30 ? categoryName.substring(0, 30) + '...' : categoryName;
 
         return `
           <div class="flex items-center justify-start text-left w-full min-w-0">
@@ -83,7 +85,7 @@ export class VendorRequirementsComponent implements OnInit, OnChanges, OnDestroy
                    data-requirement-id="${requirement._id}">
                 ${truncatedTitle}
               </div>
-              <div class="text-xs text-gray-500 truncate" title="${description}">${description}</div>
+              <div class="text-xs text-gray-500 truncate" title="${categoryName}">${truncatedCategory}</div>
             </div>
           </div>
         `;
@@ -277,7 +279,7 @@ export class VendorRequirementsComponent implements OnInit, OnChanges, OnDestroy
 
   private handleClickOutside = (event: Event) => {
     const target = event.target as HTMLElement;
-    if (!target.closest('.skills-dropdown')) {
+    if (!target.closest('.skills-dropdown-container')) {
       this.showSkillsDropdown = false;
       this.changeDetectorRef.detectChanges();
     }
