@@ -1,1 +1,31 @@
 /* Component-specific styles can be added here */
+
+/* Character counter styles */
+.character-counter {
+  transition: all 0.3s ease;
+}
+
+.character-counter.warning {
+  color: #f59e0b;
+}
+
+.character-counter.danger {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+/* Progress bar animation */
+.progress-bar {
+  transition: all 0.3s ease;
+}
+
+/* Textarea focus states */
+.textarea-focus {
+  transition: all 0.2s ease;
+}
+
+/* Character limit badge */
+.character-limit-badge {
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  border: 1px solid #d1d5db;
+}

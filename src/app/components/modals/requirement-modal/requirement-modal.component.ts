@@ -74,7 +74,7 @@ export class RequirementModalComponent implements OnInit, OnChanges {
         onsite: [true],
         hybrid: [true]
       }),
-      description: ['', Validators.required]
+      description: ['', [Validators.required, Validators.maxLength(2000)]]
     });
   }
 
@@ -232,6 +232,26 @@ export class RequirementModalComponent implements OnInit, OnChanges {
 
   get timeline(): FormGroup {
     return this.requirementForm.get('timeline') as FormGroup;
+  }
+
+  get descriptionCharacterCount(): number {
+    const description = this.requirementForm.get('description')?.value || '';
+    return description.length;
+  }
+
+  get descriptionMaxLength(): number {
+    return 2000;
+  }
+
+  // Make Math available in template
+  Math = Math;
+
+  onDescriptionChange(): void {
+    // This method can be called when description changes for additional logic if needed
+    const currentCount = this.descriptionCharacterCount;
+    if (currentCount > this.descriptionMaxLength) {
+      console.warn(`Description exceeds ${this.descriptionMaxLength} characters: ${currentCount}`);
+    }
   }
 
   addSkill(): void {

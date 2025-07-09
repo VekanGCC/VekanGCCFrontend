@@ -51,6 +51,16 @@ export class AdminReportsComponent implements OnInit, OnDestroy {
   constructor(private apiService: ApiService) {}
 
   ngOnInit(): void {
+    // Set default custom dates (last 30 days) if none are set
+    if (!this.startDate || !this.endDate) {
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - 30);
+      
+      this.startDate = startDate.toISOString().split('T')[0];
+      this.endDate = endDate.toISOString().split('T')[0];
+    }
+    
     this.loadReport();
   }
 
@@ -64,6 +74,10 @@ export class AdminReportsComponent implements OnInit, OnDestroy {
   }
 
   onDateRangeChange(): void {
+    console.log('📊 Reports: Date range changed to:', this.dateRange);
+    if (this.dateRange === 'custom') {
+      console.log('📊 Reports: Custom dates - startDate:', this.startDate, 'endDate:', this.endDate);
+    }
     this.loadReport();
   }
 
@@ -101,11 +115,17 @@ export class AdminReportsComponent implements OnInit, OnDestroy {
   private buildQueryParams(): any {
     const params: any = { period: this.dateRange };
     
-    if (this.dateRange === 'custom' && this.startDate && this.endDate) {
-      params.startDate = this.startDate;
-      params.endDate = this.endDate;
+    if (this.dateRange === 'custom') {
+      if (this.startDate && this.endDate) {
+        params.startDate = this.startDate;
+        params.endDate = this.endDate;
+      } else {
+        console.warn('📊 Reports: Custom date range selected but dates are missing. Using default period.');
+        params.period = 'month'; // Fallback to month if custom dates are not set
+      }
     }
     
+    console.log('📊 Reports: Built query params:', params);
     return params;
   }
 

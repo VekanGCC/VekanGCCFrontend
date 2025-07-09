@@ -129,6 +129,41 @@ export class ApiService {
       );
   }
 
+  // Generic GET request with custom parameters (for reporting)
+  getWithCustomParams<T>(endpoint: string, params?: any): Observable<T> {
+    // Check if we should attempt the request
+    if (!this.connectionService.shouldAttemptRequest()) {
+      console.log('🚫 API: Skipping GET request - server unavailable');
+      return throwError(() => new Error('Server is not available. Please check your connection.'));
+    }
+
+    const options = this.getHttpOptions();
+    if (params) {
+      let httpParams = new HttpParams();
+      
+      // Handle custom parameters for reporting
+      if (params.period) httpParams = httpParams.set('period', params.period);
+      if (params.startDate) httpParams = httpParams.set('startDate', params.startDate);
+      if (params.endDate) httpParams = httpParams.set('endDate', params.endDate);
+      
+      // Also handle any pagination parameters that might be passed
+      if (params.page) httpParams = httpParams.set('page', params.page.toString());
+      if (params.limit) httpParams = httpParams.set('limit', params.limit.toString());
+      if (params.search) httpParams = httpParams.set('search', params.search);
+      if (params.status) httpParams = httpParams.set('status', params.status);
+      
+      console.log('🔧 API: Built custom HTTP params:', httpParams.toString());
+      (options as any).params = httpParams;
+    }
+    
+    return this.http.get<T>(`${this.apiUrl}${endpoint}`, options)
+      .pipe(
+        tap(() => this.connectionService.markServerAvailable()),
+        retry(1),
+        catchError(this.handleError)
+      );
+  }
+
   // Generic POST request
   post<T>(endpoint: string, data: any): Observable<T> {
     // Check if we should attempt the request
@@ -906,37 +941,37 @@ export class ApiService {
   // Admin Reporting APIs
   getUserRegistrationReport(params?: any): Observable<any> {
     console.log('📊 API: Fetching user registration report...');
-    return this.get<any>('/admin/reports/user-registration-reporting', params);
+    return this.getWithCustomParams<any>('/admin/reports/user-registration-reporting', params);
   }
 
   getResourcesReport(params?: any): Observable<any> {
     console.log('📊 API: Fetching resources report...');
-    return this.get<any>('/admin/reports/resources-reporting', params);
+    return this.getWithCustomParams<any>('/admin/reports/resources-reporting', params);
   }
 
   getRequirementsReport(params?: any): Observable<any> {
     console.log('📊 API: Fetching requirements report...');
-    return this.get<any>('/admin/reports/requirements-reporting', params);
+    return this.getWithCustomParams<any>('/admin/reports/requirements-reporting', params);
   }
 
   getApplicationsReport(params?: any): Observable<any> {
     console.log('📊 API: Fetching applications report...');
-    return this.get<any>('/admin/reports/applications-reporting', params);
+    return this.getWithCustomParams<any>('/admin/reports/applications-reporting', params);
   }
 
   getSkillsReport(params?: any): Observable<any> {
     console.log('📊 API: Fetching skills report...');
-    return this.get<any>('/admin/reports/skills-reporting', params);
+    return this.getWithCustomParams<any>('/admin/reports/skills-reporting', params);
   }
 
   getFinancialReport(params?: any): Observable<any> {
     console.log('📊 API: Fetching financial report...');
-    return this.get<any>('/admin/reports/financial-reporting', params);
+    return this.getWithCustomParams<any>('/admin/reports/financial-reporting', params);
   }
 
   getMonthlyGrowthReport(params?: any): Observable<any> {
     console.log('📊 API: Fetching monthly growth report...');
-    return this.get<any>('/admin/reports/monthly-growth-reporting', params);
+    return this.getWithCustomParams<any>('/admin/reports/monthly-growth-reporting', params);
   }
 
   // Custom reporting APIs
