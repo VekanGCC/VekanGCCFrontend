@@ -912,8 +912,40 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   toggleUserStatus(user: User): void {
-    // TODO: Implement user status toggle
-    console.log('Toggle user status:', user);
+    if (!user || !user._id) {
+      return;
+    }
+
+    const action = user.isActive ? 'deactivate' : 'activate';
+    const confirmMessage = `Are you sure you want to ${action} ${user.firstName} ${user.lastName}?`;
+    
+    if (confirm(confirmMessage)) {
+      this.subscriptions.push(
+        this.adminService.toggleUserStatus(user._id).subscribe({
+          next: (response) => {
+            // Update the user's status in the local array
+            const userIndex = this.allUsers.findIndex(u => u._id === user._id);
+            if (userIndex !== -1) {
+              this.allUsers[userIndex].isActive = !this.allUsers[userIndex].isActive;
+            }
+            
+            // Update the selected user if it's the same user
+            if (this.selectedUserForProfile && this.selectedUserForProfile._id === user._id) {
+              this.selectedUserForProfile.isActive = !this.selectedUserForProfile.isActive;
+              // Trigger profile refresh to update the UI
+              this.profileRefreshTrigger++;
+            }
+            
+            console.log(`User ${action}d successfully`);
+            // You can add a toast notification here
+          },
+          error: (error) => {
+            console.error(`Error ${action}ing user:`, error);
+            // You can add a toast notification here
+          }
+        })
+      );
+    }
   }
 
   // Computed properties for template bindings

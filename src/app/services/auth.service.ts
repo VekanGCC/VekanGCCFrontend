@@ -103,20 +103,24 @@ export class AuthService {
         if (response.success) {
           const { token, data } = response;
           
-          // Check approval status before allowing login
-          if (data.approvalStatus === 'pending') {
-            console.log('Auth Service: Login blocked - user approval pending');
-            throw new Error('Your account is pending approval. Please contact the administrator.');
-          }
-          
-          if (data.approvalStatus === 'rejected') {
-            console.log('Auth Service: Login blocked - user approval rejected');
-            throw new Error('Your account has been rejected. Please contact the administrator for more information.');
-          }
-          
-          if (data.approvalStatus !== 'approved') {
-            const statusMessage = data.approvalStatus || 'unknown';
-            throw new Error(`Your account status is '${statusMessage}'. Only approved accounts can login.`);
+          // Check approval status only if registration is complete
+          if (data.isRegistrationComplete) {
+            if (data.approvalStatus === 'pending') {
+              console.log('Auth Service: Login blocked - user approval pending');
+              throw new Error('Your account is pending approval. Please contact the administrator.');
+            }
+            
+            if (data.approvalStatus === 'rejected') {
+              console.log('Auth Service: Login blocked - user approval rejected');
+              throw new Error('Your account has been rejected. Please contact the administrator for more information.');
+            }
+            
+            if (data.approvalStatus !== 'approved') {
+              const statusMessage = data.approvalStatus || 'unknown';
+              throw new Error(`Your account status is '${statusMessage}'. Only approved accounts can login.`);
+            }
+          } else {
+            console.log('Auth Service: Registration incomplete, allowing login to complete registration');
           }
           
           console.log('Auth Service: Storing token and user data');

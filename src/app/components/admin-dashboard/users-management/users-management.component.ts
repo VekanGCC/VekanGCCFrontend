@@ -25,6 +25,7 @@ export class UsersManagementComponent {
 
   @Output() pageChange = new EventEmitter<number>();
   @Output() editUser = new EventEmitter<User>();
+  @Output() toggleUserStatus = new EventEmitter<User>();
 
   constructor() {}
 
@@ -101,6 +102,10 @@ export class UsersManagementComponent {
 
   onEditUser(user: User): void {
     this.editUser.emit(user);
+  }
+
+  onToggleUserStatus(user: User): void {
+    this.toggleUserStatus.emit(user);
   }
 
   trackById(index: number, item: any): string {

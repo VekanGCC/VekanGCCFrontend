@@ -77,9 +77,8 @@ export class VendorRegistrationService {
   }
 
   sendOTP(email: string): Observable<OTPResponse> {
-    // For vendor, OTP is generated in step 1, so this can be a no-op or return a mock response
-    // Optionally, you can implement a resend OTP endpoint if needed
-    return of({ success: true, message: 'OTP sent (mock for vendor)', otp: '123456' });
+    // For vendor, make a real API call to get the OTP from backend
+    return this.http.post<OTPResponse>(`${this.apiUrl}/send-otp`, { email });
   }
 
   verifyOTP(email: string, otp: string): Observable<boolean> {

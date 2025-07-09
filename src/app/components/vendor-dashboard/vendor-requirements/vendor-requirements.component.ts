@@ -289,7 +289,7 @@ export class VendorRequirementsComponent implements OnInit, OnChanges, OnDestroy
 
   private loadAvailableSkills(): void {
     console.log('🔧 VendorRequirements: Loading available skills...');
-    this.apiService.getAdminSkills().subscribe({
+    this.apiService.getActiveSkills().subscribe({
       next: (response) => {
         console.log('✅ VendorRequirements: Skills loaded:', response);
         this.availableSkills = response.data || [];
@@ -309,6 +309,7 @@ export class VendorRequirementsComponent implements OnInit, OnChanges, OnDestroy
       page: this.paginationState.currentPage,
       limit: this.paginationState.pageSize,
       search: this.searchTerm || undefined,
+      status: 'active', // Only show active requirements
       skills: this.selectedSkillIds.length > 0 ? this.selectedSkillIds : undefined,
       skillLogic: this.selectedSkillIds.length > 0 ? this.skillLogic : undefined,
       minBudget: this.minBudget || undefined,

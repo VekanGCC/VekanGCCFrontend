@@ -354,7 +354,7 @@ export class RequirementModalComponent implements OnInit, OnChanges {
         },
         clientId: user._id,
         clientName: user.businessInfo?.companyName || 'Unknown Company',
-        status: 'open' as const,
+        status: 'active' as const,
         createdBy: user._id,
         startDate: formValue.timeline.start_date ? new Date(formValue.timeline.start_date).toISOString() : new Date().toISOString(),
         endDate: this.calculateEndDate(formValue.timeline.start_date, formValue.timeline.duration)

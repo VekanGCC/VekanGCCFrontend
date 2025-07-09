@@ -263,7 +263,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
 
   private loadAvailableSkills(): void {
     console.log('🔄 ClientResources: Loading available skills...');
-    this.apiService.getAdminSkills().subscribe({
+    this.apiService.getActiveSkills().subscribe({
       next: (response) => {
         if (response.success && response.data) {
           this.availableSkills = response.data;
@@ -283,7 +283,8 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
 
     const params: any = {
       page: this.paginationState.currentPage,
-      limit: this.paginationState.pageSize
+      limit: this.paginationState.pageSize,
+      status: 'active' // Only show active resources
     };
 
     // Add search term

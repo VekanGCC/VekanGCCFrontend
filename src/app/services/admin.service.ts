@@ -228,8 +228,8 @@ export class AdminService {
     return this.apiService.put<User>(`/admin/users/${userId}`, user);
   }
 
-  toggleUserStatus(userId: string): Observable<User> {
-    return this.apiService.post<User>(`/admin/users/${userId}/toggle-status`, {});
+  toggleUserStatus(userId: string): Observable<ApiResponse<any>> {
+    return this.apiService.put<ApiResponse<any>>(`/admin/users/all/${userId}/toggle-status`, {});
   }
 
   getCategories(): Observable<ApiResponse<Category[]>> {

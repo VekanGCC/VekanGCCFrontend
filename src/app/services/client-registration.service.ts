@@ -48,6 +48,7 @@ export class ClientRegistrationService {
         country: '',
         pinCode: ''
       },
+      paymentTerms: '',
       panNumber: '',
       registeredUnderESI: false,
       registeredUnderPF: false,
@@ -153,21 +154,17 @@ export class ClientRegistrationService {
     return this.http.post(`${this.apiUrl}/registration/step1`, data);
   }
 
-  // Step 3: Address and Bank Details
+  // Step 3: Address and Payment Terms
   saveStep3(data: {
     address: {
-      street: string;
+      addressLine1: string;
+      addressLine2?: string;
       city: string;
       state: string;
       country: string;
-      zipCode: string;
+      pinCode: string;
     };
-    bankDetails: {
-      accountNumber: string;
-      ifscCode: string;
-      bankName: string;
-      accountHolderName: string;
-    };
+    paymentTerms: string;
   }): Observable<any> {
     return this.http.post(`${this.apiUrl}/registration/step3`, data);
   }

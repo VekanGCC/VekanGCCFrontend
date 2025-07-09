@@ -26,6 +26,7 @@ export class ProfileDashboardComponent implements OnInit, OnDestroy, OnChanges {
   @Output() backToUsers = new EventEmitter<void>();
   @Output() approveUser = new EventEmitter<User>();
   @Output() rejectUser = new EventEmitter<{user: User, notes: string}>();
+  @Output() toggleUserStatus = new EventEmitter<User>();
   
   profileData: ProfileData | null = null;
   isLoading = false;
@@ -145,6 +146,12 @@ export class ProfileDashboardComponent implements OnInit, OnDestroy, OnChanges {
     if (this.profileData?.user && this.rejectNotes.trim()) {
       this.rejectUser.emit({ user: this.profileData.user, notes: this.rejectNotes });
       this.onCloseRejectModal();
+    }
+  }
+
+  onToggleUserStatus(): void {
+    if (this.profileData?.user) {
+      this.toggleUserStatus.emit(this.profileData.user);
     }
   }
 

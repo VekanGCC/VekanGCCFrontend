@@ -5,6 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
 import { VendorRegistrationService } from '../../services/vendor-registration.service';
 import { ClientRegistrationService } from '../../services/client-registration.service';
+import { AuthService } from '../../services/auth.service';
 import { VendorRegistration } from '../../models/vendor-registration.model';
 import { ClientRegistration } from '../../models/client-registration.model';
 import { firstValueFrom } from 'rxjs';
@@ -13,6 +14,7 @@ interface ApiResponse {
   success: boolean;
   message?: string;
   data?: any;
+  otp?: string;
 }
 
 interface OTPResponse extends ApiResponse {
@@ -54,6 +56,7 @@ export class SignupComponent implements OnInit, OnDestroy {
   otpSent = false;
   otpTimer = 0;
   otpInterval: any;
+  currentOTP: string = '';
 
   vendorRegistration: VendorRegistration | null = null;
   clientRegistration: ClientRegistration | null = null;
@@ -63,7 +66,8 @@ export class SignupComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private vendorRegistrationService: VendorRegistrationService,
-    private clientRegistrationService: ClientRegistrationService
+    private clientRegistrationService: ClientRegistrationService,
+    private authService: AuthService
   ) {
     // Forms will be initialized in ngOnInit
   }
@@ -71,10 +75,26 @@ export class SignupComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initializeForms();
 
-    // Check for user type in query params
+    // Check for user type and step in query params
     this.route.queryParams.subscribe(params => {
       if (params['type'] === 'vendor' || params['type'] === 'client') {
         this.userType = params['type'];
+        
+        // If step is specified, set the current step
+        if (params['step']) {
+          const step = parseInt(params['step']);
+          if (step >= 1 && step <= 5) {
+            this.currentStep = step;
+          }
+        }
+        
+        // Check if user is already logged in (redirected from login)
+        const currentUser = this.authService.getCurrentUser();
+        if (currentUser && currentUser.email) {
+          console.log('User redirected from login, populating forms with existing data:', currentUser);
+          this.populateFormsWithExistingUserData(currentUser);
+        }
+        
         this.loadRegistrationData();
       } else {
         // If no user type specified, clear any existing registration data and start with selection
@@ -264,14 +284,14 @@ export class SignupComponent implements OnInit, OnDestroy {
       this.step3Form.get('bankCity')?.setValidators([Validators.required]);
       this.step3Form.get('paymentTerms')?.setValidators([Validators.required]);
     } else {
-      // Remove bank details validators for clients
+      // Remove bank details validators for clients, but keep payment terms required
       this.step3Form.get('accountNumber')?.clearValidators();
       this.step3Form.get('accountType')?.clearValidators();
       this.step3Form.get('ifscCode')?.clearValidators();
       this.step3Form.get('bankName')?.clearValidators();
       this.step3Form.get('branchName')?.clearValidators();
       this.step3Form.get('bankCity')?.clearValidators();
-      this.step3Form.get('paymentTerms')?.clearValidators();
+      this.step3Form.get('paymentTerms')?.setValidators([Validators.required]); // Payment terms required for clients too
     }
 
     // Update validity only for the controls that had validators changed
@@ -393,14 +413,15 @@ export class SignupComponent implements OnInit, OnDestroy {
       confirmPassword: registration.confirmPassword
     });
 
-    // Populate Step 3 (no bank details for clients)
+    // Populate Step 3 (address and payment terms for clients)
     this.step3Form.patchValue({
       addressLine1: registration.address.addressLine1,
       addressLine2: registration.address.addressLine2,
       city: registration.address.city,
       state: registration.address.state,
       country: registration.address.country,
-      pinCode: registration.address.pinCode
+      pinCode: registration.address.pinCode,
+      paymentTerms: registration.paymentTerms
     });
 
     // Populate Step 4
@@ -424,6 +445,32 @@ export class SignupComponent implements OnInit, OnDestroy {
     });
 
     this.updateFormValidatorsForUserType();
+  }
+
+  private populateFormsWithExistingUserData(user: any): void {
+    console.log('Populating forms with existing user data:', user);
+    
+    // Populate step 1 form with existing user data
+    this.step1Form.patchValue({
+      email: user.email || '',
+      companyName: user.companyName || '',
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      contactPerson: user.contactPerson || '',
+      gstNumber: user.gstNumber || '',
+      serviceType: user.serviceType || '',
+      numberOfResources: user.numberOfResources || 1,
+      numberOfRequirements: user.numberOfRequirements || 1,
+      phone: user.phone || ''
+    });
+    
+    // Mark email as verified since user is already logged in
+    this.otpVerified = true;
+    
+    // Set current step to the next step they need to complete
+    if (user.registrationStep) {
+      this.currentStep = Math.min(user.registrationStep + 1, 5);
+    }
   }
 
   previousStep(): void {
@@ -452,8 +499,18 @@ export class SignupComponent implements OnInit, OnDestroy {
           if (response.success) {
             // Clear any form errors before proceeding
             this.clearFormErrors();
-            // Send OTP after successful step 1 save
-            await this.sendOTP();
+            
+            // Check if OTP is included in the response (from step 1)
+            if (response.otp) {
+              this.currentOTP = response.otp;
+              this.otpSent = true;
+              this.startOtpTimer();
+              this.showSuccessMessage('OTP sent successfully');
+            } else {
+              // Send OTP after successful step 1 save if not included
+              await this.sendOTP();
+            }
+            
             this.currentStep++;
           } else {
             // Preserve form values and clear form errors when there's a server error
@@ -566,6 +623,7 @@ export class SignupComponent implements OnInit, OnDestroy {
 
       if (response.success) {
         this.otpSent = true;
+        this.currentOTP = response.otp || ''; // Store the OTP from backend
         this.startOtpTimer();
         this.showSuccessMessage('OTP sent successfully');
       } else {
@@ -709,6 +767,27 @@ export class SignupComponent implements OnInit, OnDestroy {
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   }
 
+  copyOTP(): void {
+    const otp = this.currentOTP;
+    if (!otp) {
+      this.showSuccessMessage('No OTP available to copy');
+      return;
+    }
+    
+    navigator.clipboard.writeText(otp).then(() => {
+      this.showSuccessMessage('OTP copied to clipboard!');
+    }).catch(() => {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = otp;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      this.showSuccessMessage('OTP copied to clipboard!');
+    });
+  }
+
   navigateToLogin(): void {
     this.router.navigate(['/login']);
   }
@@ -827,6 +906,11 @@ export class SignupComponent implements OnInit, OnDestroy {
           }
         };
         
+        // Add payment terms for clients
+        if (this.isClient) {
+          step3Data.paymentTerms = this.step3Form.get('paymentTerms')?.value;
+        }
+        
         // Add bank details for vendors
         if (this.isVendor) {
           step3Data.bankDetails = {
@@ -886,6 +970,8 @@ export class SignupComponent implements OnInit, OnDestroy {
           const requiredFields = ['addressLine1', 'city', 'state', 'country', 'pinCode'];
           if (this.isVendor) {
             requiredFields.push('accountNumber', 'accountType', 'ifscCode', 'bankName', 'branchName', 'bankCity', 'paymentTerms');
+          } else if (this.isClient) {
+            requiredFields.push('paymentTerms');
           }
           
           const missingFields = requiredFields.filter(field => {

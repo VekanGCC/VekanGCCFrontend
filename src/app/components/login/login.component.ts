@@ -119,7 +119,21 @@ export class LoginComponent implements OnInit {
 
   private navigateBasedOnRole(user: any): void {
     console.log('LoginComponent: Navigating based on user type:', user.userType);
+    console.log('LoginComponent: Registration step:', user.registrationStep, 'Complete:', user.isRegistrationComplete);
     
+    // Check if registration is complete
+    if (!user.isRegistrationComplete) {
+      console.log('LoginComponent: Registration incomplete, redirecting to signup step:', user.registrationStep + 1);
+      this.router.navigate(['/signup'], { 
+        queryParams: { 
+          type: user.userType,
+          step: user.registrationStep + 1 
+        } 
+      });
+      return;
+    }
+    
+    // Registration is complete, navigate based on role
     switch (user.userType) {
       case 'admin':
         this.router.navigate(['/admin']);

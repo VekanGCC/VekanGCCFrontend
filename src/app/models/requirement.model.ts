@@ -24,7 +24,7 @@ export interface Requirement {
     type: string;
   };
   description: string;
-  status: 'draft' | 'open' | 'in_progress' | 'on_hold' | 'completed' | 'cancelled';
+  status: 'draft' | 'open' | 'in_progress' | 'on_hold' | 'completed' | 'cancelled' | 'active' | 'inactive';
   priority?: string;
   createdBy: any; // Can be string or object with user details
   organizationId?: any; // Can be string or object with organization details

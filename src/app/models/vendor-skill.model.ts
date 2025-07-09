@@ -18,6 +18,7 @@ export interface VendorSkill {
   yearsOfExperience: number;
   proficiency: string;
   status: 'pending' | 'approved' | 'rejected';
+  reviewNotes?: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;

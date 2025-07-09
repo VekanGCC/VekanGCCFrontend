@@ -1,65 +1,205 @@
 <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-  <div class="p-6 border-b border-gray-100">
+  <!-- Header Section -->
+  <div class="p-6 border-b border-gray-100 header-section">
     <div class="flex items-center justify-between">
-      <h3 class="text-lg font-semibold text-gray-900">Vendor Skill</h3>
-      <select [(ngModel)]="skillApprovalFilter" (change)="onFilterChange()"
-              class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500">
-        <option value="all">All Approvals</option>
-        <option value="pending">Pending</option>
-        <option value="approved">Approved</option>
-        <option value="rejected">Rejected</option>
-      </select>
-    </div>
-  </div>
-  <div class="p-6">
-    <div *ngFor="let approval of filteredSkillApprovals; trackBy: trackById" 
-         class="flex items-center justify-between py-4 border-b border-gray-100 last:border-0">
-      <div class="flex-1">
-        <div class="flex items-start justify-between">
-          <div>
-            <p class="font-medium text-gray-900">{{approval.skill?.skill?.name || 'Unknown'}}</p>
-            <p class="text-sm text-gray-600" *ngIf="approval.skill.category">{{approval.skill.category}}</p>
-            <p class="text-sm text-gray-500 mt-1">{{approval.skill.description}}</p>
-            <div class="flex items-center gap-4 mt-2">
-              <span class="text-sm text-gray-600">
-                <strong>Vendor:</strong> {{approval.skill.vendor.firstName}} {{approval.skill.vendor.lastName}} ({{approval.skill.vendor.companyName}})
-              </span>
-              <span class="text-sm text-gray-600">
-                <strong>Experience:</strong> {{approval.skill.yearsOfExperience}} years
-              </span>
-              <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + getProficiencyClass(approval.skill.proficiency)">
-                {{approval.skill.proficiency | titlecase}}
-              </span>
-            </div>
-          </div>
-          <div class="flex items-center gap-3">
-            <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + 
-              (approval.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-               approval.status === 'approved' ? 'bg-green-100 text-green-800' :
-               'bg-red-100 text-red-800')">
-              {{approval.status}}
-            </span>
-            <div class="flex gap-2" *ngIf="approval.status === 'pending'">
-              <button (click)="onOpenApprovalModal(approval.skill)"
-                      class="px-3 py-1 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors">
-                Approve
-              </button>
-              <button (click)="onOpenRejectModal(approval.skill)"
-                      class="px-3 py-1 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors">
-                Reject
-              </button>
-            </div>
-          </div>
+      <div>
+        <h3 class="text-xl font-semibold text-gray-900">Vendor Skill Approvals</h3>
+        <p class="text-sm text-gray-600 mt-1">Manage and review vendor skill submissions</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 filter-section">
+          <span class="text-sm text-gray-600">Filter:</span>
+          <select [(ngModel)]="skillApprovalFilter" (change)="onFilterChange()"
+                  class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white filter-select">
+            <option value="all">All Approvals</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
+        <div class="text-sm text-gray-500 skill-count">
+          {{ filteredSkillApprovals.length }} of {{ skillApprovals.length }} skills
         </div>
       </div>
     </div>
-    <p *ngIf="skillApprovals.length === 0" class="text-gray-500 text-center py-8">No vendor skill approvals found</p>
+  </div>
+
+  <!-- Table Section -->
+  <div class="overflow-x-auto table-container">
+    <table class="min-w-full divide-y divide-gray-200">
+      <!-- Table Header -->
+      <thead class="bg-gray-50">
+        <tr>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Skill Details
+          </th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Vendor
+          </th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Experience
+          </th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Proficiency
+          </th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Status
+          </th>
+          <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            Actions
+          </th>
+        </tr>
+      </thead>
+      
+      <!-- Table Body -->
+      <tbody class="bg-white divide-y divide-gray-200">
+        <tr *ngFor="let approval of filteredSkillApprovals; trackBy: trackById" 
+            class="hover:bg-gray-50 transition-colors">
+          
+          <!-- Skill Details Column -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-start">
+              <div class="flex-shrink-0 h-10 w-10">
+                <div class="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center skill-icon">
+                  <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                  </svg>
+                </div>
+              </div>
+              <div class="ml-4">
+                <div class="text-sm font-medium text-gray-900">
+                  {{approval.skill?.skill?.name || 'Unknown Skill'}}
+                </div>
+                <div class="text-sm text-gray-500" *ngIf="approval.skill.category">
+                  {{approval.skill.category}}
+                </div>
+                <div class="text-xs text-gray-400 mt-1 max-w-xs truncate" *ngIf="approval.skill.description">
+                  {{approval.skill.description}}
+                </div>
+              </div>
+            </div>
+          </td>
+          
+          <!-- Vendor Column -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="flex items-center">
+              <div class="flex-shrink-0 h-8 w-8">
+                <div class="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center vendor-avatar">
+                  <span class="text-sm font-medium text-gray-700">
+                    {{approval.skill.vendor.firstName?.charAt(0)}}{{approval.skill.vendor.lastName?.charAt(0)}}
+                  </span>
+                </div>
+              </div>
+              <div class="ml-3">
+                <div class="text-sm font-medium text-gray-900">
+                  {{approval.skill.vendor.firstName}} {{approval.skill.vendor.lastName}}
+                </div>
+                <div class="text-sm text-gray-500" *ngIf="approval.skill.vendor.companyName">
+                  {{approval.skill.vendor.companyName}}
+                </div>
+              </div>
+            </div>
+          </td>
+          
+          <!-- Experience Column -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <div class="text-sm text-gray-900">
+              <span class="font-medium">{{approval.skill.yearsOfExperience}}</span> years
+            </div>
+            <div class="text-xs experience-level" 
+                 [class]="approval.skill.yearsOfExperience >= 5 ? 'senior' : approval.skill.yearsOfExperience >= 2 ? 'mid-level' : 'junior'">
+              {{approval.skill.yearsOfExperience >= 5 ? 'Senior' : approval.skill.yearsOfExperience >= 2 ? 'Mid-level' : 'Junior'}} level
+            </div>
+          </td>
+          
+          <!-- Proficiency Column -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium proficiency-badge ' + getProficiencyClass(approval.skill.proficiency)">
+              <span class="w-2 h-2 rounded-full mr-1.5 proficiency-dot" 
+                    [class]="approval.skill.proficiency === 'beginner' ? 'bg-green-400' :
+                             approval.skill.proficiency === 'intermediate' ? 'bg-yellow-400' :
+                             approval.skill.proficiency === 'advanced' ? 'bg-blue-400' :
+                             'bg-purple-400'"></span>
+              {{approval.skill.proficiency | titlecase}}
+            </span>
+          </td>
+          
+          <!-- Status Column -->
+          <td class="px-6 py-4 whitespace-nowrap">
+            <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium status-badge ' + 
+              (approval.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+               approval.status === 'approved' ? 'bg-green-100 text-green-800' :
+               'bg-red-100 text-red-800')">
+              <span class="w-2 h-2 rounded-full mr-1.5" 
+                    [class]="approval.status === 'pending' ? 'bg-yellow-400' :
+                             approval.status === 'approved' ? 'bg-green-400' :
+                             'bg-red-400'"></span>
+              {{approval.status | titlecase}}
+            </span>
+            <div class="text-xs text-gray-500 mt-1" *ngIf="approval.status === 'rejected' && approval.skill.reviewNotes">
+              {{approval.skill.reviewNotes}}
+            </div>
+          </td>
+          
+          <!-- Actions Column -->
+          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+            <div class="flex items-center gap-2">
+              <!-- View Details Button -->
+              <button class="text-blue-600 hover:text-blue-900 px-2 py-1 rounded text-xs border border-blue-200 hover:bg-blue-50 transition-colors action-button">
+                View
+              </button>
+              
+              <!-- Action Buttons for Pending Skills -->
+              <div class="flex gap-1" *ngIf="approval.status === 'pending'">
+                <button (click)="onOpenApprovalModal(approval.skill)"
+                        class="text-green-600 hover:text-green-900 px-2 py-1 rounded text-xs border border-green-200 hover:bg-green-50 transition-colors action-button">
+                  Approve
+                </button>
+                <button (click)="onOpenRejectModal(approval.skill)"
+                        class="text-red-600 hover:text-red-900 px-2 py-1 rounded text-xs border border-red-200 hover:bg-red-50 transition-colors action-button">
+                  Reject
+                </button>
+              </div>
+              
+              <!-- Status Change Buttons for Approved/Rejected Skills -->
+              <div class="flex gap-1" *ngIf="approval.status === 'approved'">
+                <button class="text-yellow-600 hover:text-yellow-900 px-2 py-1 rounded text-xs border border-yellow-200 hover:bg-yellow-50 transition-colors action-button">
+                  Revoke
+                </button>
+              </div>
+              
+              <div class="flex gap-1" *ngIf="approval.status === 'rejected'">
+                <button class="text-green-600 hover:text-green-900 px-2 py-1 rounded text-xs border border-green-200 hover:bg-green-50 transition-colors action-button">
+                  Re-approve
+                </button>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <!-- Empty State -->
+    <div *ngIf="filteredSkillApprovals.length === 0" class="text-center py-12 empty-state">
+      <div class="mx-auto h-12 w-12 text-gray-400">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+        </svg>
+      </div>
+      <h3 class="mt-2 text-sm font-medium text-gray-900">No skills found</h3>
+      <p class="mt-1 text-sm text-gray-500">
+        {{ skillApprovalFilter === 'all' ? 'No vendor skills have been submitted yet.' : 
+           'No ' + skillApprovalFilter + ' skills found.' }}
+      </p>
+    </div>
   </div>
   
   <!-- Pagination -->
-  <app-pagination
-    *ngIf="!paginationState.isLoading && skillApprovals.length > 0"
-    [paginationState]="paginationState"
-    (pageChange)="onPageChange($event)">
-  </app-pagination>
+  <div class="px-6 py-4 border-t border-gray-200 pagination-container">
+    <app-pagination
+      *ngIf="!paginationState.isLoading && skillApprovals.length > 0"
+      [paginationState]="paginationState"
+      (pageChange)="onPageChange($event)">
+    </app-pagination>
+  </div>
 </div> 

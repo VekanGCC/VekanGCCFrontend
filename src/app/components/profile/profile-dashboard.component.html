@@ -80,6 +80,15 @@
                 <img src="assets/icons/lucide/lucide/x.svg" class="w-4 h-4 mr-2" alt="Reject" />
                 Reject User
               </button>
+              
+              <!-- Toggle Status Button for All Users -->
+              <button (click)="onToggleUserStatus()"
+                      [class]="'inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors ml-2 ' + 
+                      (profileData.user.isActive ? 'bg-red-600 hover:bg-red-700 text-white' : 'bg-green-600 hover:bg-green-700 text-white')">
+                <img [src]="profileData.user.isActive ? 'assets/icons/lucide/lucide/power-off.svg' : 'assets/icons/lucide/lucide/power.svg'" 
+                     class="w-4 h-4 mr-2" [alt]="profileData.user.isActive ? 'Deactivate' : 'Activate'" />
+                {{ profileData.user.isActive ? 'Deactivate' : 'Activate' }} User
+              </button>
             </div>
           </div>
         </div>

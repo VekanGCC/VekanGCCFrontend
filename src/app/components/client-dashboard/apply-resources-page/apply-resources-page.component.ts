@@ -144,7 +144,7 @@ export class ApplyResourcesPageComponent implements OnInit {
         console.log('🔧 Requirements response:', response);
         if (response.success && response.data) {
           // Only show open requirements
-          this.requirements = response.data.filter((req: Requirement) => req.status === 'open');
+          this.requirements = response.data.filter((req: Requirement) => req.status === 'active');
           this.filteredRequirements = [...this.requirements];
           
           console.log('🔧 Loaded requirements:', this.requirements.length);
@@ -168,7 +168,7 @@ export class ApplyResourcesPageComponent implements OnInit {
     // Use search parameter which now includes skill name search
     const params = {
       search: searchTerm,
-      status: 'open',
+              status: 'active',
       limit: 50 // Limit results for better performance
     };
     

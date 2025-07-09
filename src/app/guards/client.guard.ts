@@ -25,6 +25,18 @@ export const ClientGuard = () => {
       console.log('Client Guard: Is authenticated:', isAuthenticated, 'Is client:', isClient);
       
       if (user && isAuthenticated && isClient) {
+        // Check if registration is complete
+        if (!user.isRegistrationComplete) {
+          console.log('Client Guard: Registration incomplete, redirecting to signup');
+          router.navigate(['/signup'], { 
+            queryParams: { 
+              type: 'client',
+              step: user.registrationStep + 1 
+            } 
+          });
+          return false;
+        }
+        
         return true;
       }
       

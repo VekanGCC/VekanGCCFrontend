@@ -56,7 +56,7 @@ export class ApplyResourceModalComponent implements OnInit {
       next: (response) => {
         if (response.success && response.data) {
           // Only show open requirements
-          this.requirements = response.data.filter((req: Requirement) => req.status === 'open');
+          this.requirements = response.data.filter((req: Requirement) => req.status === 'active');
           this.filteredRequirements = [...this.requirements];
         }
         this.isLoading = false;

@@ -25,6 +25,18 @@ export const VendorGuard = () => {
       console.log('Vendor Guard: Is authenticated:', isAuthenticated, 'Is vendor:', isVendor);
       
       if (user && isAuthenticated && isVendor) {
+        // Check if registration is complete
+        if (!user.isRegistrationComplete) {
+          console.log('Vendor Guard: Registration incomplete, redirecting to signup');
+          router.navigate(['/signup'], { 
+            queryParams: { 
+              type: 'vendor',
+              step: user.registrationStep + 1 
+            } 
+          });
+          return false;
+        }
+        
         return true;
       }
       

@@ -8,6 +8,8 @@ export interface User {
   isActive: boolean;
   isEmailVerified: boolean;
   approvalStatus: 'pending' | 'approved' | 'rejected';
+  registrationStep: number;
+  isRegistrationComplete: boolean;
   companyName: string;
   contactPerson: string;
   phone: string;

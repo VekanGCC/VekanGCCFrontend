@@ -19,6 +19,7 @@ export interface ClientRegistration {
     country: string;
     pinCode: string;
   };
+  paymentTerms: string;
   panNumber: string;
   registeredUnderESI: boolean;
   registeredUnderPF: boolean;

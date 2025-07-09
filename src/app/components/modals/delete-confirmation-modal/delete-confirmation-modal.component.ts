@@ -21,13 +21,13 @@ import { CommonModule } from '@angular/common';
           <div class="items-center px-4 py-3">
             <button
               (click)="onConfirm()"
-              class="px-4 py-2 bg-red-500 text-white text-base font-medium rounded-md w-24 mr-2 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300">
-              Delete
+              class="px-4 py-2 text-white text-base font-medium rounded-md w-24 mr-2 focus:outline-none focus:ring-2 {{confirmButtonClass}}">
+              {{confirmText}}
             </button>
             <button
               (click)="onCancel()"
               class="px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md w-24 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300">
-              Cancel
+              {{cancelText}}
             </button>
           </div>
         </div>
@@ -39,6 +39,9 @@ import { CommonModule } from '@angular/common';
 export class DeleteConfirmationModalComponent {
   @Input() title: string = 'Confirm Delete';
   @Input() message: string = 'Are you sure you want to delete this item? This action cannot be undone.';
+  @Input() confirmText: string = 'Delete';
+  @Input() cancelText: string = 'Cancel';
+  @Input() confirmButtonClass: string = 'bg-red-500 hover:bg-red-600 focus:ring-red-300';
   @Output() confirm = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
 
