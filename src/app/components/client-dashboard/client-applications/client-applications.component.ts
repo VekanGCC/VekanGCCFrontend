@@ -14,11 +14,13 @@ import { PaginationState } from '../../../models/pagination.model';
 import { ClientService } from '../../../services/client.service';
 import { ClientApplicationsService } from '../../../services/client-applications.service';
 import { Router, ActivatedRoute } from '@angular/router';
+import { ApplicationFiltersComponent, ApplicationFilters } from '../../shared/application-filters/application-filters.component';
+import { ApplicationStatusService } from '../../../services/application-status.service';
 
 @Component({
   selector: 'app-client-applications',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, AgGridModule, PaginationComponent],
+  imports: [CommonModule, LucideAngularModule, AgGridModule, PaginationComponent, ApplicationFiltersComponent],
   templateUrl: './client-applications.component.html',
   styleUrls: ['./client-applications.component.scss']
 })
@@ -35,6 +37,14 @@ export class ClientApplicationsComponent implements OnInit, OnDestroy {
     hasPreviousPage: false
   };
   currentFilter: any = {};
+  
+  // Filtering properties
+  currentFilters: ApplicationFilters = {
+    category: 'active',
+    statuses: [],
+    searchTerm: undefined
+  };
+  applicationCounts = { active: 0, inactive: 0, all: 0 };
 
   @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
 
@@ -224,12 +234,43 @@ export class ClientApplicationsComponent implements OnInit, OnDestroy {
     private clientService: ClientService,
     private clientApplicationsService: ClientApplicationsService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private applicationStatusService: ApplicationStatusService
   ) {}
 
   ngOnInit(): void {
     console.log('🔧 ClientApplicationsComponent: ngOnInit called');
+    this.initializeFilters();
     this.checkQueryParams();
+  }
+
+  private initializeFilters() {
+    this.applicationStatusService.getActiveStatuses().subscribe(activeStatuses => {
+      this.currentFilters = {
+        category: 'active',
+        statuses: activeStatuses,
+        searchTerm: undefined
+      };
+      this.loadApplicationCounts();
+    });
+  }
+
+  private loadApplicationCounts() {
+    // Load counts for active, inactive, and all applications
+    this.applicationStatusService.getStatusMapping().subscribe(mapping => {
+      // For now, we'll use placeholder counts
+      // In a real implementation, you'd call API endpoints to get actual counts
+      this.applicationCounts = {
+        active: this.applications.filter(app => mapping.active.includes(app.status)).length,
+        inactive: this.applications.filter(app => mapping.inactive.includes(app.status)).length,
+        all: this.applications.length
+      };
+    });
+  }
+
+  onFiltersChanged(filters: ApplicationFilters) {
+    this.currentFilters = filters;
+    this.loadApplications();
   }
 
   ngOnDestroy(): void {
@@ -253,47 +294,83 @@ export class ClientApplicationsComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.paginationState.isLoading = true;
 
-    const params: any = {
-      page: this.paginationState.currentPage,
-      limit: this.paginationState.pageSize
-    };
+    // Get status mapping first, then make the API call
+    this.applicationStatusService.getStatusMapping().subscribe(statusMapping => {
+      const params: any = {
+        page: this.paginationState.currentPage,
+        limit: this.paginationState.pageSize
+      };
 
-    // Add filter if present
-    if (this.currentFilter?.requirementId) {
-      params.requirementId = this.currentFilter.requirementId;
-    }
-
-    this.clientService.getApplications(params).subscribe({
-      next: (response) => {
-        console.log('✅ ClientApplications: Applications loaded:', response);
-        if (response.success && response.data) {
-          this.applications = response.data;
-          
-          // Update pagination state
-          const paginationData = response.pagination || response.meta;
-          if (paginationData) {
-            this.paginationState = {
-              currentPage: paginationData.page || 1,
-              pageSize: paginationData.limit || 10,
-              totalItems: paginationData.total || 0,
-              totalPages: paginationData.totalPages || Math.ceil((paginationData.total || 0) / (paginationData.limit || 10)),
-              isLoading: false,
-              hasNextPage: (paginationData.page || 1) < (paginationData.totalPages || Math.ceil((paginationData.total || 0) / (paginationData.limit || 10))),
-              hasPreviousPage: (paginationData.page || 1) > 1
-            };
-          }
-        }
-        this.isLoading = false;
-        this.paginationState.isLoading = false;
-        this.changeDetectorRef.detectChanges();
-      },
-      error: (error) => {
-        console.error('❌ ClientApplications: Error loading applications:', error);
-        this.applications = [];
-        this.isLoading = false;
-        this.paginationState.isLoading = false;
-        this.changeDetectorRef.detectChanges();
+      // Add filter if present
+      if (this.currentFilter?.requirementId) {
+        params.requirementId = this.currentFilter.requirementId;
       }
+
+      // Add status filters based on current category and selected statuses
+      if (this.currentFilters.statuses && this.currentFilters.statuses.length > 0) {
+        // User has selected specific statuses - use OR logic
+        params.status = this.currentFilters.statuses;
+      } else {
+        // No specific statuses selected - use all statuses from current category
+        let categoryStatuses: string[] = [];
+        
+        switch (this.currentFilters.category) {
+          case 'active':
+            categoryStatuses = statusMapping.active;
+            break;
+          case 'inactive':
+            categoryStatuses = statusMapping.inactive;
+            break;
+          case 'all':
+            categoryStatuses = statusMapping.all;
+            break;
+        }
+        
+        // Add all statuses from the current category
+        params.status = categoryStatuses;
+      }
+
+      // Add search term if provided
+      if (this.currentFilters.searchTerm) {
+        params.search = this.currentFilters.searchTerm;
+      }
+
+      console.log('🔄 ClientApplications: Loading applications with filters:', this.currentFilters);
+      console.log('🔄 ClientApplications: API params:', params);
+
+      this.clientService.getApplications(params).subscribe({
+        next: (response) => {
+          console.log('✅ ClientApplications: Applications loaded:', response);
+          if (response.success && response.data) {
+            this.applications = response.data;
+            
+            // Update pagination state
+            const paginationData = response.pagination || response.meta;
+            if (paginationData) {
+              this.paginationState = {
+                currentPage: paginationData.page || 1,
+                pageSize: paginationData.limit || 10,
+                totalItems: paginationData.total || 0,
+                totalPages: paginationData.totalPages || Math.ceil((paginationData.total || 0) / (paginationData.limit || 10)),
+                isLoading: false,
+                hasNextPage: (paginationData.page || 1) < (paginationData.totalPages || Math.ceil((paginationData.total || 0) / (paginationData.limit || 10))),
+                hasPreviousPage: (paginationData.page || 1) > 1
+              };
+            }
+          }
+          this.isLoading = false;
+          this.paginationState.isLoading = false;
+          this.loadApplicationCounts(); // Update counts after loading applications
+          this.changeDetectorRef.detectChanges();
+        },
+        error: (error) => {
+          console.error('❌ ClientApplications: Error loading applications:', error);
+          this.applications = [];
+          this.isLoading = false;
+          this.paginationState.isLoading = false;
+          this.changeDetectorRef.detectChanges();
+        }
+      });
     });
   }
 

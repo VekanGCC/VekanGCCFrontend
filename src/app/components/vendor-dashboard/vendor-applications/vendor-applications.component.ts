@@ -18,6 +18,8 @@ import { VendorService } from '../../../services/vendor.service';
 import { VendorApplicationsService } from '../../../services/vendor-applications.service';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
+import { ApplicationFiltersComponent, ApplicationFilters } from '../../shared/application-filters/application-filters.component';
+import { ApplicationStatusService } from '../../../services/application-status.service';
 
 export interface ApplicationActionData {
   applicationId: string;
@@ -39,7 +41,7 @@ export interface ApplicationActionData {
 @Component({
   selector: 'app-vendor-applications',
   standalone: true,
-  imports: [CommonModule, AgGridModule, PaginationComponent, ApplicationActionModalComponent, ApplicationHistoryModalComponent],
+  imports: [CommonModule, AgGridModule, PaginationComponent, ApplicationActionModalComponent, ApplicationHistoryModalComponent, ApplicationFiltersComponent],
   templateUrl: './vendor-applications.component.html',
   styleUrls: ['./vendor-applications.component.scss']
 })
@@ -56,6 +58,14 @@ export class VendorApplicationsComponent implements OnInit, OnChanges {
     hasPreviousPage: false
   };
   resourceFilter: string = '';
+  
+  // Filtering properties
+  currentFilters: ApplicationFilters = {
+    category: 'active',
+    statuses: [],
+    searchTerm: undefined
+  };
+  applicationCounts = { active: 0, inactive: 0, all: 0 };
 
   @Output() updateApplicationStatus = new EventEmitter<{applicationId: string, status: string, notes?: string, actionData?: ApplicationActionData}>();
 
@@ -254,11 +264,14 @@ export class VendorApplicationsComponent implements OnInit, OnChanges {
     private vendorService: VendorService,
     private vendorApplicationsService: VendorApplicationsService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private applicationStatusService: ApplicationStatusService
   ) {}
 
   ngOnInit(): void {
     console.log('🔧 VendorApplicationsComponent: ngOnInit called');
+    
+    this.initializeFilters();
     
     // Get resourceId from route parameters
     this.activatedRoute.queryParams.subscribe(params => {
@@ -266,6 +279,35 @@ export class VendorApplicationsComponent implements OnInit, OnChanges {
       console.log('🔧 VendorApplicationsComponent: Resource filter from route:', this.resourceFilter);
       this.loadApplications();
     });
+  }
+
+  private initializeFilters() {
+    this.applicationStatusService.getActiveStatuses().subscribe(activeStatuses => {
+      this.currentFilters = {
+        category: 'active',
+        statuses: activeStatuses,
+        searchTerm: undefined
+      };
+      this.loadApplicationCounts();
+    });
+  }
+
+  private loadApplicationCounts() {
+    // Load counts for active, inactive, and all applications
+    this.applicationStatusService.getStatusMapping().subscribe(mapping => {
+      // For now, we'll use placeholder counts
+      // In a real implementation, you'd call API endpoints to get actual counts
+      this.applicationCounts = {
+        active: this.applications.filter(app => mapping.active.includes(app.status)).length,
+        inactive: this.applications.filter(app => mapping.inactive.includes(app.status)).length,
+        all: this.applications.length
+      };
+    });
+  }
+
+  onFiltersChanged(filters: ApplicationFilters) {
+    this.currentFilters = filters;
+    this.loadApplications();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -284,10 +326,44 @@ export class VendorApplicationsComponent implements OnInit, OnChanges {
     this.isLoading = true;
     this.paginationState.isLoading = true;
 
-    const params: PaginationParams = {
-      page: this.paginationState.currentPage,
-      limit: this.paginationState.pageSize
-    };
+    // Get status mapping first, then make the API call
+    this.applicationStatusService.getStatusMapping().subscribe(statusMapping => {
+      const params: PaginationParams = {
+        page: this.paginationState.currentPage,
+        limit: this.paginationState.pageSize
+      };
+
+      // Add status filters based on current category and selected statuses
+      if (this.currentFilters.statuses && this.currentFilters.statuses.length > 0) {
+        // User has selected specific statuses - use OR logic
+        (params as any).status = this.currentFilters.statuses;
+      } else {
+        // No specific statuses selected - use all statuses from current category
+        let categoryStatuses: string[] = [];
+        
+        switch (this.currentFilters.category) {
+          case 'active':
+            categoryStatuses = statusMapping.active;
+            break;
+          case 'inactive':
+            categoryStatuses = statusMapping.inactive;
+            break;
+          case 'all':
+            categoryStatuses = statusMapping.all;
+            break;
+        }
+        
+        // Add all statuses from the current category
+        (params as any).status = categoryStatuses;
+      }
+
+      // Add search term if provided
+      if (this.currentFilters.searchTerm) {
+        (params as any).search = this.currentFilters.searchTerm;
+      }
+
+    console.log('🔄 VendorApplications: Loading applications with filters:', this.currentFilters);
+    console.log('🔄 VendorApplications: API params:', params);
 
     // Use different service method based on whether resource filter is provided
     let observable: Observable<PaginatedResponse<any>>;
@@ -300,33 +376,35 @@ export class VendorApplicationsComponent implements OnInit, OnChanges {
       observable = this.vendorService.getApplications(params);
     }
 
-    observable.subscribe({
-      next: (response) => {
-        console.log('✅ VendorApplications: Applications loaded successfully:', response);
-        this.applications = response.data || [];
-        
-        // Handle pagination data - check both meta and pagination properties
-        const paginationData = response.meta || response.pagination;
-        this.paginationState = {
-          ...this.paginationState,
-          totalItems: paginationData?.total || 0,
-          totalPages: (paginationData as any)?.pages || paginationData?.totalPages || 0,
-          hasNextPage: (paginationData?.page || 1) < ((paginationData as any)?.pages || paginationData?.totalPages || 1),
-          hasPreviousPage: (paginationData?.page || 1) > 1,
-          isLoading: false
-        };
-        
-        console.log('✅ VendorApplications: Pagination state updated:', this.paginationState);
-        console.log('✅ VendorApplications: Applications array:', this.applications);
-        
-        this.isLoading = false;
-        this.refreshGridData();
-      },
-      error: (error) => {
-        console.error('❌ VendorApplications: Error loading applications:', error);
-        this.isLoading = false;
-        this.paginationState.isLoading = false;
-      }
+          observable.subscribe({
+        next: (response) => {
+          console.log('✅ VendorApplications: Applications loaded successfully:', response);
+          this.applications = response.data || [];
+          
+          // Handle pagination data - check both meta and pagination properties
+          const paginationData = response.meta || response.pagination;
+          this.paginationState = {
+            ...this.paginationState,
+            totalItems: paginationData?.total || 0,
+            totalPages: (paginationData as any)?.pages || paginationData?.totalPages || 0,
+            hasNextPage: (paginationData?.page || 1) < ((paginationData as any)?.pages || paginationData?.totalPages || 1),
+            hasPreviousPage: (paginationData?.page || 1) > 1,
+            isLoading: false
+          };
+          
+          console.log('✅ VendorApplications: Pagination state updated:', this.paginationState);
+          console.log('✅ VendorApplications: Applications array:', this.applications);
+          
+          this.isLoading = false;
+          this.loadApplicationCounts(); // Update counts after loading applications
+          this.refreshGridData();
+        },
+        error: (error) => {
+          console.error('❌ VendorApplications: Error loading applications:', error);
+          this.isLoading = false;
+          this.paginationState.isLoading = false;
+        }
+      });
     });
   }
 

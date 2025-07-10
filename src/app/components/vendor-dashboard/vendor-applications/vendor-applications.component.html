@@ -1,4 +1,10 @@
 <div class="space-y-6">
+  <!-- Application Filters -->
+  <app-application-filters
+    [totalCounts]="applicationCounts"
+    (filtersChanged)="onFiltersChanged($event)"
+  ></app-application-filters>
+
   <!-- Applications Table -->
   <div class="bg-white rounded-lg shadow">
     <div class="p-6">

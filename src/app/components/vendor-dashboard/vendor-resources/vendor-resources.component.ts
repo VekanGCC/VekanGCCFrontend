@@ -18,11 +18,12 @@ import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { ResourceModalComponent } from '../../modals/resource-modal/resource-modal.component';
+import { DeactivationConfirmationModalComponent, DeactivationConfirmationData } from '../../shared/deactivation-confirmation-modal/deactivation-confirmation-modal.component';
 
 @Component({
   selector: 'app-vendor-resources',
   standalone: true,
-  imports: [CommonModule, AgGridModule, PaginationComponent, ResourceModalComponent],
+  imports: [CommonModule, AgGridModule, PaginationComponent, ResourceModalComponent, DeactivationConfirmationModalComponent],
   templateUrl: './vendor-resources.component.html',
   styleUrls: ['./vendor-resources.component.scss']
 })
@@ -31,6 +32,8 @@ export class VendorResourcesComponent implements OnInit, OnChanges {
   isLoading = false;
   showResourceModal = false;
   resourceToEdit: Resource | null = null;
+  showDeactivationModal = false;
+  deactivationData: DeactivationConfirmationData | null = null;
   paginationState: PaginationState = {
     currentPage: 1,
     pageSize: 10,

@@ -1,5 +1,54 @@
 /* Component-specific styles can be added here */
 
+/* Container-based Layout Styles */
+.main-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.sidebar-container {
+  width: 256px; /* w-64 */
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.content-container {
+  flex: 1;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar for content area */
+.content-area::-webkit-scrollbar {
+  width: 8px;
+}
+
+.content-area::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.content-area::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.content-area::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
 /* Dark Theme Sidebar Styles - Inspired by assets sidebar */
 .sidebar {
   height: 100%;
@@ -32,7 +81,16 @@
 .nav-menu {
   flex: 1;
   padding: 20px 0;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Stats section styling - Integrated into navigation */
+.stats-section-integrated {
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto;
 }
 
 .nav-group {
@@ -232,7 +290,7 @@
 
 /* Mobile responsive styles */
 @media (max-width: 1024px) {
-  .sidebar-mobile {
+  .sidebar-container {
     position: fixed;
     top: 0;
     left: 0;
@@ -243,9 +301,9 @@
     transition: transform 0.3s ease-in-out;
   }
 
-  .main-content-mobile {
-    margin-left: 0;
+  .content-container {
     width: 100%;
+    margin-left: 0;
   }
 
   .mobile-menu-btn {
@@ -343,7 +401,7 @@ body.sidebar-open {
 
 /* Mobile responsive adjustments */
 @media (max-width: 1024px) {
-  .sidebar-open {
+  .sidebar-container.open {
     transform: translateX(0);
   }
 }
