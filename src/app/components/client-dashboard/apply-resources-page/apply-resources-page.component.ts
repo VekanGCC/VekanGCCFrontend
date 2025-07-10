@@ -9,6 +9,7 @@ import { AuthService } from '../../../services/auth.service';
 import { ClientService } from '../../../services/client.service';
 import { AppService } from '../../../services/app.service';
 import { SkillsService } from '../../../services/skills.service';
+import { ApiService } from '../../../services/api.service';
 import { User } from '../../../models/user.model';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 
@@ -46,6 +47,7 @@ export class ApplyResourcesPageComponent implements OnInit {
     private clientService: ClientService,
     private appService: AppService,
     private skillsService: SkillsService,
+    private apiService: ApiService,
     private changeDetectorRef: ChangeDetectorRef,
     private route: ActivatedRoute,
     private router: Router,
@@ -99,21 +101,45 @@ export class ApplyResourcesPageComponent implements OnInit {
     
     console.log('🔧 ApplyResourcesPage: Loading resources with IDs:', this.selectedResourceIds);
     
-    // First, try to get resources from the current app service state
-    let availableResources = this.appService.resources;
-    console.log('🔧 ApplyResourcesPage: Current resources in app service:', availableResources);
+    // Fetch resource data by IDs from the API
+    this.loadResourcesByIds(this.selectedResourceIds);
+  }
+
+  private loadResourcesByIds(resourceIds: string[]): void {
+    console.log('🔧 ApplyResourcesPage: Fetching resources by IDs:', resourceIds);
+    this.isLoading = true;
     
-    // If no resources are loaded, try to reload them
-    if (availableResources.length === 0) {
-      console.log('🔧 ApplyResourcesPage: No resources in app service, reloading...');
-      this.appService.reloadResources().then(() => {
-        availableResources = this.appService.resources;
-        console.log('🔧 ApplyResourcesPage: Resources after reload:', availableResources);
-        this.loadResourcesFromAvailableData(availableResources);
+    // Use Promise.all to fetch all resources in parallel
+    const resourcePromises = resourceIds.map(id => 
+      this.apiService.getResource(id).toPromise()
+    );
+    
+    Promise.all(resourcePromises)
+      .then((responses: any[]) => {
+        console.log('🔧 ApplyResourcesPage: Resource API responses:', responses);
+        
+        // Extract successful responses
+        this.resources = responses
+          .filter((response: any) => response && response.success && response.data)
+          .map((response: any) => response.data);
+        
+        console.log('🔧 ApplyResourcesPage: Loaded resources:', this.resources);
+        
+        if (this.resources.length === 0) {
+          this.errorMessage = 'Resources not found. Please try again.';
+        } else {
+          this.errorMessage = '';
+        }
+        
+        this.isLoading = false;
+        this.changeDetectorRef.detectChanges();
+      })
+      .catch(error => {
+        console.error('🔧 ApplyResourcesPage: Error fetching resources:', error);
+        this.errorMessage = 'Failed to load resources. Please try again.';
+        this.isLoading = false;
+        this.changeDetectorRef.detectChanges();
       });
-    } else {
-      this.loadResourcesFromAvailableData(availableResources);
-    }
   }
 
   private loadResourcesFromAvailableData(availableResources: Resource[]): void {
@@ -453,4 +479,5 @@ export class ApplyResourcesPageComponent implements OnInit {
     // Fallback
     return 'Unknown Skill';
   }
+
 } 

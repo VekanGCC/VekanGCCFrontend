@@ -107,16 +107,20 @@ export class ClientApplicationsComponent implements OnInit, OnDestroy {
     { 
       headerName: 'Status', 
       field: 'status', 
-      flex: 1,
+      flex: 2,
+      width: 200,
       cellStyle: { display: 'flex', alignItems: 'center', justifyContent: 'flex-start' },
       cellRenderer: (params: any) => {
         const status = params.data.status;
         const statusClass = this.getStatusClass(status);
         const statusText = this.formatStatus(status);
         
+        // Truncate to 15 characters and add ellipsis if longer
+        const displayText = statusText.length > 15 ? statusText.substring(0, 15) + '...' : statusText;
+        
         return `
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}">
-            ${statusText}
+          <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusClass}" title="${statusText}">
+            ${displayText}
           </span>
         `;
       }
@@ -460,6 +464,10 @@ export class ClientApplicationsComponent implements OnInit, OnDestroy {
   }
 
   formatStatus(status: string): string {
+    // Special display for applied status to show pending admin approval
+    if (status.toLowerCase() === 'applied') {
+      return 'Applied: Pending Admin Approval';
+    }
     return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   }
 
@@ -559,7 +567,6 @@ export class ClientApplicationsComponent implements OnInit, OnDestroy {
     switch (currentStatus) {
       case 'applied':
         return [
-          { value: 'shortlisted', label: 'Shortlist' },
           { value: 'rejected', label: 'Reject' }
         ];
       case 'shortlisted':
