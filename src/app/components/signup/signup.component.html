@@ -1,38 +1,38 @@
-<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-8">
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-4 sm:py-8">
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
     <!-- Header -->
-    <div class="text-center mb-8">
-      <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl mb-4">
-        <img src="assets/icons/lucide/lucide/user-plus.svg" alt="user-plus" class="w-8 h-8 text-white" />
+    <div class="text-center mb-6 sm:mb-8">
+      <div class="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl mb-3 sm:mb-4">
+        <img src="assets/icons/lucide/lucide/user-plus.svg" alt="user-plus" class="w-6 h-6 sm:w-8 sm:h-8 text-white" />
       </div>
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">
+      <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
         {{userType ? userTypeTitle + ' Registration' : 'Join TalentBridge'}}
       </h1>
-      <p class="text-gray-600">
+      <p class="text-sm sm:text-base text-gray-600">
         {{userType ? 'Complete your registration to get started' : 'Choose your account type to begin'}}
       </p>
     </div>
 
     <!-- User Type Selection (Step 0) -->
-    <div *ngIf="currentStep === 0" class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
-      <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Choose Your Account Type</h2>
+    <div *ngIf="currentStep === 0" class="bg-white rounded-2xl shadow-xl border border-gray-100 p-4 sm:p-8">
+      <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6 text-center">Choose Your Account Type</h2>
       
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         <!-- Vendor Card -->
         <div class="relative">
           <button
             (click)="selectUserType('vendor')"
-            class="w-full p-6 bg-white border-2 border-gray-200 rounded-xl hover:border-blue-500 hover:shadow-lg transition-all duration-200 text-left">
-            <div class="flex items-center justify-between mb-4">
-              <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <img src="assets/icons/lucide/lucide/store.svg" alt="store" class="w-6 h-6 text-blue-600" />
+            class="w-full p-4 sm:p-6 bg-white border-2 border-gray-200 rounded-xl hover:border-blue-500 hover:shadow-lg transition-all duration-200 text-left">
+            <div class="flex items-center justify-between mb-3 sm:mb-4">
+              <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <img src="assets/icons/lucide/lucide/store.svg" alt="store" class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
               </div>
-              <div class="text-sm font-medium text-blue-600 bg-blue-50 px-3 py-1 rounded-full">Vendor</div>
+              <div class="text-xs sm:text-sm font-medium text-blue-600 bg-blue-50 px-2 sm:px-3 py-1 rounded-full">Vendor</div>
             </div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-2">Vendor Account</h3>
-            <p class="text-gray-600 mb-4">Register as a service provider to offer your services to clients.</p>
-            <div class="flex items-center text-sm text-gray-500">
-              <img src="assets/icons/lucide/lucide/circle-check.svg" alt="check-circle" class="w-4 h-4 mr-2 text-green-500" />
+            <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-2">Vendor Account</h3>
+            <p class="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">Register as a service provider to offer your services to clients.</p>
+            <div class="flex items-center text-xs sm:text-sm text-gray-500">
+              <img src="assets/icons/lucide/lucide/circle-check.svg" alt="check-circle" class="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-green-500" />
               <span>Offer services to clients</span>
             </div>
           </button>
@@ -42,25 +42,25 @@
         <div class="relative">
           <button
             (click)="selectUserType('client')"
-            class="w-full p-6 bg-white border-2 border-gray-200 rounded-xl hover:border-blue-500 hover:shadow-lg transition-all duration-200 text-left">
-            <div class="flex items-center justify-between mb-4">
-              <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
-                <img src="assets/icons/lucide/lucide/home.svg" alt="home" class="w-6 h-6 text-indigo-600" />
+            class="w-full p-4 sm:p-6 bg-white border-2 border-gray-200 rounded-xl hover:border-blue-500 hover:shadow-lg transition-all duration-200 text-left">
+            <div class="flex items-center justify-between mb-3 sm:mb-4">
+              <div class="w-10 h-10 sm:w-12 sm:h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                <img src="assets/icons/lucide/lucide/home.svg" alt="home" class="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600" />
               </div>
-              <div class="text-sm font-medium text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">Client</div>
+              <div class="text-xs sm:text-sm font-medium text-indigo-600 bg-indigo-50 px-2 sm:px-3 py-1 rounded-full">Client</div>
             </div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-2">Client Account</h3>
-            <p class="text-gray-600 mb-4">Register as a client to find and hire service providers.</p>
-            <div class="flex items-center text-sm text-gray-500">
-              <img src="assets/icons/lucide/lucide/circle-check.svg" alt="check-circle" class="w-4 h-4 mr-2 text-green-500" />
+            <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-2">Client Account</h3>
+            <p class="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4">Register as a client to find and hire service providers.</p>
+            <div class="flex items-center text-xs sm:text-sm text-gray-500">
+              <img src="assets/icons/lucide/lucide/circle-check.svg" alt="check-circle" class="w-3 h-3 sm:w-4 sm:h-4 mr-2 text-green-500" />
               <span>Post requirements and hire vendors</span>
             </div>
           </button>
         </div>
       </div>
 
-      <div class="mt-8 text-center">
-        <p class="text-sm text-gray-600">
+      <div class="mt-6 sm:mt-8 text-center">
+        <p class="text-xs sm:text-sm text-gray-600">
           Already have an account?
           <button
             (click)="navigateToLogin()"
@@ -74,10 +74,10 @@
     <!-- Registration Steps (Steps 1-5) -->
     <div *ngIf="currentStep > 0">
       <!-- Progress Bar -->
-      <div class="mb-8">
+      <div class="mb-6 sm:mb-8">
         <div class="flex items-center justify-between mb-2">
-          <span class="text-sm font-medium text-gray-700">Step {{currentStep}} of {{totalSteps}}</span>
-          <span class="text-sm text-gray-500">{{getProgressPercentage()}}% Complete</span>
+          <span class="text-xs sm:text-sm font-medium text-gray-700">Step {{currentStep}} of {{totalSteps}}</span>
+          <span class="text-xs sm:text-sm text-gray-500">{{getProgressPercentage()}}% Complete</span>
         </div>
         <div class="w-full bg-gray-200 rounded-full h-2">
           <div class="bg-gradient-to-r from-blue-600 to-indigo-600 h-2 rounded-full transition-all duration-300" 
@@ -86,23 +86,23 @@
       </div>
 
       <!-- Step Indicators -->
-      <div class="flex justify-center mb-8">
-        <div class="flex items-center space-x-4">
+      <div class="flex justify-center mb-6 sm:mb-8">
+        <div class="flex items-center space-x-2 sm:space-x-4">
           <div *ngFor="let step of [1,2,3,4,5]; let i = index" class="flex items-center">
-            <div [class]="'w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ' + 
+            <div [class]="'w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-medium ' + 
               (step <= currentStep 
                 ? 'bg-blue-600 text-white' 
                 : 'bg-gray-200 text-gray-500')">
               {{step}}
             </div>
-            <div *ngIf="i < 4" [class]="'w-8 h-0.5 ' + 
+            <div *ngIf="i < 4" [class]="'w-4 sm:w-8 h-0.5 ' + 
               (step < currentStep ? 'bg-blue-600' : 'bg-gray-200')"></div>
           </div>
         </div>
       </div>
 
       <!-- Form Container -->
-      <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+      <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-4 sm:p-8">
         <!-- Step 1: Company Information -->
         <div *ngIf="currentStep === 1">
           <h2 class="text-2xl font-bold text-gray-900 mb-6">Company Information</h2>
