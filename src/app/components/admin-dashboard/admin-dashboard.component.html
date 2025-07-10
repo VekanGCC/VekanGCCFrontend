@@ -267,4 +267,13 @@
     </div>
   </div>
 
+  <!-- Application History Modal -->
+  <app-application-history-modal
+    [applicationId]="selectedApplicationId"
+    [isVisible]="showHistoryModal"
+    [isLoading]="false"
+    [history]="applicationHistory"
+    (close)="closeHistoryModal()">
+  </app-application-history-modal>
+
 </div>

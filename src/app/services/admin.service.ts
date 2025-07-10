@@ -208,6 +208,10 @@ export class AdminService {
     });
   }
 
+  getApplicationHistory(applicationId: string): Observable<any> {
+    return this.apiService.get<any>(`/applications/${applicationId}/history`);
+  }
+
   approveVendorSkill(skillId: string): Observable<ApiResponse<any>> {
     return this.apiService.updateVendorSkillStatus(skillId, 'approved');
   }

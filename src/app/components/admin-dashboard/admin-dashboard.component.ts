@@ -34,6 +34,8 @@ import { UsersManagementComponent } from './users-management/users-management.co
 import { ProfileDashboardComponent } from '../profile/profile-dashboard.component';
 import { AdminReportsComponent } from './admin-reports/admin-reports.component';
 import { WorkflowManagementComponent } from './workflow-management/workflow-management.component';
+import { AdminApplicationsService } from '../../services/admin-applications.service';
+import { ApplicationHistoryModalComponent, ApplicationHistoryEntry } from '../modals/application-history-modal/application-history-modal.component';
 
 interface ApiResponse<T> {
   success: boolean;
@@ -75,7 +77,8 @@ interface NavigationTab {
     UsersManagementComponent,
     ProfileDashboardComponent,
     AdminReportsComponent,
-    WorkflowManagementComponent
+    WorkflowManagementComponent,
+    ApplicationHistoryModalComponent
   ],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.scss']
@@ -120,11 +123,14 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   showEditCategoryModal = false;
   showSkillApprovalModal = false;
   showSkillRejectModal = false;
+  showHistoryModal = false;
   selectedVendorSkill: VendorSkill | null = null;
   selectedUserForProfile: User | null = null;
   selectedCategoryForEdit: Category | null = null;
   skillRejectNotes = '';
   profileRefreshTrigger = 0; // Trigger to refresh profile data
+  applicationHistory: ApplicationHistoryEntry[] = [];
+  selectedApplicationId: string = '';
 
   // Filters
   transactionFilter = 'all';
@@ -244,6 +250,7 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     private appService: AppService,
     private vendorManagementService: VendorManagementService,
     private workflowService: WorkflowService,
+    private adminApplicationsService: AdminApplicationsService,
     private router: Router,
     private apiService: ApiService,
     private changeDetectorRef: ChangeDetectorRef
@@ -292,6 +299,34 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.adminService.applications$.subscribe(applications => {
         this.allApplications = applications;
+      })
+    );
+
+    // Subscribe to admin applications service modal actions
+    this.subscriptions.push(
+      this.adminApplicationsService.modalAction$.subscribe(action => {
+        debugger;
+        if (action.type === 'viewHistory' && action.applicationId) {
+          debugger;
+          if (action.history && action.applicationDetails) {
+            debugger;
+            // Use the data provided by the service
+            this.handleViewHistory({
+              applicationId: action.applicationId,
+              history: action.history,
+              applicationDetails: action.applicationDetails
+            });
+          } else {
+            debugger;
+            // Fallback to loading data manually
+            this.handleViewApplicationHistory(action.applicationId);
+          }
+        } else if (action.type === 'viewDetails' && action.application) {
+          debugger;
+          this.handleViewApplicationDetails(action.application);
+        } else {
+          debugger;
+        }
       })
     );
   }
@@ -1103,5 +1138,54 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  // Application History Modal Methods
+  handleViewApplicationHistory(applicationId: string): void {
+    this.selectedApplicationId = applicationId;
+    this.showHistoryModal = true;
+    this.loadApplicationHistory(applicationId);
+  }
+
+  handleViewHistory(data: {
+    applicationId: string;
+    history: any[];
+    applicationDetails: any;
+  }): void {
+    this.selectedApplicationId = data.applicationId;
+    this.applicationHistory = data.history;
+    this.showHistoryModal = true;
+    this.changeDetectorRef.detectChanges();
+  }
+
+  handleViewApplicationDetails(application: Application): void {
+    console.log('🔧 AdminDashboard: Viewing application details for:', application._id);
+    // TODO: Implement application details modal
+  }
+
+  private loadApplicationHistory(applicationId: string): void {
+    this.adminService.getApplicationHistory(applicationId).subscribe({
+      next: (response) => {
+        if (response.success && response.data) {
+          this.applicationHistory = response.data;
+        } else {
+          this.applicationHistory = [];
+        }
+        this.changeDetectorRef.detectChanges();
+      },
+      error: (error) => {
+        console.error('🔧 AdminDashboard: Error loading application history:', error);
+        this.applicationHistory = [];
+        this.changeDetectorRef.detectChanges();
+      }
+    });
+  }
+
+  closeHistoryModal(): void {
+    console.log('🔧 AdminDashboard: Closing history modal');
+    this.showHistoryModal = false;
+    this.selectedApplicationId = '';
+    this.applicationHistory = [];
+    this.changeDetectorRef.detectChanges();
   }
 }
