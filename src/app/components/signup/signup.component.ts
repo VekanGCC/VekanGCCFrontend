@@ -96,7 +96,6 @@ export class SignupComponent implements OnInit, OnDestroy {
         // Check if user is already logged in (redirected from login)
         const currentUser = this.authService.getCurrentUser();
         if (currentUser && currentUser.email) {
-          console.log('User redirected from login, populating forms with existing data:', currentUser);
           this.populateFormsWithExistingUserData(currentUser);
         }
         
@@ -127,27 +126,11 @@ export class SignupComponent implements OnInit, OnDestroy {
       }
     });
     
-    // Debug form initialization
-    setTimeout(() => {
-      this.debugFormInitialization();
-    }, 1000);
+
   }
 
   debugFormInitialization() {
-    console.log('=== FORM INITIALIZATION DEBUG ===');
-    console.log('Step 3 form:', this.step3Form);
-    console.log('Step 3 form controls:', this.step3Form.controls);
-    console.log('Account type control:', this.step3Form.get('accountType'));
-    console.log('Account type control value:', this.step3Form.get('accountType')?.value);
-    console.log('Account type control valid:', this.step3Form.get('accountType')?.valid);
-    console.log('Account type control errors:', this.step3Form.get('accountType')?.errors);
-    console.log('=== END FORM INITIALIZATION DEBUG ===');
-    
-    // Test setting a value manually
-    console.log('Testing manual value setting...');
-    this.step3Form.patchValue({ accountType: 'savings' });
-    console.log('After manual set - Account type value:', this.step3Form.get('accountType')?.value);
-    console.log('After manual set - Account type valid:', this.step3Form.get('accountType')?.valid);
+    // Debug method - can be used for troubleshooting if needed
   }
 
   ngOnDestroy(): void {
@@ -206,11 +189,8 @@ export class SignupComponent implements OnInit, OnDestroy {
   private initializeForms(): void {
     // Prevent multiple initializations
     if (this.formsInitialized) {
-      console.log('Forms already initialized, skipping...');
       return;
     }
-    
-    console.log('Initializing forms...');
     
     // Step 1: Company Information
     this.step1Form = this.fb.group({
@@ -272,7 +252,6 @@ export class SignupComponent implements OnInit, OnDestroy {
 
     this.setupConditionalValidators();
     this.formsInitialized = true;
-    console.log('Forms initialized successfully');
   }
 
   private updateFormValidatorsForUserType(): void {
@@ -453,8 +432,6 @@ export class SignupComponent implements OnInit, OnDestroy {
   }
 
   private populateFormsWithExistingUserData(user: any): void {
-    console.log('Populating forms with existing user data:', user);
-    
     // Populate step 1 form with existing user data
     this.step1Form.patchValue({
       email: user.email || '',
@@ -554,28 +531,20 @@ export class SignupComponent implements OnInit, OnDestroy {
       } else if (this.currentStep === 5) {
         // For step 5, complete registration
         try {
-          console.log('Step 5: Starting registration completion...');
-          console.log('Step 5 form value:', this.step5Form.value);
-          console.log('Step 5 form valid:', this.step5Form.valid);
-          console.log('Step 5 form errors:', this.step5Form.errors);
-          
           // Validate step 5 form
           this.markFormGroupTouched(this.step5Form);
           if (!this.step5Form.valid) {
-            console.log('Step 5 form validation failed');
             this.error = 'Please complete all required fields in step 5';
             return;
           }
 
           const email = this.step1Form.get('email')?.value;
           const step5Data = { email, ...this.step5Form.value };
-          console.log('Step 5 data to send:', step5Data);
           
           const response = await firstValueFrom<ApiResponse>(this.isVendor ?
             this.vendorRegistrationService.saveStep(5, step5Data) :
             this.clientRegistrationService.saveStep(5, step5Data)
           );
-          console.log('Step 5 response:', response);
           
           if (response.success) {
             this.showSuccessMessage('Registration complete! Redirecting to login...', 2000);
@@ -593,13 +562,10 @@ export class SignupComponent implements OnInit, OnDestroy {
       } else {
         // For other steps, just save the data
         try {
-          console.log(`Step ${this.currentStep} - Sending data:`, stepData);
           const response = await firstValueFrom<ApiResponse>(this.isVendor ? 
             this.vendorRegistrationService.saveStep(this.currentStep, stepData) :
             this.clientRegistrationService.saveStep(this.currentStep, stepData)
           );
-          
-          console.log(`Step ${this.currentStep} - Response:`, response);
           
           if (response.success) {
             this.clearFormErrors();
@@ -839,41 +805,7 @@ export class SignupComponent implements OnInit, OnDestroy {
   }
 
   debugFormValidation() {
-    console.log('=== DEBUG FORM VALIDATION ===');
-    console.log('Current step:', this.currentStep);
-    console.log('User type:', this.userType);
-    console.log('Step 3 form valid:', this.step3Form.valid);
-    console.log('Step 3 form invalid:', this.step3Form.invalid);
-    console.log('Step 3 form errors:', this.step3Form.errors);
-    
-    // Check each control
-    Object.keys(this.step3Form.controls).forEach(key => {
-      const control = this.step3Form.get(key);
-      console.log(`Control ${key}:`, {
-        valid: control?.valid,
-        invalid: control?.invalid,
-        errors: control?.errors,
-        value: control?.value,
-        touched: control?.touched,
-        dirty: control?.dirty,
-        validator: control?.validator
-      });
-    });
-    
-    // Check if all required fields have values
-    const requiredFields = ['addressLine1', 'city', 'state', 'country', 'pinCode'];
-    if (this.isVendor) {
-      requiredFields.push('accountNumber', 'accountType', 'ifscCode', 'bankName', 'branchName', 'bankCity', 'paymentTerms');
-    }
-    
-    const missingFields = requiredFields.filter(field => {
-      const value = this.step3Form.get(field)?.value;
-      return !value || value.trim() === '';
-    });
-    
-    console.log('Required fields:', requiredFields);
-    console.log('Missing fields:', missingFields);
-    console.log('=== END DEBUG ===');
+    // Debug method - can be used for troubleshooting if needed
   }
 
 

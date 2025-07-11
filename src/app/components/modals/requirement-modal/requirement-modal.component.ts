@@ -87,17 +87,11 @@ export class RequirementModalComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    console.log('🔧 RequirementModal: ngOnInit called, mode:', this.mode, 'requirement:', this.requirement);
-    console.log('🔧 RequirementModal: Initial form state:', this.requirementForm.value);
-    console.log('🔧 RequirementModal: Initial budget value:', this.requirementForm.get('budget')?.value);
-    
     // Load available skills from API first
     this.apiService.get<ApiResponse<AdminSkill[]>>('/skills/active').subscribe({
       next: (response) => {
-        console.log('🔧 RequirementModal: Skills API response:', response);
         if (response.success && response.data) {
           this.availableSkills = response.data;
-          console.log('🔧 RequirementModal: Available skills loaded:', this.availableSkills.length);
           
           // After skills are loaded, populate the form if in edit mode
           if (this.mode === 'edit' && this.requirement && !this.formPopulated) {
@@ -115,10 +109,8 @@ export class RequirementModalComponent implements OnInit, OnChanges {
     // Load available categories from API service (public endpoint)
     this.apiService.getActiveCategories().subscribe({
       next: (response) => {
-        console.log('🔧 RequirementModal: Categories response:', response);
         if (response.success) {
           this.availableCategories = response.data;
-          console.log('🔧 RequirementModal: Available categories:', this.availableCategories);
           
           // After categories are loaded, populate the form if in edit mode
           if (this.mode === 'edit' && this.requirement && !this.formPopulated) {
@@ -158,14 +150,8 @@ export class RequirementModalComponent implements OnInit, OnChanges {
 
   private populateForm(): void {
     if (!this.requirement) {
-      console.log('🔧 RequirementModal: populateForm called but no requirement provided');
       return;
     }
-
-    console.log('🔧 RequirementModal: Populating form with requirement:', this.requirement);
-    console.log('🔧 RequirementModal: Requirement skills:', this.requirement.skills);
-    console.log('🔧 RequirementModal: Requirement attachment:', this.requirement.attachment);
-    console.log('🔧 RequirementModal: Requirement experience:', this.requirement.experience);
 
     // Clear existing skills FormArray and add the requirement's skills
     while (this.skills.length !== 0) {
@@ -174,7 +160,6 @@ export class RequirementModalComponent implements OnInit, OnChanges {
     
     // Add each skill from the requirement - handle both string and object formats
     this.requirement.skills.forEach((skill: any) => {
-      console.log('🔧 RequirementModal: Adding skill to form:', skill);
       // If skill is an object, use its _id, otherwise use the skill string
       const skillId = typeof skill === 'object' ? skill._id : skill;
       this.skills.push(this.fb.control(skillId, Validators.required));
@@ -182,7 +167,6 @@ export class RequirementModalComponent implements OnInit, OnChanges {
 
     // If no skills, add at least one empty skill field
     if (this.skills.length === 0) {
-      console.log('🔧 RequirementModal: No skills found, adding empty skill field');
       this.skills.push(this.fb.control('', Validators.required));
     }
 
@@ -214,20 +198,14 @@ export class RequirementModalComponent implements OnInit, OnChanges {
       level: (this.requirement.experience as any)?.level || 'junior'
     });
 
-    console.log('🔧 RequirementModal: Form patched with data');
-    console.log('🔧 RequirementModal: Experience form group value:', this.experience.value);
-    console.log('🔧 RequirementModal: Full form value after patch:', this.requirementForm.value);
-
     // Handle existing attachment if in edit mode
     if (this.mode === 'edit' && this.requirement.attachment) {
-      console.log('🔧 RequirementModal: Found existing attachment:', this.requirement.attachment);
       // Note: We can't set selectedFile directly since it's a File object, not attachment data
       // Instead, we'll show the existing attachment in the template
     }
 
     // Force change detection to update the form
     this.changeDetectorRef.detectChanges();
-    console.log('🔧 RequirementModal: Form populated successfully');
   }
 
   get skills(): FormArray {
@@ -263,11 +241,9 @@ export class RequirementModalComponent implements OnInit, OnChanges {
   }
 
   addSkill(): void {
-    console.log('🔧 RequirementModal: Adding new skill field');
     this.skills.push(this.fb.control('')); // Remove Validators.required initially
     // Force change detection to ensure the new field appears immediately
     this.changeDetectorRef.detectChanges();
-    console.log('🔧 RequirementModal: New skill field added, total skills:', this.skills.length);
   }
 
   removeSkill(index: number): void {
@@ -284,28 +260,6 @@ export class RequirementModalComponent implements OnInit, OnChanges {
       return;
     }
 
-    console.log('🔧 RequirementModal: onSubmit called, mode:', this.mode);
-    this.logFormState();
-    console.log('🔧 RequirementModal: Form errors:', this.requirementForm.errors);
-    console.log('🔧 RequirementModal: Budget field errors:', this.requirementForm.get('budget')?.errors);
-
-    // Debug: Check each field's validity
-    console.log('🔧 RequirementModal: Form validation check:');
-    console.log('  - title valid:', this.requirementForm.get('title')?.valid, 'errors:', this.requirementForm.get('title')?.errors);
-    console.log('  - category valid:', this.requirementForm.get('category')?.valid, 'errors:', this.requirementForm.get('category')?.errors);
-    console.log('  - experience valid:', this.requirementForm.get('experience')?.valid, 'errors:', this.requirementForm.get('experience')?.errors);
-    console.log('  - location valid:', this.requirementForm.get('location')?.valid, 'errors:', this.requirementForm.get('location')?.errors);
-    console.log('  - timeline valid:', this.requirementForm.get('timeline')?.valid, 'errors:', this.requirementForm.get('timeline')?.errors);
-    console.log('  - budget valid:', this.requirementForm.get('budget')?.valid, 'errors:', this.requirementForm.get('budget')?.errors);
-    console.log('  - description valid:', this.requirementForm.get('description')?.valid, 'errors:', this.requirementForm.get('description')?.errors);
-    console.log('  - skills valid:', this.requirementForm.get('skills')?.valid, 'errors:', this.requirementForm.get('skills')?.errors);
-    
-    // Check individual skills
-    const skillsArray = this.requirementForm.get('skills') as FormArray;
-    for (let i = 0; i < skillsArray.length; i++) {
-      console.log(`  - skill[${i}] valid:`, skillsArray.at(i).valid, 'value:', skillsArray.at(i).value, 'errors:', skillsArray.at(i).errors);
-    }
-
     // Check if the main form fields are valid (excluding skills array)
     const mainFormValid = this.requirementForm.get('title')?.valid &&
                          this.requirementForm.get('category')?.valid &&
@@ -315,25 +269,14 @@ export class RequirementModalComponent implements OnInit, OnChanges {
                          this.requirementForm.get('budget')?.valid &&
                          this.requirementForm.get('description')?.valid;
 
-    console.log('🔧 RequirementModal: Main form valid:', mainFormValid);
-    console.log('🔧 RequirementModal: Overall form valid:', this.requirementForm.valid);
-
     if (mainFormValid) {
       const user = this.authService.currentUser;
       if (!user) return;
 
       const formValue = this.requirementForm.value;
-      console.log('🔧 RequirementModal: Form value:', formValue);
-      console.log('🔧 RequirementModal: Budget in formValue:', formValue.budget);
-      console.log('🔧 RequirementModal: Experience in formValue:', formValue.experience);
-      console.log('🔧 RequirementModal: MinYears in formValue:', formValue.experience?.minYears);
-      console.log('🔧 RequirementModal: Level in formValue:', formValue.experience?.level);
-      console.log('🔧 RequirementModal: Category in formValue:', formValue.category);
-      console.log('🔧 RequirementModal: Skills in formValue:', formValue.skills);
       
       // Filter out empty skills and validate that at least one skill is selected
       const filteredSkills = formValue.skills.filter((skill: string) => skill && skill.trim() !== '');
-      console.log('🔧 RequirementModal: Filtered skills:', filteredSkills);
 
       if (filteredSkills.length === 0) {
         console.error('🔧 RequirementModal: At least one skill must be selected');
@@ -388,27 +331,15 @@ export class RequirementModalComponent implements OnInit, OnChanges {
         endDate: this.calculateEndDate(formValue.timeline.start_date, formValue.timeline.duration)
       };
 
-      console.log('🔧 RequirementModal: Final requirement data being sent:', requirementData);
-      console.log('🔧 RequirementModal: Category ObjectId:', requirementData.category);
-      console.log('🔧 RequirementModal: Skills ObjectIds:', requirementData.skills);
-      console.log('🔧 RequirementModal: Budget data:', requirementData.budget);
-      console.log('🔧 RequirementModal: Budget charge value:', requirementData.budget.charge);
-
       if (this.mode === 'edit' && this.requirement) {
-        console.log('🔧 RequirementModal: Handling edit mode with file upload');
-        
         // If a new file is selected, upload it first
         if (this.selectedFile) {
-          console.log('🔧 RequirementModal: Uploading new file for requirement:', this.requirement._id);
-          
           this.apiService.uploadFile(this.selectedFile, 'requirement', this.requirement._id, {
             category: 'document',
             description: `Requirement document for: ${requirementData.title}`,
             isPublic: false
           }).subscribe({
             next: (fileResponse: any) => {
-              console.log('🔧 RequirementModal: File upload successful:', fileResponse);
-              
               if (fileResponse.success && fileResponse.data) {
                 // Update the requirement data with new file information
                 const updatedRequirement: Requirement = {
@@ -424,16 +355,13 @@ export class RequirementModalComponent implements OnInit, OnChanges {
                   }
                 };
                 
-                console.log('🔧 RequirementModal: Emitting edit confirmation with new file');
                 this.confirm.emit(updatedRequirement);
                 this.close.emit();
               } else {
-                console.error('🔧 RequirementModal: File upload failed:', fileResponse);
                 console.error('❌ Failed to upload new file. Please try again.');
               }
             },
             error: (error: any) => {
-              console.error('🔧 RequirementModal: File upload error:', error);
               console.error('❌ Failed to upload new file. Please try again.');
             }
           });
@@ -447,40 +375,29 @@ export class RequirementModalComponent implements OnInit, OnChanges {
           // If existing attachment was removed (set to undefined), ensure it's not included
           if (this.requirement.attachment === undefined) {
             updatedRequirement.attachment = undefined;
-            console.log('🔧 RequirementModal: Existing attachment will be removed');
           } else if (this.requirement.attachment) {
             // Keep existing attachment
             updatedRequirement.attachment = this.requirement.attachment;
-            console.log('🔧 RequirementModal: Keeping existing attachment');
           }
           
-          console.log('🔧 RequirementModal: Emitting edit confirmation without file change');
           this.confirm.emit(updatedRequirement);
           this.close.emit();
         }
       } else if (this.mode === 'create') {
-        console.log('🔧 RequirementModal: Creating requirement with apiService.createRequirement');
-        
         // Step 1: Create the requirement first
         this.apiService.createRequirement(requirementData).subscribe({
           next: (response: any) => {
-            console.log('🔧 RequirementModal: Requirement created successfully:', response);
-            
             if (response.success && response.data) {
               const requirementId = response.data._id;
               
               // Step 2: If file is selected, upload it with the requirement ID
               if (this.selectedFile) {
-                console.log('🔧 RequirementModal: Uploading file for requirement:', requirementId);
-                
                 this.apiService.uploadFile(this.selectedFile, 'requirement', requirementId, {
                   category: 'document',
                   description: `Requirement document for: ${requirementData.title}`,
                   isPublic: false
                 }).subscribe({
                   next: (fileResponse: any) => {
-                    console.log('🔧 RequirementModal: File upload successful:', fileResponse);
-                    
                     if (fileResponse.success && fileResponse.data) {
                       // Step 3: Update the requirement with file information
                       const updateData = {
@@ -494,11 +411,8 @@ export class RequirementModalComponent implements OnInit, OnChanges {
                         }
                       };
                       
-                      console.log('🔧 RequirementModal: Updating requirement with file info:', updateData);
-                      
                       this.apiService.updateRequirement(requirementId, updateData).subscribe({
                         next: (updateResponse: any) => {
-                          console.log('🔧 RequirementModal: Requirement updated with file info:', updateResponse);
                           // Emit the created requirement with file attachment
                           const createdRequirement: Requirement = {
                             ...response.data,
@@ -513,54 +427,34 @@ export class RequirementModalComponent implements OnInit, OnChanges {
                           };
                           this.confirm.emit(createdRequirement);
                           this.close.emit();
-                          console.log('✅ Requirement created successfully with file attachment!');
                         },
                         error: (error: any) => {
-                          console.error('🔧 RequirementModal: Error updating requirement with file info:', error);
                           console.error('❌ Requirement created but failed to attach file. Please try again.');
                         }
                       });
                     } else {
-                      console.error('🔧 RequirementModal: File upload failed:', fileResponse);
                       console.error('❌ Requirement created but file upload failed. Please try again.');
                     }
                   },
                   error: (error: any) => {
-                    console.error('🔧 RequirementModal: File upload error:', error);
                     console.error('❌ Requirement created but file upload failed. Please try again.');
                   }
                 });
               } else {
                 // No file selected, requirement creation is complete
-                console.log('🔧 RequirementModal: Requirement created without file attachment');
                 // Emit the created requirement
                 this.confirm.emit(response.data);
                 this.close.emit();
-                console.log('✅ Requirement created successfully!');
               }
             } else {
-              console.error('🔧 RequirementModal: Requirement creation failed:', response);
               console.error('❌ Failed to create requirement. Please try again.');
             }
           },
           error: (error: any) => {
-            console.error('🔧 RequirementModal: Requirement creation error:', error);
             console.error('❌ Failed to create requirement. Please try again.');
           }
         });
       }
-    } else {
-      console.log('🔧 RequirementModal: Form is invalid:', this.requirementForm.errors);
-      console.log('🔧 RequirementModal: Form status:', this.requirementForm.status);
-      console.log('🔧 RequirementModal: All form controls:', this.requirementForm.controls);
-      
-      // Check each form control for errors
-      Object.keys(this.requirementForm.controls).forEach(key => {
-        const control = this.requirementForm.get(key);
-        if (control && !control.valid) {
-          console.log(`🔧 RequirementModal: ${key} is invalid:`, control.errors);
-        }
-      });
     }
   }
 
@@ -591,7 +485,6 @@ export class RequirementModalComponent implements OnInit, OnChanges {
     }
 
     this.selectedFile = file;
-    console.log('🔧 RequirementModal: File selected:', file.name, file.size);
   }
 
   removeFile(): void {
@@ -609,14 +502,10 @@ export class RequirementModalComponent implements OnInit, OnChanges {
       console.error('🔧 RequirementModal: No file ID found for download');
       return;
     }
-
-    console.log('🔧 RequirementModal: Downloading file:', attachment);
     
     // Use the API service to download the file
     this.apiService.downloadFile(attachment.fileId).subscribe({
       next: (response: Blob) => {
-        console.log('🔧 RequirementModal: File download successful');
-        
         // Create download link and trigger download
         const link = document.createElement('a');
         link.href = URL.createObjectURL(response);
@@ -642,8 +531,6 @@ export class RequirementModalComponent implements OnInit, OnChanges {
     if (!this.requirement || !this.requirement.attachment) {
       return;
     }
-
-    console.log('🔧 RequirementModal: Removing existing file attachment');
     
     // Set a flag to indicate that the existing attachment should be removed
     // We'll handle this in the onSubmit method
@@ -655,16 +542,7 @@ export class RequirementModalComponent implements OnInit, OnChanges {
 
   // Helper method to debug form state
   private logFormState(): void {
-    console.log('🔧 RequirementModal: Current form state:', this.requirementForm.value);
-    console.log('🔧 RequirementModal: Form valid:', this.requirementForm.valid);
-    console.log('🔧 RequirementModal: Budget field value:', this.requirementForm.get('budget')?.value);
-    console.log('🔧 RequirementModal: Budget field valid:', this.requirementForm.get('budget')?.valid);
-    console.log('🔧 RequirementModal: Experience form group value:', this.experience.value);
-    console.log('🔧 RequirementModal: Experience form group valid:', this.experience.valid);
-    console.log('🔧 RequirementModal: MinYears field value:', this.experience.get('minYears')?.value);
-    console.log('🔧 RequirementModal: Level field value:', this.experience.get('level')?.value);
-    console.log('🔧 RequirementModal: MinYears field valid:', this.experience.get('minYears')?.valid);
-    console.log('🔧 RequirementModal: Level field valid:', this.experience.get('level')?.valid);
+    // Debug method - can be used for troubleshooting if needed
   }
 
   getSkillId(skill: any): string {
@@ -673,29 +551,11 @@ export class RequirementModalComponent implements OnInit, OnChanges {
 
   // Debug method to check form validity
   checkFormValidity(): void {
-    console.log('🔧 RequirementModal: === FORM VALIDITY CHECK ===');
-    console.log('Overall form valid:', this.requirementForm.valid);
-    console.log('Form value:', this.requirementForm.value);
-    console.log('Form errors:', this.requirementForm.errors);
-    
-    const fields = ['title', 'category', 'experience', 'location', 'timeline', 'budget', 'description', 'skills'];
-    fields.forEach(field => {
-      const control = this.requirementForm.get(field);
-      console.log(`${field}: valid=${control?.valid}, value=${control?.value}, errors=${JSON.stringify(control?.errors)}`);
-    });
-    
-    // Check skills array specifically
-    const skillsArray = this.requirementForm.get('skills') as FormArray;
-    console.log('Skills array length:', skillsArray.length);
-    for (let i = 0; i < skillsArray.length; i++) {
-      const skillControl = skillsArray.at(i);
-      console.log(`Skill[${i}]: valid=${skillControl.valid}, value="${skillControl.value}", errors=${JSON.stringify(skillControl.errors)}`);
-    }
+    // Debug method - can be used for troubleshooting if needed
   }
 
   private calculateEndDate(startDate: string | null, duration: number): string {
     if (!startDate || !duration) {
-      console.error('🔧 RequirementModal: Invalid start date or duration');
       return new Date().toISOString();
     }
 

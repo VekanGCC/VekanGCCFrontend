@@ -50,10 +50,7 @@ export class SkillsManagementComponent implements OnInit {
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef
   ) {
-    debugger; // Debugger at constructor level
-    console.log('=== SKILLS MANAGEMENT CONSTRUCTOR DEBUG ===');
-    console.log('SkillsManagementComponent constructor called');
-    
+  
     this.skillForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       category: ['', Validators.required],
@@ -67,44 +64,25 @@ export class SkillsManagementComponent implements OnInit {
       isActive: [true]
     });
     
-    console.log('Forms initialized');
-    console.log('=== END SKILLS MANAGEMENT CONSTRUCTOR DEBUG ===');
+   
   }
 
 
 
   ngOnInit(): void {
-    debugger; // Debugger at ngOnInit level
-    console.log('=== SKILLS MANAGEMENT COMPONENT INIT ===');
-    console.log('SkillsManagementComponent ngOnInit called');
-    console.log('Modal components imported:', {
-      hasDeleteModal: !!DeleteConfirmationModalComponent,
-      hasEditSkillModal: !!EditSkillModalComponent,
-      hasEditCategoryModal: !!EditCategoryModalComponent
-    });
     this.loadSkills();
     this.loadCategories();
-    console.log('=== END SKILLS MANAGEMENT COMPONENT INIT ===');
   }
 
-  // Test method to verify component is working
-  testMethod(): void {
-    debugger;
-    console.log('=== TEST METHOD CALLED ===');
-    alert('Test method is working!');
-  }
+ 
 
   loadSkills(): void {
-    debugger; // Debugger at loadSkills level
-    console.log('=== LOAD SKILLS DEBUG ===');
     this.isLoading = true;
-    console.log('Calling skillsService.getSkills()');
+  
     this.skillsService.getSkills().subscribe({
       next: (skills) => {
-        console.log('Skills loaded:', skills);
         this.skills = skills;
         this.isLoading = false;
-        console.log('Skills array updated, length:', this.skills.length);
       },
       error: (err) => {
         console.error('Error loading skills:', err);
@@ -112,7 +90,6 @@ export class SkillsManagementComponent implements OnInit {
         this.isLoading = false;
       }
     });
-    console.log('=== END LOAD SKILLS DEBUG ===');
   }
 
   loadCategories(): void {
@@ -198,12 +175,9 @@ export class SkillsManagementComponent implements OnInit {
     this.error = null;
     this.success = null;
 
-    console.log('Deleting item:', this.itemToDelete);
-
     if (this.itemToDelete.type === 'skill') {
       this.skillsService.deleteSkill(this.itemToDelete.id).subscribe({
         next: (response) => {
-          console.log('Delete response:', response);
           this.skills = this.skills.filter(s => s._id !== this.itemToDelete!.id);
           this.success = 'Skill deleted successfully';
           this.closeDeleteModal();
@@ -219,7 +193,6 @@ export class SkillsManagementComponent implements OnInit {
     } else {
       this.skillsService.deleteCategory(this.itemToDelete.id).subscribe({
         next: (response) => {
-          console.log('Delete category response:', response);
           this.categories = this.categories.filter(c => c._id !== this.itemToDelete!.id);
           this.success = 'Category deleted successfully';
           this.closeDeleteModal();
@@ -354,32 +327,14 @@ export class SkillsManagementComponent implements OnInit {
 
   // Form Helpers
   editSkill(skill: Skill): void {
-    debugger; // Debugger statement to pause execution
-    console.log('=== EDIT SKILL MODAL DEBUG ===');
-    console.log('1. editSkill method called with skill:', skill);
-    
     this.editingSkill = skill;
-    console.log('2. editingSkill set to:', this.editingSkill);
-    
     this.showEditSkillModal = true;
-    console.log('3. showEditSkillModal set to:', this.showEditSkillModal);
-    
-    console.log('4. Current modal states:');
-    console.log('   - showEditSkillModal:', this.showEditSkillModal);
-    console.log('   - showEditCategoryModal:', this.showEditCategoryModal);
-    console.log('   - showDeleteModal:', this.showDeleteModal);
-    
     this.cdr.detectChanges();
-    console.log('5. Change detection triggered');
     
     // Force change detection after a small delay to ensure modal renders
     setTimeout(() => {
-      console.log('6. Timeout callback - forcing change detection again');
       this.cdr.detectChanges();
-      console.log('7. Final modal state check - showEditSkillModal:', this.showEditSkillModal);
     }, 100);
-    
-    console.log('=== END EDIT SKILL MODAL DEBUG ===');
   }
 
   onEditSkillSave(skillData: Partial<Skill>): void {
@@ -416,7 +371,6 @@ export class SkillsManagementComponent implements OnInit {
 
   onSubmitSkill(): void {
     if (this.skillForm.invalid) {
-      console.log('Form is invalid:', this.skillForm.errors);
       return;
     }
 
@@ -425,12 +379,10 @@ export class SkillsManagementComponent implements OnInit {
     this.success = null;
 
     const skillData = this.skillForm.value;
-    console.log('Submitting skill data:', skillData);
 
     if (this.editingSkill) {
       this.skillsService.updateSkill(this.editingSkill._id!, skillData).subscribe({
         next: (updatedSkill) => {
-          console.log('Skill updated:', updatedSkill);
           const index = this.skills.findIndex(s => s._id === updatedSkill._id);
           if (index !== -1) {
             this.skills[index] = updatedSkill;
@@ -448,10 +400,8 @@ export class SkillsManagementComponent implements OnInit {
         }
       });
     } else {
-      console.log('Creating new skill...');
       this.skillsService.createSkill(skillData).subscribe({
         next: (newSkill) => {
-          console.log('Skill created:', newSkill);
           this.skills.push(newSkill);
           this.success = 'Skill created successfully';
           this.resetSkillForm();
@@ -471,7 +421,6 @@ export class SkillsManagementComponent implements OnInit {
   editCategory(category: SkillCategory): void {
     this.editingCategory = category;
     this.showEditCategoryModal = true;
-    console.log('Opening edit category modal for:', category);
     this.cdr.detectChanges();
     
     // Force change detection after a small delay to ensure modal renders

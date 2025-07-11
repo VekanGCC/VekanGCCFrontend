@@ -77,11 +77,6 @@ export class ApplyRequirementPageComponent implements OnInit, AfterViewInit, OnD
     private route: ActivatedRoute,
     public router: Router
   ) {
-    console.log('🔧 ApplyRequirementPage: Constructor called - Instance #', this.instanceId);
-    console.log('🔧 ApplyRequirementPage: Constructor - Current URL:', this.router.url);
-    console.log('🔧 ApplyRequirementPage: Constructor - Route params:', this.route.snapshot.params);
-    console.log('🔧 ApplyRequirementPage: Constructor - Query params:', this.route.snapshot.queryParams);
-    
     // Setup debounced search
     this.resourceSearchSubject.pipe(
       debounceTime(300),
@@ -95,15 +90,11 @@ export class ApplyRequirementPageComponent implements OnInit, AfterViewInit, OnD
   }
   
   private initializeComponent(): void {
-    console.log('🔧 ApplyRequirementPage: Component initialization started');
     this.currentUser = this.authService.getCurrentUser();
-    console.log('🔧 ApplyRequirementPage: Current user:', this.currentUser);
     
     // Get requirement ID from query parameters
     this.route.queryParams.subscribe(params => {
-      console.log('🔧 ApplyRequirementPage: Query params received:', params);
       const requirementId = params['requirementId'] || '';
-      console.log('🔧 ApplyRequirementPage: Requirement ID from query params:', requirementId);
       
       if (requirementId) {
         this.loadRequirement(requirementId);
@@ -116,28 +107,22 @@ export class ApplyRequirementPageComponent implements OnInit, AfterViewInit, OnD
 
   ngOnInit(): void {
     // Note: Component initialization is now handled in constructor due to lifecycle hook issues
-    console.log('🔧 ApplyRequirementPage: ngOnInit called - Instance #', this.instanceId);
   }
 
   ngAfterViewInit(): void {
-    console.log('🔧 ApplyRequirementPage: ngAfterViewInit called - Instance #', this.instanceId);
   }
 
   ngOnDestroy(): void {
-    console.log('🔧 ApplyRequirementPage: ngOnDestroy called - Instance #', this.instanceId);
     // Cleanup subscription
     this.resourceSearchSubject.complete();
   }
 
   private loadRequirement(requirementId: string): void {
-    console.log('🔧 Loading requirement:', requirementId);
     this.isLoading = true;
     this.apiService.getRequirement(requirementId).subscribe({
       next: (response) => {
-        console.log('🔧 Requirement response:', response);
         if (response.success && response.data) {
           this.requirement = response.data;
-          console.log('🔧 Loaded requirement:', this.requirement);
         } else {
           this.errorMessage = 'Failed to load requirement';
         }
@@ -154,29 +139,23 @@ export class ApplyRequirementPageComponent implements OnInit, AfterViewInit, OnD
   }
 
   private loadResources(): void {
-    console.log('🔧 Loading vendor resources...');
     this.loadResourcesWithSearch(''); // Load all resources initially
   }
 
   // Multi-select dropdown methods
   toggleResourcesDropdown() {
-    console.log('🔧 Toggle dropdown clicked, current state:', this.showResourcesDropdown);
-    console.log('🔧 Available resources:', this.resources.length);
     this.showResourcesDropdown = !this.showResourcesDropdown;
     if (this.showResourcesDropdown) {
       this.filteredResources = [...this.resources];
     }
-    console.log('🔧 New dropdown state:', this.showResourcesDropdown);
     this.changeDetectorRef.detectChanges();
   }
 
   filterResources() {
-    console.log('🔧 Filtering resources, search term:', this.resourceSearchTerm);
     this.resourceSearchSubject.next(this.resourceSearchTerm);
   }
 
   private loadResourcesWithSearch(searchTerm: string): void {
-    console.log('🔧 Loading resources with search:', searchTerm);
     this.isLoading = true;
     
     // Use search parameter which now includes skill name search
@@ -186,16 +165,11 @@ export class ApplyRequirementPageComponent implements OnInit, AfterViewInit, OnD
       limit: 50 // Limit results for better performance
     };
     
-    console.log('🔧 Frontend: Sending search params:', params);
-    
     this.apiService.getResources(params).subscribe({
       next: (response) => {
-        console.log('🔧 Resources search response:', response);
         if (response.success && response.data) {
           this.resources = response.data;
           this.filteredResources = [...this.resources];
-          
-          console.log('🔧 Loaded resources with search:', this.resources.length);
         }
         this.isLoading = false;
         this.changeDetectorRef.detectChanges();
@@ -265,10 +239,6 @@ export class ApplyRequirementPageComponent implements OnInit, AfterViewInit, OnD
       return;
     }
 
-    console.log('🔧 Submitting application...');
-    console.log('🔧 Selected resources:', this.selectedResourceIds);
-    console.log('🔧 Requirement ID:', this.requirement._id);
-
     this.isLoading = true;
     this.applicationResults = [];
 
@@ -284,8 +254,6 @@ export class ApplyRequirementPageComponent implements OnInit, AfterViewInit, OnD
 
     Promise.all(applicationPromises)
       .then(results => {
-        console.log('🔧 Application results:', results);
-        
         results.forEach((result, index) => {
           const resourceId = this.selectedResourceIds[index];
           const resourceName = this.getResourceName(resourceId);
@@ -325,7 +293,7 @@ export class ApplyRequirementPageComponent implements OnInit, AfterViewInit, OnD
         this.changeDetectorRef.detectChanges();
       })
       .catch(error => {
-        console.error('🔧 Error creating applications:', error);
+        console.error('❌ Error creating applications:', error);
         this.errorMessage = 'Failed to create applications';
         this.isLoading = false;
         this.changeDetectorRef.detectChanges();
@@ -333,7 +301,6 @@ export class ApplyRequirementPageComponent implements OnInit, AfterViewInit, OnD
   }
 
   onCancel(): void {
-    console.log('🔧 ApplyRequirementPage: Canceling application');
     this.router.navigate(['/vendor/requirements']);
   }
 

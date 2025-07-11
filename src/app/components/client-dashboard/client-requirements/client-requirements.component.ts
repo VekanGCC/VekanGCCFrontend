@@ -335,7 +335,6 @@ export class ClientRequirementsComponent implements OnInit, OnDestroy {
           
           if (closeBtn) {
             closeBtn.addEventListener('click', () => {
-              console.log('🔍 DEBUG: Close button clicked for requirement:', requirement._id);
               this.onOpenCloseRequirementModal(requirement);
               // Force change detection to ensure modal opens immediately
               this.changeDetectorRef.detectChanges();
@@ -380,7 +379,6 @@ export class ClientRequirementsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log('🔧 ClientRequirementsComponent: ngOnInit called');
     this.loadRequirements();
   }
 
@@ -389,7 +387,6 @@ export class ClientRequirementsComponent implements OnInit, OnDestroy {
   }
 
   private loadRequirements(): void {
-    console.log('🔄 ClientRequirements: Loading requirements...');
     this.isLoading = true;
     this.paginationState.isLoading = true;
 
@@ -400,7 +397,6 @@ export class ClientRequirementsComponent implements OnInit, OnDestroy {
 
     this.clientService.getRequirements(params).subscribe({
       next: (response) => {
-        console.log('✅ ClientRequirements: Requirements loaded:', response);
         if (response.success && response.data) {
           this.requirements = response.data;
           
@@ -436,10 +432,7 @@ export class ClientRequirementsComponent implements OnInit, OnDestroy {
   }
 
   private loadRequirementsWithCounts(): void {
-    console.log('🔄 ClientRequirements: Loading counts for requirements...');
-    
     if (this.requirements.length === 0) {
-      console.log('🔄 ClientRequirements: No requirements to load counts for');
       return;
     }
 
@@ -463,8 +456,6 @@ export class ClientRequirementsComponent implements OnInit, OnDestroy {
 
     forkJoin(requests).subscribe({
       next: (results) => {
-        console.log('✅ ClientRequirements: Counts loaded:', results);
-        
         // Update requirements with application counts
         if (results.applicationCounts.success && results.applicationCounts.data) {
           this.requirements = this.requirements.map(req => ({
@@ -481,7 +472,6 @@ export class ClientRequirementsComponent implements OnInit, OnDestroy {
           }));
         }
         
-        console.log('✅ ClientRequirements: Requirements updated with counts:', this.requirements);
         this.changeDetectorRef.detectChanges();
       },
       error: (error) => {
@@ -491,7 +481,6 @@ export class ClientRequirementsComponent implements OnInit, OnDestroy {
   }
 
   onPageChange(page: number): void {
-    console.log('🔄 ClientRequirements: Page changed to:', page);
     this.paginationState.currentPage = page;
     this.loadRequirements();
   }
@@ -500,7 +489,6 @@ export class ClientRequirementsComponent implements OnInit, OnDestroy {
     const sortModel = event.api.getColumnState().filter(col => col.sort);
     if (sortModel.length > 0) {
       const sort = sortModel[0];
-      console.log('🔄 ClientRequirements: Sort changed:', sort);
       // You can implement sorting logic here if needed
     }
   }
@@ -525,25 +513,21 @@ export class ClientRequirementsComponent implements OnInit, OnDestroy {
   }
 
   onOpenRequirementModal(): void {
-    console.log('🔄 ClientRequirements: Opening new requirement modal');
     this.requirementToEdit = null; // Clear any existing requirement to edit
     this.showRequirementModal = true;
   }
 
   onOpenCloseRequirementModal(requirement: Requirement): void {
-    console.log('🔄 ClientRequirements: Opening close requirement modal for:', requirement._id);
     this.requirementToEdit = requirement;
     this.showRequirementModal = true;
   }
 
   onOpenEditRequirementModal(requirement: Requirement): void {
-    console.log('🔄 ClientRequirements: Opening edit requirement modal for:', requirement._id);
     this.requirementToEdit = requirement;
     this.showRequirementModal = true;
   }
 
   onCloseRequirementModal(): void {
-    console.log('🔄 ClientRequirements: Closing requirement modal');
     this.showRequirementModal = false;
     this.requirementToEdit = null;
     // Refresh requirements data after modal is closed
@@ -551,12 +535,9 @@ export class ClientRequirementsComponent implements OnInit, OnDestroy {
   }
 
   onRequirementCreated(requirement: Requirement): void {
-    console.log('🔄 ClientRequirements: New requirement created:', requirement);
-    
     // Make API call to create the requirement
     this.clientService.createRequirement(requirement).subscribe({
       next: (response) => {
-        console.log('✅ ClientRequirements: Requirement created successfully:', response);
         if (response.success) {
           // Refresh the requirements list to show new data
           this.loadRequirements();
@@ -573,12 +554,9 @@ export class ClientRequirementsComponent implements OnInit, OnDestroy {
   }
 
   onRequirementUpdated(requirement: Requirement): void {
-    console.log('🔄 ClientRequirements: Requirement updated:', requirement);
-    
     // Make API call to update the requirement
     this.clientService.updateRequirement(requirement._id, requirement).subscribe({
       next: (response) => {
-        console.log('✅ ClientRequirements: Requirement updated successfully:', response);
         if (response.success) {
           // Refresh the requirements list to show updated data
           this.loadRequirements();
@@ -595,7 +573,6 @@ export class ClientRequirementsComponent implements OnInit, OnDestroy {
   }
 
   onViewApplications(requirementId: string): void {
-    console.log('🔄 ClientRequirements: Viewing applications for requirement:', requirementId);
     // Navigate to applications page with filter
     this.router.navigate(['/client/applications'], { 
       queryParams: { requirementId } 
@@ -603,7 +580,6 @@ export class ClientRequirementsComponent implements OnInit, OnDestroy {
   }
 
   onViewMatchingResources(requirementId: string): void {
-    console.log('🔄 ClientRequirements: Viewing matching resources for requirement:', requirementId);
     // Navigate to matching resources page
     this.router.navigate(['/client/matching-resources'], { 
       queryParams: { requirementId } 
@@ -611,18 +587,14 @@ export class ClientRequirementsComponent implements OnInit, OnDestroy {
   }
 
   downloadAttachment(requirement: Requirement): void {
-    console.log('🔄 ClientRequirements: Downloading attachment for requirement:', requirement._id);
-    
     if (!requirement.attachment || !requirement.attachment.fileId) {
-      console.error('🔄 ClientRequirements: No file ID found for download');
+      console.error('❌ ClientRequirements: No file ID found for download');
       return;
     }
 
     // Use the API service to download the file
     this.apiService.downloadFile(requirement.attachment.fileId).subscribe({
       next: (response: Blob) => {
-        console.log('🔄 ClientRequirements: File download successful');
-        
         // Create download link and trigger download
         const link = document.createElement('a');
         link.href = URL.createObjectURL(response);
@@ -638,7 +610,7 @@ export class ClientRequirementsComponent implements OnInit, OnDestroy {
         URL.revokeObjectURL(link.href);
       },
       error: (error: any) => {
-        console.error('🔄 ClientRequirements: File download error:', error);
+        console.error('❌ ClientRequirements: File download error:', error);
         // Handle download error - could show a toast notification here
       }
     });

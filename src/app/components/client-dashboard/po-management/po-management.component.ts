@@ -336,8 +336,6 @@ export class POManagementComponent implements OnInit, OnDestroy {
             this.pos = response.data.docs || [];
             this.totalPOs = response.data.totalDocs || 0;
             
-            console.log('🔧 PO Management: Loaded POs:', this.pos.map(p => ({ id: p._id, status: p.status })));
-            
             // Update pagination state
             this.paginationState = {
               currentPage: this.currentPage,
@@ -520,7 +518,6 @@ export class POManagementComponent implements OnInit, OnDestroy {
           vendorId = selectedSOW.vendorId as string;
         }
         
-        console.log('🔧 Setting vendor ID from SOW:', vendorId);
         this.poForm.get('vendorId')?.setValue(vendorId);
         this.poForm.get('vendorId')?.disable(); // Make vendor field non-editable
         
@@ -529,15 +526,12 @@ export class POManagementComponent implements OnInit, OnDestroy {
           id: vendorId,
           display: this.getVendorDisplay(selectedSOW.vendorId)
         }];
-        
-        console.log('🔧 Vendor field disabled, value set to:', this.poForm.get('vendorId')?.value);
       }
     } else {
       // Clear vendor when SOW is deselected
       this.poForm.get('vendorId')?.setValue('');
       this.poForm.get('vendorId')?.enable(); // Re-enable vendor field
       this.vendorDisplayOptions = []; // Clear vendor options
-      console.log('🔧 Vendor field cleared and re-enabled');
     }
     
     // Check amount validation
@@ -632,24 +626,16 @@ export class POManagementComponent implements OnInit, OnDestroy {
         paymentTerms: formValue.paymentTerms
       };
 
-      console.log('🔧 Submitting PO data:', poData);
-
       this.poService.createPO(poData)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
-            console.log('🔧 PO created successfully:', response);
             this.showCreateModal = false;
             this.loadPOs();
             this.isLoading = false;
           },
           error: (error) => {
-            console.error('🔧 Error creating PO:', error);
-            console.error('🔧 Error details:', {
-              status: error.status,
-              message: error.error?.message || error.message,
-              error: error.error
-            });
+            console.error('❌ Error creating PO:', error);
             
             // Handle specific error messages
             let errorMessage = 'Failed to create Purchase Order';
@@ -682,7 +668,6 @@ export class POManagementComponent implements OnInit, OnDestroy {
   }
 
   onActionClick(po: PO, actionType: string): void {
-    console.log('🔧 PO Management: onActionClick called:', { poId: po._id, actionType, po });
     this.selectedPO = po;
     this.actionType = actionType as 'submit' | 'approve' | 'send-to-vendor';
     this.actionForm.reset();
@@ -694,12 +679,6 @@ export class POManagementComponent implements OnInit, OnDestroy {
     if (this.selectedPO && this.actionForm.valid) {
       this.isLoading = true;
       const comments = this.actionForm.get('comments')?.value;
-
-      console.log('🔧 PO Management: Submitting action:', {
-        poId: this.selectedPO._id,
-        actionType: this.actionType,
-        comments: comments
-      });
 
       let actionObservable;
       switch (this.actionType) {
@@ -716,27 +695,26 @@ export class POManagementComponent implements OnInit, OnDestroy {
           actionObservable = this.poService.sendToVendor(this.selectedPO._id);
           break;
         default:
-          console.error('🔧 PO Management: Unknown action type:', this.actionType);
+          console.error('❌ PO Management: Unknown action type:', this.actionType);
           this.isLoading = false;
           return;
       }
 
       actionObservable.pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
-          console.log('🔧 PO Management: Action response:', response);
           if (response.success) {
             this.showActionModal = false;
             this.loadPOs();
             this.showSuccessMessage(`PO ${this.actionType} successfully`);
           } else {
-            console.error('🔧 PO Management: Action failed:', response.message);
+            console.error('❌ PO Management: Action failed:', response.message);
             this.showErrorMessage(response.message || `Failed to ${this.actionType} PO`);
           }
           this.isLoading = false;
           this.changeDetectorRef.detectChanges();
         },
         error: (error: any) => {
-          console.error(`🔧 PO Management: Error performing ${this.actionType} action:`, error);
+          console.error(`❌ PO Management: Error performing ${this.actionType} action:`, error);
           this.showErrorMessage(`Failed to ${this.actionType} PO`);
           this.isLoading = false;
           this.changeDetectorRef.detectChanges();
@@ -797,12 +775,6 @@ export class POManagementComponent implements OnInit, OnDestroy {
     const actions = [];
     const currentUser = this.authService.getCurrentUser();
     
-    console.log('🔧 PO Management: Getting available actions for PO:', {
-      poId: po._id,
-      poStatus: po.status,
-      userRole: currentUser?.organizationRole
-    });
-    
     // client_owner has full access to all actions
     const isClientOwner = currentUser?.organizationRole === 'client_owner';
     
@@ -819,7 +791,6 @@ export class POManagementComponent implements OnInit, OnDestroy {
       actions.push({ type: 'send-to-vendor', icon: '📧', label: 'Send to Vendor' });
     }
     
-    console.log('🔧 PO Management: Available actions for client_owner:', actions);
     return actions;
   }
 
@@ -861,11 +832,6 @@ export class POManagementComponent implements OnInit, OnDestroy {
           // Filter out SOWs that already have POs
           this.availableSOWs = this.availableSOWs.filter(sow => !sowIdsWithPOs.has(sow._id));
           
-          console.log('🔧 Filtered SOWs:', {
-            totalSOWs: this.availableSOWs.length,
-            excludedSOWs: sowIdsWithPOs.size
-          });
-          
           this.updateSOWDisplayOptions();
         },
         error: (error: any) => {
@@ -877,45 +843,37 @@ export class POManagementComponent implements OnInit, OnDestroy {
   }
 
   onGridReady(params: any): void {
-    console.log('🔧 PO Management: Grid ready, setting up button handlers');
     this.setupButtonHandlers();
   }
 
   setupButtonHandlers(): void {
-    console.log('🔧 PO Management: Setting up button handlers');
-    console.log('🔧 PO Management: Available POs:', this.pos.map(p => ({ id: p._id, status: p.status })));
-    
     // Set up global functions for button clicks
     (window as any).poViewAction = (poId: string) => {
-      console.log('🔧 PO Management: View button clicked for PO:', poId);
       const po = this.pos.find(p => p._id === poId);
-      console.log('🔧 PO Management: Found PO for view:', po);
       if (po) {
         this.onViewPO(po);
       } else {
-        console.error('🔧 PO Management: PO not found for view:', poId);
+        console.error('❌ PO Management: PO not found for view:', poId);
       }
     };
 
     (window as any).poActionAction = (poId: string, actionType: string) => {
-      console.log('🔧 PO Management: Action button clicked for PO:', poId, 'Action:', actionType);
       const po = this.pos.find(p => p._id === poId);
-      console.log('🔧 PO Management: Found PO for action:', po);
       if (po) {
         this.onActionClick(po, actionType);
       } else {
-        console.error('🔧 PO Management: PO not found for action:', poId);
+        console.error('❌ PO Management: PO not found for action:', poId);
       }
     };
   }
 
   showSuccessMessage(message: string): void {
     // Implement success message display
-    console.log('Success:', message);
+    // console.log('Success:', message);
   }
 
   showErrorMessage(message: string): void {
     // Implement error message display
-    console.error('Error:', message);
+    console.error('❌ Error:', message);
   }
 } 

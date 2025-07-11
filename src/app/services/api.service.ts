@@ -76,7 +76,6 @@ export class ApiService {
       httpParams = httpParams.set('approvedVendorsOnly', params.approvedVendorsOnly.toString());
     }
     
-    console.log('🔧 API: Built HTTP params:', httpParams.toString());
     return httpParams;
   }
 
@@ -101,7 +100,6 @@ export class ApiService {
   };
 
   private clearAuthState(): void {
-    console.log('API Service: Clearing authentication state');
     sessionStorage.removeItem('authToken');
     sessionStorage.removeItem('user');
     sessionStorage.removeItem('refreshToken');
@@ -112,7 +110,6 @@ export class ApiService {
   get<T>(endpoint: string, params?: PaginationParams): Observable<T> {
     // Check if we should attempt the request
     if (!this.connectionService.shouldAttemptRequest()) {
-      console.log('🚫 API: Skipping GET request - server unavailable');
       return throwError(() => new Error('Server is not available. Please check your connection.'));
     }
 
@@ -133,7 +130,6 @@ export class ApiService {
   getWithCustomParams<T>(endpoint: string, params?: any): Observable<T> {
     // Check if we should attempt the request
     if (!this.connectionService.shouldAttemptRequest()) {
-      console.log('🚫 API: Skipping GET request - server unavailable');
       return throwError(() => new Error('Server is not available. Please check your connection.'));
     }
 
@@ -152,7 +148,6 @@ export class ApiService {
       if (params.search) httpParams = httpParams.set('search', params.search);
       if (params.status) httpParams = httpParams.set('status', params.status);
       
-      console.log('🔧 API: Built custom HTTP params:', httpParams.toString());
       (options as any).params = httpParams;
     }
     
@@ -168,7 +163,6 @@ export class ApiService {
   post<T>(endpoint: string, data: any): Observable<T> {
     // Check if we should attempt the request
     if (!this.connectionService.shouldAttemptRequest()) {
-      console.log('🚫 API: Skipping POST request - server unavailable');
       return throwError(() => new Error('Server is not available. Please check your connection.'));
     }
 
@@ -203,16 +197,12 @@ export class ApiService {
 
   // User APIs
   getUsers(): Observable<any> {
-    console.log('👥 API: Fetching users...');
     return this.get('/users');
   }
 
   // Resource APIs with pagination
   getResources(params?: PaginationParams): Observable<PaginatedResponse<any>> {
-    console.log('🧑‍💼 API: Fetching resources from:', `${this.apiUrl}/resources`);
-    console.log('🧑‍💼 API: Parameters being sent:', params);
     return this.get<PaginatedResponse<any>>('/resources', params).pipe(
-      tap(response => console.log('🧑‍💼 API: Resources response:', response)),
       catchError(error => {
         console.error('❌ API: Error fetching resources:', error);
         return throwError(() => error);
@@ -222,108 +212,86 @@ export class ApiService {
 
   // Get single resource by ID
   getResource(id: string): Observable<any> {
-    console.log('🧑‍💼 API: Fetching resource by ID:', id);
-    console.log('🧑‍💼 API: Full URL will be:', `${this.apiUrl}/resources/${id}`);
     return this.get<any>(`/resources/${id}`);
   }
 
   // Requirement APIs with pagination
   getRequirements(params?: PaginationParams): Observable<PaginatedResponse<any>> {
-    console.log('📋 API: Fetching requirements...');
     return this.get<PaginatedResponse<any>>('/requirements', params);
   }
 
   // Get single requirement by ID
   getRequirement(id: string): Observable<any> {
-   
-    console.log('📋 API: Fetching requirement by ID:', id);
-    console.log('📋 API: Full URL will be:', `${this.apiUrl}/requirements/${id}`);
     return this.get<any>(`/requirements/${id}`);
   }
 
   // Application APIs with pagination
   getApplications(params?: PaginationParams): Observable<PaginatedResponse<any>> {
-    console.log('📊 API: Fetching applications...');
     return this.get<PaginatedResponse<any>>('/applications', params);
   }
 
   // Vendor-specific applications with pagination
   getVendorApplications(params?: PaginationParams): Observable<PaginatedResponse<any>> {
-    console.log('📊 API: Fetching vendor applications...');
     return this.get<PaginatedResponse<any>>('/applications/vendor', params);
   }
 
   // Client-specific applications with pagination
   getClientApplications(params?: PaginationParams): Observable<PaginatedResponse<any>> {
-    console.log('📊 API: Fetching client applications...');
     return this.get<PaginatedResponse<any>>('/applications/client', params);
   }
 
   // Generic Skills (Admin Skills)
   getAdminSkills(): Observable<ApiResponse<AdminSkill[]>> {
-    console.log('🔧 API: Fetching admin skills...');
     return this.get<ApiResponse<AdminSkill[]>>('/admin/skills');
   }
 
   // Get active skills for vendors
   getActiveSkills(): Observable<ApiResponse<AdminSkill[]>> {
-    console.log('🔧 API: Fetching active skills...');
     return this.get<ApiResponse<AdminSkill[]>>('/skills/active');
   }
 
   // Get active categories for dropdowns
   getActiveCategories(): Observable<ApiResponse<any[]>> {
-    console.log('📂 API: Fetching active categories...');
     return this.get<ApiResponse<any[]>>('/categories/active');
   }
 
   // Get vendors for dropdowns
   getVendors(): Observable<ApiResponse<any[]>> {
-    console.log('🏢 API: Fetching vendors from:', `${this.apiUrl}/vendors`);
     return this.get<ApiResponse<any[]>>('/vendors');
   }
 
   // Vendor Niche Skills
   getVendorSkills(): Observable<any> {
-    console.log('🎯 API: Fetching vendor niche skills...');
     return this.get('/vendor/niche-skills');
   }
 
   // Admin APIs
   getAdminDashboard(): Observable<any> {
-    console.log('📊 API: Fetching admin dashboard data...');
     return this.get('/admin/stats');
   }
 
   approveEntity(approvalId: string, notes?: string): Observable<any> {
-    console.log('✅ API: Approving entity:', approvalId);
     return this.post('/admin/approvals/approve', { approvalId, notes });
   }
 
   rejectEntity(approvalId: string, notes: string): Observable<any> {
-    console.log('❌ API: Rejecting entity:', approvalId);
     return this.post('/admin/approvals/reject', { approvalId, notes });
   }
 
   approveUser(userId: string, notes?: string): Observable<any> {
-    console.log('✅ API: Approving user:', userId);
     return this.post('/admin/users/approve', { userId, notes });
   }
 
   rejectUser(userId: string, notes: string): Observable<any> {
-    console.log('❌ API: Rejecting user:', userId);
     return this.post('/admin/users/reject', { userId, notes });
   }
 
   getPlatformStats(): Observable<any> {
-    console.log('📈 API: Fetching platform statistics...');
     return this.get('/admin/stats');
   }
 
   // Authentication APIs
   login(credentials: { email: string; password: string }): Observable<any> {
-    console.log('🔐 API: Login attempt for:', credentials.email);
-    
     return this.http.post(`${this.apiUrl}/auth/login`, credentials, {
       headers: new HttpHeaders({
         'Content-Type': 'application/json'
@@ -337,7 +305,6 @@ export class ApiService {
   }
 
   verifyToken(token: string): Observable<any> {
-    console.log('🔒 API: Verifying token');
     return this.http.get(`${this.apiUrl}/auth/verify`, {
       headers: new HttpHeaders({
         'Authorization': `Bearer ${token}`
@@ -366,8 +333,6 @@ export class ApiService {
   }
 
   createResource(resource: any): Observable<any> {
-    console.log('➕ API: Creating resource:', resource.name);
-    
     if (this.useMockData) {
       return this.http.get<any>('/assets/mock-data/resources.json').pipe(
         delay(500),
@@ -377,7 +342,6 @@ export class ApiService {
             id: Date.now().toString(),
             createdAt: new Date().toISOString().split('T')[0]
           };
-          console.log('✅ API: Resource created:', newResource);
           return { success: true, data: newResource };
         }),
         catchError(error => {
@@ -396,8 +360,6 @@ export class ApiService {
   }
 
   updateResource(id: string, resource: any): Observable<any> {
-    console.log('📝 API: Updating resource:', id);
-    
     if (this.useMockData) {
       return of({ success: true, data: { ...resource, id } }).pipe(delay(500));
     } else {
@@ -411,8 +373,6 @@ export class ApiService {
   }
 
   deleteResource(id: string): Observable<any> {
-    console.log('🗑️ API: Deleting resource:', id);
-    
     if (this.useMockData) {
       return of({ success: true }).pipe(delay(500));
     } else {
@@ -426,8 +386,6 @@ export class ApiService {
   }
 
   createRequirement(requirement: any): Observable<any> {
-    console.log('➕ API: Creating requirement:', requirement.title);
-    
     if (this.useMockData) {
       return this.http.get<any>('/assets/mock-data/requirements.json').pipe(
         delay(500),
@@ -437,7 +395,6 @@ export class ApiService {
             id: Date.now().toString(),
             createdAt: new Date().toISOString().split('T')[0]
           };
-          console.log('✅ API: Requirement created:', newRequirement);
           return { success: true, data: newRequirement };
         }),
         catchError(error => {
@@ -456,8 +413,6 @@ export class ApiService {
   }
 
   updateRequirement(id: string, requirement: any): Observable<any> {
-    console.log('📝 API: Updating requirement:', id);
-    
     if (this.useMockData) {
       return of({ success: true, data: { ...requirement, id } }).pipe(delay(500));
     } else {
@@ -471,8 +426,6 @@ export class ApiService {
   }
 
   updateRequirementStatus(id: string, status: string): Observable<any> {
-    console.log('🔄 API: Updating requirement status:', id, status);
-    
     if (this.useMockData) {
       return of({ success: true, data: { id, status } }).pipe(delay(500));
     } else {
@@ -486,8 +439,6 @@ export class ApiService {
   }
 
   createApplication(application: any): Observable<any> {
-    console.log('➕ API: Creating application...');
-    
     if (this.useMockData) {
       return this.http.get<any>('/assets/mock-data/applications.json').pipe(
         delay(500),
@@ -498,7 +449,6 @@ export class ApiService {
             createdAt: new Date().toISOString().split('T')[0],
             updatedAt: new Date().toISOString().split('T')[0]
           };
-          console.log('✅ API: Application created:', newApplication);
           return { success: true, data: newApplication };
         }),
         catchError(error => {
@@ -526,8 +476,6 @@ export class ApiService {
   }
 
   updateApplicationStatus(id: string, status: string, notes?: string): Observable<any> {
-    console.log('🔄 API: Updating application status:', id, status);
-    
     if (this.useMockData) {
       return of({ 
         success: true, 
@@ -550,13 +498,10 @@ export class ApiService {
 
   // Vendor User APIs
   getVendorUsers(): Observable<any> {
-    console.log('👥 API: Fetching vendor users...');
     return this.get('/admin/vendor-employees');
   }
 
   createVendorUser(user: any): Observable<any> {
-    console.log('➕ API: Creating vendor user:', user.name);
-    
     if (this.useMockData) {
       return this.http.get<any>('/assets/mock-data/vendor-users.json').pipe(
         delay(500),
@@ -566,7 +511,6 @@ export class ApiService {
             id: Date.now().toString(),
             createdAt: new Date().toISOString().split('T')[0]
           };
-          console.log('✅ API: Vendor user created:', newUser);
           return { success: true, data: newUser };
         }),
         catchError(error => {
@@ -585,8 +529,6 @@ export class ApiService {
   }
 
   updateVendorUserStatus(id: string, status: string): Observable<any> {
-    console.log('🔄 API: Updating vendor user status:', id, status);
-    
     if (this.useMockData) {
       return of({ success: true, data: { id, status } }).pipe(delay(500));
     } else {
@@ -601,8 +543,6 @@ export class ApiService {
 
   // Generic Skills (Admin Skills)
   createAdminSkill(skill: any): Observable<any> {
-    console.log('➕ API: Creating admin skill:', skill.name);
-    
     if (this.useMockData) {
       return this.post('/admin/skills', skill);
     } else {
@@ -616,8 +556,6 @@ export class ApiService {
   }
 
   updateAdminSkill(id: string, updates: any): Observable<any> {
-    console.log('📝 API: Updating admin skill:', id);
-    
     if (this.useMockData) {
       return this.post('/admin/skills', updates);
     } else {
@@ -631,8 +569,6 @@ export class ApiService {
   }
 
   deleteAdminSkill(id: string): Observable<any> {
-    console.log('🗑️ API: Deleting admin skill:', id);
-    
     if (this.useMockData) {
       return this.delete('/admin/skills');
     } else {
@@ -647,8 +583,6 @@ export class ApiService {
 
   // Vendor Niche Skills
   createVendorSkill(skill: any): Observable<any> {
-    console.log('➕ API: Creating vendor niche skill:', skill);
-    
     if (this.useMockData) {
       return this.post('/vendor-skills', skill);
     } else {
@@ -662,8 +596,6 @@ export class ApiService {
   }
 
   updateVendorSkillStatus(id: string, status: string, reviewNotes?: string): Observable<any> {
-    console.log('🔄 API: Updating vendor niche skill status:', id, status);
-    
     if (this.useMockData) {
       return this.post('/vendor-skills', { status, reviewNotes });
     } else {
@@ -677,8 +609,6 @@ export class ApiService {
   }
 
   deleteVendorSkill(id: string): Observable<any> {
-    console.log('🗑️ API: Deleting vendor niche skill:', id);
-    
     if (this.useMockData) {
       return of({ success: true }).pipe(delay(500));
     } else {
@@ -692,29 +622,23 @@ export class ApiService {
   }
 
   getPendingApprovals(): Observable<any> {
-    console.log('⏳ API: Fetching pending approvals...');
     return this.get('/admin/approvals');
   }
 
   getAllTransactions(): Observable<any> {
-    console.log('💰 API: Fetching all transactions...');
     return this.get('/admin/transactions');
   }
 
   getAdminUsers(): Observable<any> {
-    console.log('👥 API: Fetching admin users...');
     return this.get('/admin/users');
   }
 
   createAdminUser(user: any): Observable<any> {
-    console.log('➕ API: Creating admin user:', user.email);
     return this.post('/admin/users', user);
   }
 
   // File Management APIs
   uploadFile(file: globalThis.File, entityType: string, entityId: string, metadata?: any): Observable<ApiResponse<File>> {
-    console.log('📁 API: Uploading file:', file.name);
-    
     const formData = new FormData();
     formData.append('file', file);
     formData.append('entityType', entityType);
@@ -734,7 +658,6 @@ export class ApiService {
     };
 
     return this.http.post<ApiResponse<File>>(`${this.apiUrl}/files/upload`, formData, options).pipe(
-      tap(response => console.log('✅ API: File uploaded successfully:', response)),
       catchError(error => {
         console.error('❌ API: File upload error:', error);
         return throwError(() => error);
@@ -743,8 +666,6 @@ export class ApiService {
   }
 
   getFilesByEntity(entityType: string, entityId: string, filters?: FileFilters): Observable<PaginatedResponse<File>> {
-    console.log('📁 API: Fetching files for entity:', entityType, entityId);
-    
     let params = new HttpParams();
     if (filters) {
       if (filters.category) params = params.set('category', filters.category);
@@ -757,7 +678,6 @@ export class ApiService {
     (options as any).params = params;
 
     return this.http.get<PaginatedResponse<File>>(`${this.apiUrl}/files/entity/${entityType}/${entityId}`, options).pipe(
-      tap(response => console.log('✅ API: Files retrieved successfully:', response)),
       catchError(error => {
         console.error('❌ API: Error fetching files:', error);
         return throwError(() => error);
@@ -766,8 +686,6 @@ export class ApiService {
   }
 
   getMyFiles(filters?: FileFilters): Observable<PaginatedResponse<File>> {
-    console.log('📁 API: Fetching my files');
-    
     let params = new HttpParams();
     if (filters) {
       if (filters.category) params = params.set('category', filters.category);
@@ -780,7 +698,6 @@ export class ApiService {
     (options as any).params = params;
 
     return this.http.get<PaginatedResponse<File>>(`${this.apiUrl}/files/my-files`, options).pipe(
-      tap(response => console.log('✅ API: My files retrieved successfully:', response)),
       catchError(error => {
         console.error('❌ API: Error fetching my files:', error);
         return throwError(() => error);
@@ -789,10 +706,7 @@ export class ApiService {
   }
 
   getFile(fileId: string): Observable<ApiResponse<File>> {
-    console.log('📁 API: Fetching file:', fileId);
-    
     return this.http.get<ApiResponse<File>>(`${this.apiUrl}/files/${fileId}`, this.getHttpOptions()).pipe(
-      tap(response => console.log('✅ API: File retrieved successfully:', response)),
       catchError(error => {
         console.error('❌ API: Error fetching file:', error);
         return throwError(() => error);
@@ -801,8 +715,6 @@ export class ApiService {
   }
 
   downloadFile(fileId: string): Observable<Blob> {
-    console.log('📁 API: Downloading file:', fileId);
-    
     const options = {
       headers: new HttpHeaders({
         'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`
@@ -811,7 +723,6 @@ export class ApiService {
     };
 
     return this.http.get<Blob>(`${this.apiUrl}/files/${fileId}/download`, options).pipe(
-      tap(() => console.log('✅ API: File download started')),
       catchError(error => {
         console.error('❌ API: Error downloading file:', error);
         return throwError(() => error);
@@ -820,10 +731,7 @@ export class ApiService {
   }
 
   updateFile(fileId: string, updates: FileUpdateRequest): Observable<ApiResponse<File>> {
-    console.log('📁 API: Updating file:', fileId);
-    
     return this.http.put<ApiResponse<File>>(`${this.apiUrl}/files/${fileId}`, updates, this.getHttpOptions()).pipe(
-      tap(response => console.log('✅ API: File updated successfully:', response)),
       catchError(error => {
         console.error('❌ API: Error updating file:', error);
         return throwError(() => error);
@@ -832,10 +740,7 @@ export class ApiService {
   }
 
   deleteFile(fileId: string): Observable<ApiResponse<any>> {
-    console.log('📁 API: Deleting file:', fileId);
-    
     return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/files/${fileId}`, this.getHttpOptions()).pipe(
-      tap(response => console.log('✅ API: File deleted successfully:', response)),
       catchError(error => {
         console.error('❌ API: Error deleting file:', error);
         return throwError(() => error);
@@ -845,8 +750,6 @@ export class ApiService {
 
   // Admin file management
   getPendingFileApprovals(page?: number, limit?: number): Observable<PaginatedResponse<File>> {
-    console.log('📁 API: Fetching pending file approvals');
-    
     let params = new HttpParams();
     if (page) params = params.set('page', page.toString());
     if (limit) params = params.set('limit', limit.toString());
@@ -855,7 +758,6 @@ export class ApiService {
     (options as any).params = params;
 
     return this.http.get<PaginatedResponse<File>>(`${this.apiUrl}/files/pending-approvals`, options).pipe(
-      tap(response => console.log('✅ API: Pending approvals retrieved successfully:', response)),
       catchError(error => {
         console.error('❌ API: Error fetching pending approvals:', error);
         return throwError(() => error);
@@ -864,10 +766,7 @@ export class ApiService {
   }
 
   approveFile(fileId: string, approval: FileApprovalRequest): Observable<ApiResponse<File>> {
-    console.log('📁 API: Approving file:', fileId, approval.approvalStatus);
-    
     return this.http.patch<ApiResponse<File>>(`${this.apiUrl}/files/${fileId}/approval`, approval, this.getHttpOptions()).pipe(
-      tap(response => console.log('✅ API: File approval updated successfully:', response)),
       catchError(error => {
         console.error('❌ API: Error updating file approval:', error);
         return throwError(() => error);
@@ -876,10 +775,7 @@ export class ApiService {
   }
 
   bulkApproveFiles(approval: BulkApprovalRequest): Observable<ApiResponse<any>> {
-    console.log('📁 API: Bulk approving files:', approval.fileIds.length, 'files');
-    
     return this.http.post<ApiResponse<any>>(`${this.apiUrl}/files/bulk-approval`, approval, this.getHttpOptions()).pipe(
-      tap(response => console.log('✅ API: Bulk approval completed successfully:', response)),
       catchError(error => {
         console.error('❌ API: Error in bulk approval:', error);
         return throwError(() => error);
@@ -889,8 +785,6 @@ export class ApiService {
 
   // Test methods for debugging file downloads
   testBasicDownload(): Observable<Blob> {
-    console.log('🧪 API: Testing basic download...');
-    
     const options = {
       headers: new HttpHeaders({
         'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`
@@ -899,7 +793,6 @@ export class ApiService {
     };
 
     return this.http.get<Blob>(`${this.apiUrl}/files/test-file`, options).pipe(
-      tap(() => console.log('✅ API: Basic download test started')),
       catchError(error => {
         console.error('❌ API: Basic download test error:', error);
         return throwError(() => error);
@@ -908,8 +801,6 @@ export class ApiService {
   }
 
   testFileDownload(fileId: string): Observable<Blob> {
-    console.log('🧪 API: Testing file download for:', fileId);
-    
     const options = {
       headers: new HttpHeaders({
         'Authorization': `Bearer ${sessionStorage.getItem('authToken')}`
@@ -918,7 +809,6 @@ export class ApiService {
     };
 
     return this.http.get<Blob>(`${this.apiUrl}/files/${fileId}/test-download`, options).pipe(
-      tap(() => console.log('✅ API: Test file download started')),
       catchError(error => {
         console.error('❌ API: Test file download error:', error);
         return throwError(() => error);
@@ -927,10 +817,7 @@ export class ApiService {
   }
 
   checkFileIntegrity(fileId: string): Observable<any> {
-    console.log('🧪 API: Checking file integrity for:', fileId);
-    
     return this.http.get<any>(`${this.apiUrl}/files/${fileId}/integrity`, this.getHttpOptions()).pipe(
-      tap(response => console.log('✅ API: File integrity check completed')),
       catchError(error => {
         console.error('❌ API: File integrity check error:', error);
         return throwError(() => error);
@@ -940,53 +827,43 @@ export class ApiService {
 
   // Admin Reporting APIs
   getUserRegistrationReport(params?: any): Observable<any> {
-    console.log('📊 API: Fetching user registration report...');
     return this.getWithCustomParams<any>('/admin/reports/user-registration-reporting', params);
   }
 
   getResourcesReport(params?: any): Observable<any> {
-    console.log('📊 API: Fetching resources report...');
     return this.getWithCustomParams<any>('/admin/reports/resources-reporting', params);
   }
 
   getRequirementsReport(params?: any): Observable<any> {
-    console.log('📊 API: Fetching requirements report...');
     return this.getWithCustomParams<any>('/admin/reports/requirements-reporting', params);
   }
 
   getApplicationsReport(params?: any): Observable<any> {
-    console.log('📊 API: Fetching applications report...');
     return this.getWithCustomParams<any>('/admin/reports/applications-reporting', params);
   }
 
   getSkillsReport(params?: any): Observable<any> {
-    console.log('📊 API: Fetching skills report...');
     return this.getWithCustomParams<any>('/admin/reports/skills-reporting', params);
   }
 
   getFinancialReport(params?: any): Observable<any> {
-    console.log('📊 API: Fetching financial report...');
     return this.getWithCustomParams<any>('/admin/reports/financial-reporting', params);
   }
 
   getMonthlyGrowthReport(params?: any): Observable<any> {
-    console.log('📊 API: Fetching monthly growth report...');
     return this.getWithCustomParams<any>('/admin/reports/monthly-growth-reporting', params);
   }
 
   // Custom reporting APIs
   createCustomReport(config: any): Observable<any> {
-    console.log('📊 API: Creating custom report...');
     return this.post<any>('/admin/reports/custom-reporting', config);
   }
 
   getReportTemplates(): Observable<any> {
-    console.log('📊 API: Fetching report templates...');
     return this.get<any>('/admin/reports/templates-reporting');
   }
 
   saveReportTemplate(template: any): Observable<any> {
-    console.log('📊 API: Saving report template...');
     return this.post<any>('/admin/reports/save-template-reporting', template);
   }
 }

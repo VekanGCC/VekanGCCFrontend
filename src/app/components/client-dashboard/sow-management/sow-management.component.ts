@@ -372,12 +372,9 @@ export class SOWManagementComponent implements OnInit, OnDestroy {
   }
 
   loadVendors(): void {
-    console.log('🔧 SOW Management: Loading vendors from database...');
     this.isLoadingVendors = true;
     this.apiService.getVendors().subscribe({
       next: (response: any) => {
-        console.log('🔧 SOW Management: Vendors API response:', response);
-        
         // Handle different response formats
         let vendors = [];
         if (response.success && response.data) {
@@ -393,21 +390,13 @@ export class SOWManagementComponent implements OnInit, OnDestroy {
             id: vendor._id || vendor.id,
             display: `${vendor.firstName || ''} ${vendor.lastName || ''}`.trim() || vendor.email || 'Unknown Vendor'
           }));
-          console.log('🔧 SOW Management: Loaded vendors:', this.vendorDisplayOptions);
         } else {
-          console.warn('🔧 SOW Management: No vendors found in response');
           this.vendorDisplayOptions = [];
         }
         this.isLoadingVendors = false;
       },
       error: (error: any) => {
-        console.error('🔧 SOW Management: Error loading vendors:', error);
-        console.error('🔧 SOW Management: Error details:', {
-          status: error.status,
-          statusText: error.statusText,
-          message: error.message,
-          url: error.url
-        });
+        console.error('❌ SOW Management: Error loading vendors:', error);
         this.isLoadingVendors = false;
         this.vendorDisplayOptions = [];
       }
@@ -415,7 +404,6 @@ export class SOWManagementComponent implements OnInit, OnDestroy {
   }
 
   onCreateSOW(): void {
-    console.log('🔧 SOW Management: Opening create SOW modal');
     this.showCreateModal = true;
     this.sowForm.reset({
       estimatedCost: {
@@ -458,19 +446,16 @@ export class SOWManagementComponent implements OnInit, OnDestroy {
   }
 
   onViewSOW(sow: SOW): void {
-    console.log('🔧 SOW Management: Opening view modal for SOW:', sow._id);
     this.selectedSOW = sow;
     this.updateSelectedSOWDisplay();
     this.showViewModal = true;
   }
 
   onActionClick(sow: SOW, actionType: string): void {
-    console.log('🔧 SOW Management: Action clicked for SOW:', sow._id, 'Action:', actionType);
     this.selectedSOW = sow;
     this.actionType = actionType as 'approve' | 'reject' | 'pm-approval' | 'send-to-vendor';
     
     if (actionType === 'pm-approval') {
-      console.log('🔧 SOW Management: Opening PM approval modal');
       this.showPMApprovalModal = true;
       this.showActionModal = false;
       this.showViewModal = false;
@@ -486,11 +471,9 @@ export class SOWManagementComponent implements OnInit, OnDestroy {
       // Force change detection
       this.changeDetectorRef.detectChanges();
     } else if (actionType === 'send-to-vendor') {
-      console.log('🔧 SOW Management: Processing send to vendor action');
       // For send-to-vendor, we don't need a modal - just process the action directly
       this.onSendToVendor(sow);
     } else {
-      console.log('🔧 SOW Management: Opening action modal');
       this.showActionModal = true;
       this.showPMApprovalModal = false;
       this.showViewModal = false;
@@ -532,7 +515,6 @@ export class SOWManagementComponent implements OnInit, OnDestroy {
           });
       } else if (action === 'reject') {
         // For reject action, you might need to implement a reject method in the service
-        console.log('Reject action not implemented yet');
         this.isLoading = false;
       } else if (action === 'pm-approval') {
         this.showPMApprovalModal = true;
@@ -548,13 +530,10 @@ export class SOWManagementComponent implements OnInit, OnDestroy {
       this.isLoading = true;
       const comments = this.pmApprovalForm.get('comments')?.value;
 
-      console.log('🔧 SOW Management: Submitting for PM approval - SOW ID:', this.selectedSOW._id, 'Comments:', comments);
-
       this.sowService.submitForPMApproval(this.selectedSOW._id, comments)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
-            console.log('🔧 SOW Management: PM approval response:', response);
             if (response.success) {
               this.showSuccessMessage('SOW submitted for PM approval successfully');
               this.loadSOWs();
@@ -562,18 +541,17 @@ export class SOWManagementComponent implements OnInit, OnDestroy {
               // Force change detection to ensure modal closes
               this.changeDetectorRef.detectChanges();
             } else {
-              console.error('🔧 SOW Management: PM approval failed:', response.message);
+              console.error('❌ SOW Management: PM approval failed:', response.message);
               this.showErrorMessage(response.message || 'Failed to submit SOW for PM approval');
               this.isLoading = false;
             }
           },
           error: (error: any) => {
-            console.error('🔧 SOW Management: Error submitting SOW for PM approval:', error);
+            console.error('❌ SOW Management: Error submitting SOW for PM approval:', error);
             this.showErrorMessage('Failed to submit SOW for PM approval');
             this.isLoading = false;
           },
           complete: () => {
-            console.log('🔧 SOW Management: PM approval request completed');
             this.isLoading = false;
           }
         });
@@ -581,14 +559,12 @@ export class SOWManagementComponent implements OnInit, OnDestroy {
   }
 
   onSendToVendor(sow: SOW): void {
-    console.log('🔧 SOW Management: Sending SOW to vendor - SOW ID:', sow._id);
     this.isLoading = true;
 
     this.sowService.sendToVendor(sow._id)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          console.log('🔧 SOW Management: Send to vendor response:', response);
           if (response.success) {
             this.showSuccessMessage('SOW sent to vendor successfully');
             this.loadSOWs();
@@ -596,18 +572,17 @@ export class SOWManagementComponent implements OnInit, OnDestroy {
             // Force change detection to ensure modal closes
             this.changeDetectorRef.detectChanges();
           } else {
-            console.error('🔧 SOW Management: Send to vendor failed:', response.message);
+            console.error('❌ SOW Management: Send to vendor failed:', response.message);
             this.showErrorMessage(response.message || 'Failed to send SOW to vendor');
             this.isLoading = false;
           }
         },
         error: (error: any) => {
-          console.error('🔧 SOW Management: Error sending SOW to vendor:', error);
+          console.error('❌ SOW Management: Error sending SOW to vendor:', error);
           this.showErrorMessage('Failed to send SOW to vendor');
           this.isLoading = false;
         },
         complete: () => {
-          console.log('🔧 SOW Management: Send to vendor request completed');
           this.isLoading = false;
         }
       });
@@ -629,13 +604,6 @@ export class SOWManagementComponent implements OnInit, OnDestroy {
   }
 
   onCloseModal(): void {
-    console.log('🔧 SOW Management: Closing modal - Current states before:', {
-      showCreateModal: this.showCreateModal,
-      showViewModal: this.showViewModal,
-      showActionModal: this.showActionModal,
-      showPMApprovalModal: this.showPMApprovalModal
-    });
-    
     this.showCreateModal = false;
     this.showViewModal = false;
     this.showActionModal = false;
@@ -647,13 +615,6 @@ export class SOWManagementComponent implements OnInit, OnDestroy {
     this.sowForm?.reset();
     this.actionForm?.reset();
     this.pmApprovalForm?.reset();
-    
-    console.log('🔧 SOW Management: Modal states after reset:', {
-      showCreateModal: this.showCreateModal,
-      showViewModal: this.showViewModal,
-      showActionModal: this.showActionModal,
-      showPMApprovalModal: this.showPMApprovalModal
-    });
     
     // Force change detection
     this.changeDetectorRef.detectChanges();
@@ -689,8 +650,6 @@ export class SOWManagementComponent implements OnInit, OnDestroy {
   getAvailableActions(sow: SOW): Array<{type: string, icon: string, label: string}> {
     const actions = [];
     
-    console.log('🔧 SOW Management: Getting actions for SOW:', sow._id, 'Status:', sow.status);
-    
     if (sow.status === 'draft') {
       actions.push({ type: 'pm-approval', icon: '📋', label: 'Submit for PM Approval' });
     }
@@ -709,7 +668,6 @@ export class SOWManagementComponent implements OnInit, OnDestroy {
       actions.push({ type: 'send-to-vendor', icon: '📧', label: 'Send to Vendor' });
     }
     
-    console.log('🔧 SOW Management: Available actions:', actions);
     return actions;
   }
 
@@ -798,41 +756,35 @@ export class SOWManagementComponent implements OnInit, OnDestroy {
 
   get showSOWModal() {
     const hasModal = this.showCreateModal || this.showViewModal || this.showActionModal || this.showPMApprovalModal;
-    console.log('🔧 SOW Management: Modal states - Create:', this.showCreateModal, 'View:', this.showViewModal, 'Action:', this.showActionModal, 'PM:', this.showPMApprovalModal, 'HasModal:', hasModal);
     return hasModal;
   }
 
   showSuccessMessage(message: string): void {
     // Implement success message display
-    console.log('Success:', message);
+    // console.log('Success:', message);
   }
 
   showErrorMessage(message: string): void {
     // Implement error message display
-    console.error('Error:', message);
+    console.error('❌ Error:', message);
   }
 
   // Test method to check API connection
   testApiConnection(): void {
-    console.log('🔧 SOW Management: Testing API connection...');
-    
     // Test vendors route
     this.apiService.getVendors().subscribe({
       next: (response: any) => {
-        console.log('🔧 SOW Management: Vendors API test successful:', response);
+        // API test successful
       },
       error: (error: any) => {
-        console.error('🔧 SOW Management: Vendors API test failed:', error);
+        console.error('❌ SOW Management: Vendors API test failed:', error);
       }
     });
   }
 
   onGridReady(params: any): void {
-    console.log('🔧 SOW Management: Grid ready, setting up button handlers');
-    
     // Set up global functions for button clicks
     (window as any).sowViewAction = (sowId: string) => {
-      console.log('🔧 SOW Management: View button clicked for SOW:', sowId);
       const sow = this.sows.find(s => s._id === sowId);
       if (sow) {
         this.onViewSOW(sow);
@@ -840,7 +792,6 @@ export class SOWManagementComponent implements OnInit, OnDestroy {
     };
 
     (window as any).sowActionAction = (sowId: string, actionType: string) => {
-      console.log('🔧 SOW Management: Action button clicked for SOW:', sowId, 'Action:', actionType);
       const sow = this.sows.find(s => s._id === sowId);
       if (sow) {
         this.onActionClick(sow, actionType);
