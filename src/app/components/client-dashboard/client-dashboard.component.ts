@@ -186,25 +186,20 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log('🔄 ClientDashboard: Initializing...');
-    
     // Check authentication state immediately
     const user = this.authService.getCurrentUser();
     if (!user) {
-      console.log('Client Dashboard: No user found, redirecting to login');
       this.router.navigate(['/login']);
       return;
     }
 
     // Check if user is client
     if (user.userType !== 'client') {
-      console.log('Client Dashboard: User is not client, redirecting to home');
       this.router.navigate(['/']);
       return;
     }
 
     this.currentUser = user;
-    console.log('🔧 ClientDashboard: Current user:', this.currentUser);
 
     // Load initial data
     this.loadClientData();
@@ -219,7 +214,6 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
     // Subscribe to application modal actions
     this.subscriptions.push(
       this.clientApplicationsService.modalAction$.subscribe(action => {
-        console.log('🔧 ClientDashboard: Received modal action:', action);
         if (action.type === 'viewHistory' && action.applicationId) {
           if (action.history && action.applicationDetails) {
             // Use the data provided by the service
@@ -257,11 +251,9 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
     
     this.clientService.getRequirements(params).subscribe({
       next: (response) => {
-        console.log('Requirements loaded:', response);
         if (response.success && response.data) {
           // Process the requirements to ensure all fields are properly set
           this.requirements = response.data.map((req: any, index: number) => {
-            console.log(`Processing requirement ${index}:`, req);
             return {
               ...req,
               skills: Array.isArray(req.skills) ? req.skills : [],
@@ -270,7 +262,6 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
             };
           });
           this.clientRequirements = [...this.requirements];
-          console.log('Processed requirements:', this.clientRequirements);
           
           // Update pagination state
           const paginationData = response.pagination || response.meta;
@@ -300,26 +291,23 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
     }
     
     const requirementIds = this.clientRequirements.map(req => req._id);
-    console.log('🔧 ClientDashboard: Loading counts for requirements:', requirementIds);
     
     // Use forkJoin to wait for both counts to be loaded
     forkJoin({
       applicationCounts: this.clientService.getApplicationCountsForRequirements(requirementIds).pipe(
         catchError(error => {
-          console.error('🔧 ClientDashboard: Error loading application counts:', error);
+          console.error('Error loading application counts:', error);
           return of({ success: false, data: {} });
         })
       ),
       matchingResourcesCounts: this.clientService.getMatchingResourcesCountsForRequirements(requirementIds).pipe(
         catchError(error => {
-          console.error('🔧 ClientDashboard: Error loading matching resources counts:', error);
+          console.error('Error loading matching resources counts:', error);
           return of({ success: false, data: {} });
         })
       )
     }).subscribe({
       next: (results) => {
-        console.log('🔧 ClientDashboard: All counts loaded:', results);
-        
         // Update requirements with application counts
         if (results.applicationCounts.success && results.applicationCounts.data) {
           this.clientRequirements = this.clientRequirements.map(req => ({
@@ -339,14 +327,12 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
         // Update the main requirements array
         this.requirements = [...this.clientRequirements];
         
-        console.log('🔧 ClientDashboard: Final requirements with counts:', this.clientRequirements);
-        
         // Complete loading
         this.requirementsPaginationState.isLoading = false;
         this.changeDetectorRef.detectChanges();
       },
       error: (error) => {
-        console.error('🔧 ClientDashboard: Error loading counts:', error);
+        console.error('Error loading counts:', error);
         this.requirementsPaginationState.isLoading = false;
         this.changeDetectorRef.detectChanges();
       }
@@ -396,13 +382,10 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
   }
 
   onRequirementsSortChange(sortData: {sortBy: string, sortOrder: 'asc' | 'desc'}): void {
-    console.log('Requirements sort change:', sortData);
     // You can implement sorting logic here if needed
   }
 
   onViewApplications(requirementId: string): void {
-    console.log('🔧 ClientDashboard: Viewing applications for requirement:', requirementId);
-    
     // Set filter to show applications for this requirement
     this.currentApplicationFilter = { requirementId };
     
@@ -413,8 +396,6 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
   }
 
   onViewMatchingResources(requirementId: string): void {
-    console.log('🔧 ClientDashboard: Viewing matching resources for requirement:', requirementId);
-    
     // Store the requirement ID for the matching resources component
     this.currentRequirementId = requirementId;
     
@@ -429,7 +410,6 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
   }
 
   onApplicationsSortChange(sortData: {sortBy: string, sortOrder: 'asc' | 'desc'}): void {
-    console.log('Applications sort change:', sortData);
     // You can implement sorting logic here if needed
   }
 
@@ -470,7 +450,6 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
     const params = { page, limit: this.resourcesPaginationState.pageSize, sortBy, sortOrder };
     this.apiService.getResources(params).subscribe({
       next: (response) => {
-        console.log('Resources loaded:', response);
         if (response.success && response.data) {
           // Process and type the resources
           this.resources = response.data.map((resource: Resource) => {
@@ -484,7 +463,6 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
               skills: resource.skills || []
             };
           });
-          console.log('Processed resources:', this.resources);
           
           // Update pagination state
           const paginationData = response.pagination || response.meta;
@@ -515,8 +493,6 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
   }
 
   navigateToTab(tabId: string): void {
-    console.log('🔄 ClientDashboard: Navigating to tab:', tabId);
-    
     // Map tab IDs to routes
     const routeMap: { [key: string]: string } = {
       'overview': '/client/overview',
@@ -553,7 +529,6 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
   }
 
   openCloseRequirementModal(requirement: Requirement): void {
-    console.log('🔍 DEBUG: Client dashboard - Opening close requirement modal for:', requirement._id);
     this.requirementToClose = requirement;
     this.showCloseRequirementModal = true;
     this.changeDetectorRef.detectChanges();
@@ -567,21 +542,18 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
   }
 
   closeCloseRequirementModal(): void {
-    console.log('🔍 DEBUG: Client dashboard - Closing close requirement modal');
     this.showCloseRequirementModal = false;
     this.requirementToClose = null;
     this.changeDetectorRef.detectChanges();
   }
 
   closeEditRequirementModal(): void {
-    console.log('🔍 DEBUG: Client dashboard - Closing edit requirement modal');
     this.showEditRequirementModal = false;
     this.requirementToEdit = null;
     this.changeDetectorRef.detectChanges();
   }
 
   confirmCloseRequirement(): void {
-    console.log('🔍 DEBUG: Client dashboard - Confirming close requirement for:', this.requirementToClose?._id);
     if (this.requirementToClose) {
       this.isLoading = true;
       this.clientService.updateRequirement(this.requirementToClose._id, { status: 'cancelled' }).subscribe({
@@ -613,7 +585,6 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
     this.clientService.updateRequirement(requirementId, updates).subscribe({
       next: (response) => {
         if (response.success) {
-          console.log('🔧 ClientDashboard: Requirement updated successfully, reloading data');
           // Reload requirements to ensure UI shows the latest data
           this.loadRequirements(this.requirementsPaginationState.currentPage);
           this.closeEditRequirementModal();
@@ -632,12 +603,10 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
   }
 
   handleRequirementUpdate(requirement: Requirement): void {
-    console.log('Handling requirement update:', requirement);
     this.updateRequirement(requirement._id, requirement);
   }
 
   handleRequirementCreated(requirement: Requirement): void {
-    console.log('🔧 ClientDashboard: New requirement created:', requirement);
     // Close the modal
     this.showRequirementModal = false;
     
@@ -653,8 +622,6 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
 
   // Application status management
   handleUpdateApplicationStatus(data: {applicationId: string, status: string, notes?: string}): void {
-    console.log('Updating application status:', data);
-    
     // Ensure we stay on applications tab
     if (this.activeTab !== 'applications') {
       this.activeTab = 'applications';
@@ -682,7 +649,6 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
     // Make API call to update status
     this.clientService.updateApplicationStatus(data.applicationId, data.status, data.notes).subscribe({
       next: (response) => {
-        console.log('Application status updated successfully:', response);
         // Don't call loadApplications() to avoid tab change
         // The local state is already updated above
         // Ensure we're still on applications tab
@@ -709,7 +675,6 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
   }
 
   handleViewApplicationHistory(applicationId: string): void {
-    console.log('Viewing application history for:', applicationId);
     this.selectedApplicationId = applicationId;
     this.showHistoryModal = true;
     this.loadApplicationHistory(applicationId);
@@ -722,7 +687,6 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
     history: any[];
     applicationDetails: any;
   }): void {
-    console.log('🔧 ClientDashboard: handleViewHistory called with data:', data);
     this.selectedApplicationId = data.applicationId;
     this.applicationHistory = data.history;
     this.applicationDetails = data.applicationDetails;
@@ -733,33 +697,26 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
   }
 
   handleViewApplicationDetails(application: Application): void {
-    console.log('Viewing application details for:', application);
     this.selectedApplication = application;
     this.showApplicationDetailsModal = true;
     this.changeDetectorRef.detectChanges();
   }
 
   private loadApplicationHistory(applicationId: string): void {
-    console.log('🔧 ClientDashboard: Loading application history for:', applicationId);
     this.isLoadingHistory = true;
     this.clientService.getApplicationHistory(applicationId).subscribe({
       next: (response) => {
-        console.log('🔧 ClientDashboard: Application history API response:', response);
         if (response.success && response.data) {
           this.applicationHistory = response.data;
-          console.log('🔧 ClientDashboard: History data set:', this.applicationHistory);
-          console.log('🔧 ClientDashboard: History length:', this.applicationHistory.length);
         } else {
           this.applicationHistory = [];
-          console.log('🔧 ClientDashboard: No history data in response');
         }
         this.isLoadingHistory = false;
-        console.log('🔧 ClientDashboard: Loading completed, isLoadingHistory = false');
         // Force change detection immediately after setting isLoading to false
         this.changeDetectorRef.detectChanges();
       },
       error: (error) => {
-        console.error('🔧 ClientDashboard: Error loading application history:', error);
+        console.error('Error loading application history:', error);
         this.applicationHistory = [];
         this.isLoadingHistory = false;
         // Force change detection immediately after setting isLoading to false
@@ -769,19 +726,16 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
   }
 
   closeHistoryModal(): void {
-    console.log('🔧 ClientDashboard: closeHistoryModal called');
     this.showHistoryModal = false;
     this.selectedApplicationId = '';
     this.applicationHistory = [];
     this.applicationDetails = null;
     this.isLoadingHistory = false;
-    console.log('🔧 ClientDashboard: Modal closed, showHistoryModal = false');
     // Force change detection to ensure UI updates immediately
     this.changeDetectorRef.detectChanges();
   }
 
   handleModalClose(): void {
-    console.log('🔧 ClientDashboard: handleModalClose called');
     this.closeHistoryModal();
   }
 
@@ -795,7 +749,6 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
   }
 
   onResourcesSearchChange(searchParams: any): void {
-    console.log('Search parameters received:', searchParams);
     this.currentSearchParams = searchParams;
     this.loadResourcesWithSearch(searchParams);
   }
@@ -810,11 +763,8 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
       ...searchParams
     };
     
-    console.log('Loading resources with search params:', params);
-    
     this.apiService.getResources(params).subscribe({
       next: (response) => {
-        console.log('Resources loaded with search:', response);
         if (response.success && response.data) {
           // Process and type the resources
           this.resources = response.data.map((resource: Resource) => {
@@ -828,7 +778,6 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
               skills: resource.skills || []
             };
           });
-          console.log('Processed resources:', this.resources);
           
           // Update pagination state
           const paginationData = response.pagination || response.meta;
@@ -857,31 +806,23 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
   }
 
   applyMultipleResources(resourceIds: string[]): void {
-    console.log('🔧 ClientDashboard: Applying multiple resources:', resourceIds);
-    console.log('🔧 ClientDashboard: Current route:', this.router.url);
-    
     // Store the selected resource IDs
     this.selectedResourceIds = resourceIds;
     
     // Navigate to apply-resources page
     this.router.navigate(['/client/apply-resources']);
-    
-    console.log('🔧 ClientDashboard: Navigating to apply-resources with resourceIds:', resourceIds);
   }
 
   navigateBackToBrowse(): void {
-    console.log('🔧 ClientDashboard: Navigating back to browse resources');
     this.router.navigate(['/client/resources']);
   }
 
   navigateBackToRequirements(): void {
-    console.log('🔧 ClientDashboard: Navigating back to requirements');
     this.currentRequirementId = '';
     this.router.navigate(['/client/requirements']);
   }
 
   onApplyResourceFromMatching(resourceId: string): void {
-    console.log('🔧 ClientDashboard: Applying resource from matching resources:', resourceId);
     // Navigate to apply resources page with the specific resource
     this.applyResource(resourceId);
   }
@@ -929,14 +870,10 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
   }
 
   handleToggleUserStatus(data: {id: string, status: string}): void {
-    console.log('🔧 ClientDashboard: Toggling user status:', data);
-    
     const newStatus = data.status === 'active' ? 'inactive' : 'active';
     
     this.clientService.updateUserStatus(data.id, newStatus).subscribe({
       next: (response) => {
-        console.log('User status updated successfully:', response);
-        
         // Update local state immediately for responsive UI
         const userIndex = this.organizationUsers.findIndex(user => user._id === data.id);
         if (userIndex !== -1) {
@@ -952,17 +889,13 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
   }
 
   onUserAdded(user: any): void {
-    console.log('🔧 ClientDashboard: User added:', user);
     this.loadOrganizationUsers();
     this.showAddUserModal = false;
   }
 
   private loadOrganizationUsers(): void {
-    console.log('🔧 ClientDashboard: Loading organization users...');
-    
     this.clientService.getOrganizationUsers().subscribe({
       next: (response) => {
-        console.log('Organization users loaded:', response);
         if (response.success && response.data) {
           this.organizationUsers = response.data;
         } else {
@@ -1012,7 +945,6 @@ export class ClientDashboardComponent implements OnInit, OnDestroy {
   }
 
   onClearApplicationFilter(): void {
-    console.log('🔧 ClientDashboard: Clearing application filter');
     this.currentApplicationFilter = {};
     this.loadApplications(1);
   }

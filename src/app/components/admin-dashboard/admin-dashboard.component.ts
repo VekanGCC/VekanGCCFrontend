@@ -169,35 +169,27 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   // Get navigation tabs based on user organization role
   get availableNavigationTabs(): NavigationTab[] {
     if (!this.currentUser) {
-      console.log('Admin Dashboard: No current user found');
       return [];
     }
     
-    console.log('Admin Dashboard: Current user type:', this.currentUser.userType);
-    console.log('Admin Dashboard: Current user organizationRole:', this.currentUser.organizationRole);
-    
     // Admin owners can see all tabs including workflows
     if (this.currentUser.organizationRole === 'admin_owner') {
-      console.log('Admin Dashboard: User is admin owner, showing all tabs');
       return this.navigationTabs;
     }
     
     // Admin employees can see all tabs except workflows
     if (this.currentUser.organizationRole === 'admin_employee') {
-      console.log('Admin Dashboard: User is admin employee, hiding workflows tab');
       return this.navigationTabs.filter(tab => tab.id !== 'workflows');
     }
     
     // Admin accounts can see most tabs but not workflows
     if (this.currentUser.organizationRole === 'admin_account') {
-      console.log('Admin Dashboard: User is admin account, hiding workflows tab');
       return this.navigationTabs.filter(tab => tab.id !== 'workflows');
     }
     
     // Legacy role support removed - only use organizationRole
     
     // Other users see limited tabs
-    console.log('Admin Dashboard: User has no specific role, showing limited tabs');
     return this.navigationTabs.filter(tab => 
       ['overview', 'skill-approvals', 'skills', 'categories'].includes(tab.id)
     );
@@ -260,14 +252,12 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     // Check authentication state immediately
     const user = this.authService.getCurrentUser();
     if (!user) {
-      console.log('Admin Dashboard: No user found, redirecting to login');
       this.router.navigate(['/login']);
       return;
     }
 
     // Check if user is admin
     if (user.userType !== 'admin') {
-      console.log('Admin Dashboard: User is not admin, redirecting to dashboard');
       this.router.navigate(['/dashboard']);
       return;
     }
@@ -305,11 +295,8 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     // Subscribe to admin applications service modal actions
     this.subscriptions.push(
       this.adminApplicationsService.modalAction$.subscribe(action => {
-        debugger;
         if (action.type === 'viewHistory' && action.applicationId) {
-          debugger;
           if (action.history && action.applicationDetails) {
-            debugger;
             // Use the data provided by the service
             this.handleViewHistory({
               applicationId: action.applicationId,
@@ -317,15 +304,11 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
               applicationDetails: action.applicationDetails
             });
           } else {
-            debugger;
             // Fallback to loading data manually
             this.handleViewApplicationHistory(action.applicationId);
           }
         } else if (action.type === 'viewDetails' && action.application) {
-          debugger;
           this.handleViewApplicationDetails(action.application);
-        } else {
-          debugger;
         }
       })
     );
@@ -359,15 +342,12 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
           submittedAt: vendorSkill.createdAt,
           reviewNotes: ''
         }));
-        console.log('Admin Dashboard: Vendor skills data length:', this.skillApprovals.length);
         
         // Check for pagination data
         const paginationData = response.pagination;
         if (paginationData) {
-          console.log('Admin Dashboard: Vendor skills pagination data:', paginationData);
           this.updateSkillApprovalsPagination(paginationData);
         } else {
-          console.warn('Admin Dashboard: No pagination data in vendor skills response');
           // Fallback: calculate from data length
           this.updateSkillApprovalsPagination({
             page: this.skillApprovalsPaginationState.currentPage,
@@ -418,11 +398,9 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   private async loadPlatformStats(): Promise<void> {
-    console.log('Admin Dashboard: Loading platform stats...');
     this.loadingStates.stats = true;
     try {
       const stats = await firstValueFrom(this.adminService.getPlatformStats());
-      console.log('Admin Dashboard: Platform stats loaded:', stats);
       this.platformStats = stats;
       this.changeDetectorRef.detectChanges();
     } catch (error) {
@@ -451,19 +429,15 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       const response = await firstValueFrom(
         this.adminService.getApplications(this.applicationsPaginationState.currentPage, this.applicationsPaginationState.pageSize)
       );
-      console.log('Admin Dashboard: Full applications response:', response);
       
       if (response.success) {
         this.allApplications = response.data;
-        console.log('Admin Dashboard: Applications data length:', this.allApplications.length);
         
         // Check for pagination data
         const paginationData = response.pagination;
         if (paginationData) {
-          console.log('Admin Dashboard: Pagination data from response:', paginationData);
           this.updateApplicationsPagination(paginationData);
         } else {
-          console.warn('Admin Dashboard: No pagination data in response');
           // Fallback: calculate from data length
           this.updateApplicationsPagination({
             page: this.applicationsPaginationState.currentPage,
@@ -488,19 +462,15 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
       const response = await firstValueFrom(
         this.adminService.getUsers(this.usersPaginationState.currentPage, this.usersPaginationState.pageSize)
       );
-      console.log('Admin Dashboard: Full users response:', response);
       
       if (response.success) {
         this.allUsers = response.data;
-        console.log('Admin Dashboard: Users data length:', this.allUsers.length);
         
         // Check for pagination data
         const paginationData = response.pagination;
         if (paginationData) {
-          console.log('Admin Dashboard: Pagination data from response:', paginationData);
           this.updateUsersPagination(paginationData);
         } else {
-          console.warn('Admin Dashboard: No pagination data in response');
           // Fallback: calculate from data length
           this.updateUsersPagination({
             page: this.usersPaginationState.currentPage,
@@ -737,12 +707,9 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   onApplicationStatusUpdate(data: {applicationId: string, status: string, notes?: string}): void {
-    console.log('Admin: Application status update requested:', data);
-    
     this.adminService.updateApplicationStatus(data.applicationId, data.status, data.notes).subscribe({
       next: (response: any) => {
         if (response.success) {
-          console.log('Application status updated successfully:', response);
           // Reload applications to reflect the change
           this.loadApplications();
         } else {
@@ -843,13 +810,9 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   editSkill(skill: AdminSkill): void {
     // This method is now handled by the Skills Management component
     // The edit functionality is implemented in the child component
-    console.log('Edit skill event received from Skills Management:', skill);
   }
 
   onSkillUpdated(updateData: {skillId: string, skillData: Partial<AdminSkill>}): void {
-    console.log('=== ADMIN DASHBOARD SKILL UPDATED ===');
-    console.log('Skill updated from Skills Management:', updateData);
-    
     // Set loading state for skills
     this.loadingStates.skills = true;
     
@@ -857,29 +820,19 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.adminService.updateSkill(updateData.skillId, updateData.skillData).subscribe({
         next: (response) => {
-          console.log('Skill updated successfully on backend:', response);
-          
           // Refresh the admin skills data to ensure UI shows correct data
           this.loadAdminSkills().then(() => {
             this.loadingStates.skills = false;
             this.changeDetectorRef.detectChanges();
-            
-            // Show success message (you can add a toast notification here)
-            console.log('Skill updated successfully and data refreshed');
           });
         },
         error: (error) => {
           console.error('Error updating skill on backend:', error);
           this.loadingStates.skills = false;
           this.changeDetectorRef.detectChanges();
-          
-          // Show error message (you can add a toast notification here)
-          console.error('Failed to update skill');
         }
       })
     );
-    
-    console.log('=== END ADMIN DASHBOARD SKILL UPDATED ===');
   }
 
   editUser(user: User): void {
@@ -993,7 +946,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   get currentPlatformStats(): PlatformStats {
-    console.log('Admin Dashboard: Getting current platform stats:', this.platformStats);
     return this.platformStats;
   }
 
@@ -1011,29 +963,17 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   onCategoryAdded(newCategory: Category): void {
     // Add the new category to the list
     this.categories = [...this.categories, newCategory];
-    console.log('Category added:', newCategory);
   }
 
   editCategory(category: Category): void {
-    console.log('=== ADMIN DASHBOARD EDIT CATEGORY ===');
-    console.log('Edit category called with:', category);
-    
     this.selectedCategoryForEdit = category;
     this.showEditCategoryModal = true;
-    
-    console.log('selectedCategoryForEdit set to:', this.selectedCategoryForEdit);
-    console.log('showEditCategoryModal set to:', this.showEditCategoryModal);
-    
     this.changeDetectorRef.detectChanges();
-    console.log('=== END ADMIN DASHBOARD EDIT CATEGORY ===');
   }
 
 
 
   onCategoryUpdated(updatedCategory: Category): void {
-    console.log('=== ADMIN DASHBOARD CATEGORY UPDATED ===');
-    console.log('Category updated from Categories Management:', updatedCategory);
-    
     // Set loading state for categories
     this.loadingStates.categories = true;
     
@@ -1041,29 +981,19 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.adminService.updateCategory(updatedCategory._id, updatedCategory).subscribe({
         next: (response) => {
-          console.log('Category updated successfully on backend:', response);
-          
           // Refresh the categories data to ensure UI shows correct data
           this.loadCategories().then(() => {
             this.loadingStates.categories = false;
             this.changeDetectorRef.detectChanges();
-            
-            // Show success message (you can add a toast notification here)
-            console.log('Category updated successfully and data refreshed');
           });
         },
         error: (error) => {
           console.error('Error updating category on backend:', error);
           this.loadingStates.categories = false;
           this.changeDetectorRef.detectChanges();
-          
-          // Show error message (you can add a toast notification here)
-          console.error('Failed to update category');
         }
       })
     );
-    
-    console.log('=== END ADMIN DASHBOARD CATEGORY UPDATED ===');
   }
 
   closeEditCategoryModal(): void {
@@ -1073,8 +1003,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   onEditCategorySave(updatedCategoryData: Partial<Category>): void {
-    console.log('Category updated in Admin Dashboard:', updatedCategoryData);
-    
     if (this.selectedCategoryForEdit) {
       const updatedCategory: Category = {
         ...this.selectedCategoryForEdit,
@@ -1159,7 +1087,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   handleViewApplicationDetails(application: Application): void {
-    console.log('🔧 AdminDashboard: Viewing application details for:', application._id);
     // TODO: Implement application details modal
   }
 
@@ -1182,7 +1109,6 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   }
 
   closeHistoryModal(): void {
-    console.log('🔧 AdminDashboard: Closing history modal');
     this.showHistoryModal = false;
     this.selectedApplicationId = '';
     this.applicationHistory = [];
@@ -1194,19 +1120,16 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
 
   openNotifications(): void {
     // TODO: Implement notifications functionality
-    console.log('Opening notifications...');
     // You can implement a notifications modal or dropdown here
   }
 
   openSettings(): void {
     // TODO: Implement settings functionality
-    console.log('Opening settings...');
     // You can implement a settings modal or navigate to settings page
   }
 
   openUserProfile(): void {
     // TODO: Implement user profile functionality
-    console.log('Opening user profile...');
     // You can implement a profile modal or navigate to profile page
   }
 }
