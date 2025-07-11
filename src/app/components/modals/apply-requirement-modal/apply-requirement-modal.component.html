@@ -80,9 +80,9 @@
                 <div>
                   <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Budget</p>
                   <p class="text-sm font-semibold text-gray-900">
-                    {{ requirement.budget?.currency || 'USD' }}{{ requirement.budget?.charge || 0 }}/hr
+                    {{ requirement.budget.currency || 'USD' }}{{ requirement.budget.charge || 0 }}/hr
                   </p>
-                  <p class="text-xs text-gray-500">{{ requirement.budget?.type || 'Not specified' }}</p>
+                  <p class="text-xs text-gray-500">{{ requirement.budget.type || 'Not specified' }}</p>
                 </div>
               </div>
               
@@ -121,9 +121,9 @@
                 <div>
                   <p class="text-xs font-medium text-gray-500 uppercase tracking-wide">Experience</p>
                   <p class="text-sm font-semibold text-gray-900">
-                    {{ requirement.experience?.minYears || 0 }} years
+                    {{ requirement.experience.minYears || 0 }} years
                   </p>
-                  <p class="text-xs text-gray-500">{{ requirement.experience?.level || 'Not specified' }}</p>
+                  <p class="text-xs text-gray-500">{{ requirement.experience.level || 'Not specified' }}</p>
                 </div>
               </div>
               

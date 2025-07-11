@@ -198,7 +198,7 @@
 
         <div>
           <label class="block text-sm font-medium text-gray-600">SOW Reference</label>
-          <p class="text-sm text-gray-900">#{{ selectedPO.sowId?.slice(-6) }}</p>
+          <p class="text-sm text-gray-900">#{{ selectedPO.sowId.slice(-6) }}</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -215,7 +215,7 @@
         <div>
           <label class="block text-sm font-medium text-gray-600">Total Amount</label>
           <p class="text-sm text-gray-900">
-            {{ selectedPO.totalAmount?.currency }} {{ selectedPO.totalAmount?.amount?.toLocaleString() }}
+            {{ selectedPO.totalAmount.currency }} {{ selectedPO.totalAmount.amount.toLocaleString() }}
           </p>
         </div>
 
@@ -239,15 +239,15 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label class="block text-sm font-medium text-gray-600">Total Invoiced</label>
-                <p class="text-sm text-gray-900">{{ selectedPO.paymentTracking.totalInvoiced?.toLocaleString() }}</p>
+                <p class="text-sm text-gray-900">{{ selectedPO.paymentTracking.totalInvoiced.toLocaleString() }}</p>
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-600">Total Paid</label>
-                <p class="text-sm text-gray-900">{{ selectedPO.paymentTracking.totalPaid?.toLocaleString() }}</p>
+                <p class="text-sm text-gray-900">{{ selectedPO.paymentTracking.totalPaid.toLocaleString() }}</p>
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-600">Remaining Amount</label>
-                <p class="text-sm text-gray-900">{{ selectedPO.paymentTracking.remainingAmount?.toLocaleString() }}</p>
+                <p class="text-sm text-gray-900">{{ selectedPO.paymentTracking.remainingAmount.toLocaleString() }}</p>
               </div>
             </div>
           </div>
@@ -263,7 +263,7 @@
                 <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + 
                   (selectedPO.vendorResponse.status === 'accepted' ? 'bg-green-100 text-green-800' : 
                    selectedPO.vendorResponse.status === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800')">
-                  {{ selectedPO.vendorResponse.status?.toUpperCase() }}
+                  {{ selectedPO.vendorResponse.status.toUpperCase() }}
                 </span>
               </div>
               <div *ngIf="selectedPO.vendorResponse.responseDate">

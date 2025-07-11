@@ -151,16 +151,16 @@
                       </button>
                     </div>
                     
-                    <span [class]="'inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ' + 
-                      (profileData?.user?.approvalStatus === 'approved' ? 'bg-green-100 text-green-800' :
-                       profileData?.user?.approvalStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                    <span *ngIf="profileData" [class]="'inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ' + 
+                      (profileData.user.approvalStatus === 'approved' ? 'bg-green-100 text-green-800' :
+                       profileData.user.approvalStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                        'bg-red-100 text-red-800')">
-                      <img [src]="profileData?.user?.approvalStatus === 'approved' ? 'assets/icons/lucide/lucide/circle-check.svg' : 
-                                 profileData?.user?.approvalStatus === 'pending' ? 'assets/icons/lucide/lucide/clock.svg' : 
+                      <img [src]="profileData.user.approvalStatus === 'approved' ? 'assets/icons/lucide/lucide/circle-check.svg' : 
+                                 profileData.user.approvalStatus === 'pending' ? 'assets/icons/lucide/lucide/clock.svg' : 
                                  'assets/icons/lucide/lucide/x-circle.svg'" 
-                           class="w-4 h-4 mr-2" [alt]="profileData?.user?.approvalStatus">
-                      {{profileData?.user?.approvalStatus === 'approved' ? 'Admin Approved' : 
-                        profileData?.user?.approvalStatus === 'pending' ? 'Pending Approval' : 
+                           class="w-4 h-4 mr-2" [alt]="profileData.user.approvalStatus">
+                      {{profileData.user.approvalStatus === 'approved' ? 'Admin Approved' : 
+                        profileData.user.approvalStatus === 'pending' ? 'Pending Approval' : 
                         'Admin Rejected'}}
                     </span>
                   </div>
@@ -310,16 +310,16 @@
                       Add Address
                     </button>
                     
-                    <span [class]="'inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ' + 
-                      (profileData?.user?.approvalStatus === 'approved' ? 'bg-green-100 text-green-800' :
-                       profileData?.user?.approvalStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                    <span *ngIf="profileData" [class]="'inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ' + 
+                      (profileData.user.approvalStatus === 'approved' ? 'bg-green-100 text-green-800' :
+                       profileData.user.approvalStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                        'bg-red-100 text-red-800')">
-                      <img [src]="profileData?.user?.approvalStatus === 'approved' ? 'assets/icons/lucide/lucide/circle-check.svg' : 
-                                 profileData?.user?.approvalStatus === 'pending' ? 'assets/icons/lucide/lucide/clock.svg' : 
+                      <img [src]="profileData.user.approvalStatus === 'approved' ? 'assets/icons/lucide/lucide/circle-check.svg' : 
+                                 profileData.user.approvalStatus === 'pending' ? 'assets/icons/lucide/lucide/clock.svg' : 
                                  'assets/icons/lucide/lucide/x-circle.svg'" 
-                           class="w-4 h-4 mr-2" [alt]="profileData?.user?.approvalStatus">
-                      {{profileData?.user?.approvalStatus === 'approved' ? 'Admin Approved' : 
-                        profileData?.user?.approvalStatus === 'pending' ? 'Pending Approval' : 
+                           class="w-4 h-4 mr-2" [alt]="profileData.user.approvalStatus">
+                      {{profileData.user.approvalStatus === 'approved' ? 'Admin Approved' : 
+                        profileData.user.approvalStatus === 'pending' ? 'Pending Approval' : 
                         'Admin Rejected'}}
                     </span>
                   </div>
@@ -399,16 +399,16 @@
                       Add Bank Details
                     </button>
                     
-                    <span [class]="'inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ' + 
-                      (profileData?.user?.approvalStatus === 'approved' ? 'bg-green-100 text-green-800' :
-                       profileData?.user?.approvalStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                    <span *ngIf="profileData" [class]="'inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ' + 
+                      (profileData.user.approvalStatus === 'approved' ? 'bg-green-100 text-green-800' :
+                       profileData.user.approvalStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                        'bg-red-100 text-red-800')">
-                      <img [src]="profileData?.user?.approvalStatus === 'approved' ? 'assets/icons/lucide/lucide/circle-check.svg' : 
-                                 profileData?.user?.approvalStatus === 'pending' ? 'assets/icons/lucide/lucide/clock.svg' : 
+                      <img [src]="profileData.user.approvalStatus === 'approved' ? 'assets/icons/lucide/lucide/circle-check.svg' : 
+                                 profileData.user.approvalStatus === 'pending' ? 'assets/icons/lucide/lucide/clock.svg' : 
                                  'assets/icons/lucide/lucide/x-circle.svg'" 
-                           class="w-4 h-4 mr-2" [alt]="profileData?.user?.approvalStatus">
-                      {{profileData?.user?.approvalStatus === 'approved' ? 'Admin Approved' : 
-                        profileData?.user?.approvalStatus === 'pending' ? 'Pending Approval' : 
+                           class="w-4 h-4 mr-2" [alt]="profileData.user.approvalStatus">
+                      {{profileData.user.approvalStatus === 'approved' ? 'Admin Approved' : 
+                        profileData.user.approvalStatus === 'pending' ? 'Pending Approval' : 
                         'Admin Rejected'}}
                     </span>
                   </div>
@@ -515,16 +515,16 @@
                       </button>
                     </div>
                     
-                    <span [class]="'inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ' + 
-                      (profileData?.user?.approvalStatus === 'approved' ? 'bg-green-100 text-green-800' :
-                       profileData?.user?.approvalStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                    <span *ngIf="profileData" [class]="'inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ' + 
+                      (profileData.user.approvalStatus === 'approved' ? 'bg-green-100 text-green-800' :
+                       profileData.user.approvalStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                        'bg-red-100 text-red-800')">
-                      <img [src]="profileData?.user?.approvalStatus === 'approved' ? 'assets/icons/lucide/lucide/circle-check.svg' : 
-                                 profileData?.user?.approvalStatus === 'pending' ? 'assets/icons/lucide/lucide/clock.svg' : 
+                      <img [src]="profileData.user.approvalStatus === 'approved' ? 'assets/icons/lucide/lucide/circle-check.svg' : 
+                                 profileData.user.approvalStatus === 'pending' ? 'assets/icons/lucide/lucide/clock.svg' : 
                                  'assets/icons/lucide/lucide/x-circle.svg'" 
-                           class="w-4 h-4 mr-2" [alt]="profileData?.user?.approvalStatus">
-                      {{profileData?.user?.approvalStatus === 'approved' ? 'Admin Approved' : 
-                        profileData?.user?.approvalStatus === 'pending' ? 'Pending Approval' : 
+                           class="w-4 h-4 mr-2" [alt]="profileData.user.approvalStatus">
+                      {{profileData.user.approvalStatus === 'approved' ? 'Admin Approved' : 
+                        profileData.user.approvalStatus === 'pending' ? 'Pending Approval' : 
                         'Admin Rejected'}}
                     </span>
                   </div>

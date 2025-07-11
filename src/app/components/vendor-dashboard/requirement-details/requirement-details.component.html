@@ -77,9 +77,9 @@
               <span class="text-xs font-medium text-gray-500">Budget</span>
             </div>
             <p class="text-sm font-semibold text-gray-900">
-              {{ requirement.budget?.currency || 'USD' }}{{ requirement.budget?.charge || 0 }}/hr
+              {{ requirement.budget.currency || 'USD' }}{{ requirement.budget.charge || 0 }}/hr
             </p>
-            <p class="text-xs text-gray-500">{{ requirement.budget?.type || 'Not specified' }}</p>
+            <p class="text-xs text-gray-500">{{ requirement.budget.type || 'Not specified' }}</p>
           </div>
 
           <!-- Duration -->
@@ -107,8 +107,8 @@
               <img src="assets/icons/lucide/lucide/user-check.svg" alt="experience" class="w-4 h-4 text-orange-600" />
               <span class="text-xs font-medium text-gray-500">Experience</span>
             </div>
-            <p class="text-sm font-semibold text-gray-900">{{ requirement.experience?.minYears || 0 }} years</p>
-            <p class="text-xs text-gray-500">{{ requirement.experience?.level || 'Not specified' }}</p>
+            <p class="text-sm font-semibold text-gray-900">{{ requirement.experience.minYears || 0 }} years</p>
+            <p class="text-xs text-gray-500">{{ requirement.experience.level || 'Not specified' }}</p>
           </div>
         </div>
 

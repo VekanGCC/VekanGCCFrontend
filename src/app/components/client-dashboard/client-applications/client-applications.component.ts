@@ -585,8 +585,7 @@ export class ClientApplicationsComponent implements OnInit, OnDestroy {
         ];
       case 'offer_created':
         return [
-          { value: 'offer_accepted', label: 'Offer Accepted' },
-          { value: 'rejected', label: 'Reject Offer' }
+          { value: 'withdrawn', label: 'Remove Offer' }
         ];
       case 'offer_accepted':
         return [

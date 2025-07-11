@@ -74,7 +74,7 @@
                 <h4 class="font-semibold text-gray-900 text-base">{{ resource.name }}</h4>
                 <div class="flex items-center gap-2 mt-0.5">
                   <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    {{ resource.category?.name || 'No Category' }}
+                    {{ resource.category.name || 'No Category' }}
                   </span>
                   <span class="text-xs text-gray-500">• Resource #{{ i + 1 }}</span>
                   <div class="flex items-center gap-1">
@@ -280,22 +280,22 @@
                     </td>
                     <td class="p-3">
                       <div class="text-sm">
-                        <span class="font-semibold text-green-600">₹{{ requirement.budget?.charge }}</span>
-                        <span class="text-gray-500 ml-1">({{ requirement.budget?.type }})</span>
+                        <span class="font-semibold text-green-600">₹{{ requirement.budget.charge }}</span>
+                        <span class="text-gray-500 ml-1">({{ requirement.budget.type }})</span>
                       </div>
                     </td>
                     <td class="p-3 text-sm text-gray-700">{{ requirement.duration }}</td>
                     <td class="p-3 text-sm text-gray-700">{{ getLocationDisplay(requirement.location) }}</td>
-                    <td class="p-3 text-sm text-gray-700">{{ requirement.experience?.minYears }} years</td>
+                    <td class="p-3 text-sm text-gray-700">{{ requirement.experience.minYears }} years</td>
                     <td class="p-3">
                       <div class="flex flex-wrap gap-1">
                         <span *ngFor="let skill of requirement.skills?.slice(0, 3)" 
                               class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
                           {{ getSkillDisplayName(skill) }}
                         </span>
-                        <span *ngIf="(requirement.skills?.length || 0) > 3" 
+                        <span *ngIf="(requirement.skills.length || 0) > 3" 
                               class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
-                          +{{ (requirement.skills?.length || 0) - 3 }}
+                          +{{ (requirement.skills.length || 0) - 3 }}
                         </span>
                       </div>
                     </td>
@@ -339,22 +339,22 @@
             </td>
             <td class="py-3 px-4">
               <div class="text-sm">
-                <span class="font-semibold text-gray-900">₹{{ requirement.budget?.charge }}</span>
-                <span class="text-gray-500 ml-1">({{ requirement.budget?.type }})</span>
+                <span class="font-semibold text-gray-900">₹{{ requirement.budget.charge }}</span>
+                <span class="text-gray-500 ml-1">({{ requirement.budget.type }})</span>
               </div>
             </td>
             <td class="py-3 px-4 text-sm text-gray-700">{{ requirement.duration }}</td>
             <td class="py-3 px-4 text-sm text-gray-700">{{ getLocationDisplay(requirement.location) }}</td>
-            <td class="py-3 px-4 text-sm text-gray-700">{{ requirement.experience?.minYears }} years</td>
+            <td class="py-3 px-4 text-sm text-gray-700">{{ requirement.experience.minYears }} years</td>
             <td class="py-3 px-4">
               <div class="flex flex-wrap gap-1">
                 <span *ngFor="let skill of requirement.skills?.slice(0, 3)" 
                       class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
                   {{ getSkillDisplayName(skill) }}
                 </span>
-                <span *ngIf="(requirement.skills?.length || 0) > 3" 
+                <span *ngIf="(requirement.skills.length || 0) > 3" 
                       class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
-                  +{{ (requirement.skills?.length || 0) - 3 }}
+                  +{{ (requirement.skills.length || 0) - 3 }}
                 </span>
               </div>
             </td>

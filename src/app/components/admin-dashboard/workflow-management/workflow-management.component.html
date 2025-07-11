@@ -90,7 +90,7 @@
                       <strong>Application Types:</strong> {{ getApplicationTypesDisplay(workflow.applicationTypes) }}
                     </span>
                     <span class="mr-4">
-                      <strong>Steps:</strong> {{ workflow.steps?.length || 0 }}
+                      <strong>Steps:</strong> {{ workflow.steps.length || 0 }}
                     </span>
                     <span>
                       <strong>Created:</strong> {{ workflow.createdAt | date:'short' }}
@@ -150,7 +150,7 @@
                 <div class="flex-1">
                   <div class="flex items-center mb-2">
                     <h4 class="text-lg font-medium text-gray-900">
-                      Workflow: {{ instance.workflowConfigurationId?.name || 'Unknown' }}
+                      Workflow: {{ instance.workflowConfigurationId.name || 'Unknown' }}
                     </h4>
                     <span [class]="'ml-2 px-2 py-1 rounded-full text-xs ' + getStatusBadgeClass(instance.status)">
                       {{ instance.status }}
@@ -159,10 +159,10 @@
                   
                   <div class="flex items-center text-sm text-gray-500 mb-3">
                     <span class="mr-4">
-                      <strong>Application:</strong> {{ instance.applicationId?._id || 'Unknown' }}
+                      <strong>Application:</strong> {{ instance.applicationId._id || 'Unknown' }}
                     </span>
                     <span class="mr-4">
-                      <strong>Current Step:</strong> {{ instance.currentStep || 0 }} / {{ instance.steps?.length || 0 }}
+                      <strong>Current Step:</strong> {{ instance.currentStep || 0 }} / {{ instance.steps.length || 0 }}
                     </span>
                     <span>
                       <strong>Started:</strong> {{ instance.createdAt | date:'short' }}
@@ -414,7 +414,7 @@
             <h4 class="text-sm font-medium text-gray-900 mb-3">Instance Information</h4>
             <div class="space-y-2 text-sm">
               <div><strong>Status:</strong> {{ selectedInstance.status }}</div>
-              <div><strong>Current Step:</strong> {{ selectedInstance.currentStep }} / {{ selectedInstance.steps?.length || 0 }}</div>
+              <div><strong>Current Step:</strong> {{ selectedInstance.currentStep }} / {{ selectedInstance.steps.length || 0 }}</div>
               <div><strong>Started:</strong> {{ selectedInstance.createdAt | date:'short' }}</div>
               <div *ngIf="selectedInstance.completedAt">
                 <strong>Completed:</strong> {{ selectedInstance.completedAt | date:'short' }}
@@ -426,8 +426,8 @@
           <div>
             <h4 class="text-sm font-medium text-gray-900 mb-3">Application Information</h4>
             <div class="space-y-2 text-sm">
-              <div><strong>Application ID:</strong> {{ selectedInstance.applicationId?._id || 'Unknown' }}</div>
-              <div><strong>Application Status:</strong> {{ selectedInstance.applicationId?.status || 'Unknown' }}</div>
+              <div><strong>Application ID:</strong> {{ selectedInstance.applicationId._id || 'Unknown' }}</div>
+              <div><strong>Application Status:</strong> {{ selectedInstance.applicationId.status || 'Unknown' }}</div>
             </div>
           </div>
         </div>
@@ -448,7 +448,7 @@
                 <div><strong>Role:</strong> {{ step.role }}</div>
                 <div><strong>Action:</strong> {{ step.action }}</div>
                 <div *ngIf="step.assignedTo">
-                  <strong>Assigned To:</strong> {{ step.assignedTo?.firstName }} {{ step.assignedTo?.lastName }}
+                  <strong>Assigned To:</strong> {{ step.assignedTo.firstName }} {{ step.assignedTo.lastName }}
                 </div>
                 <div *ngIf="step.completedAt">
                   <strong>Completed:</strong> {{ step.completedAt | date:'short' }}

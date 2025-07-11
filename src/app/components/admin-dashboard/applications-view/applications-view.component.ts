@@ -277,13 +277,13 @@ export class ApplicationsViewComponent {
     // Admin can approve/reject offers in 'offer_created' status
     if (status === 'offer_created') {
       options.push(
-        { value: 'offer_accepted', label: 'Approve Offer' },
+        { value: 'offer_accepted', label: 'Accept Offer' },
         { value: 'rejected', label: 'Reject Offer' }
       );
     }
 
-    // Admin can revoke at any point
-    if (['applied', 'shortlisted', 'interview', 'accepted', 'offer_created', 'offer_accepted'].includes(status)) {
+    // Admin can revoke at any point (except for offer_created which has specific accept/reject options)
+    if (['applied', 'shortlisted', 'interview', 'accepted', 'offer_accepted'].includes(status)) {
       options.push(
         { value: 'withdrawn', label: 'Revoke' }
       );

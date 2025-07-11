@@ -77,9 +77,9 @@
               <span class="text-xs font-medium text-gray-500">Rate</span>
             </div>
             <p class="text-sm font-semibold text-gray-900">
-              ${{ resource.rate?.hourly || 0 }}/hr
+              ${{ resource.rate.hourly || 0 }}/hr
             </p>
-            <p class="text-xs text-gray-500">{{ resource.rate?.currency || 'USD' }}</p>
+            <p class="text-xs text-gray-500">{{ resource.rate.currency || 'USD' }}</p>
           </div>
 
           <!-- Experience -->
@@ -88,8 +88,8 @@
               <img src="assets/icons/lucide/lucide/clock.svg" alt="experience" class="w-4 h-4 text-blue-600" />
               <span class="text-xs font-medium text-gray-500">Experience</span>
             </div>
-            <p class="text-sm font-semibold text-gray-900">{{ resource.experience?.years || 0 }} years</p>
-            <p class="text-xs text-gray-500 capitalize">{{ resource.experience?.level || 'Not specified' }}</p>
+            <p class="text-sm font-semibold text-gray-900">{{ resource.experience.years || 0 }} years</p>
+            <p class="text-xs text-gray-500 capitalize">{{ resource.experience.level || 'Not specified' }}</p>
           </div>
 
           <!-- Location -->
@@ -108,8 +108,8 @@
               <img src="assets/icons/lucide/lucide/calendar.svg" alt="availability" class="w-4 h-4 text-orange-600" />
               <span class="text-xs font-medium text-gray-500">Availability</span>
             </div>
-            <p class="text-sm font-semibold text-gray-900 capitalize">{{ resource.availability?.status || 'Unknown' }}</p>
-            <p class="text-xs text-gray-500">{{ resource.availability?.hours_per_week || 0 }} hrs/week</p>
+            <p class="text-sm font-semibold text-gray-900 capitalize">{{ resource.availability.status || 'Unknown' }}</p>
+            <p class="text-xs text-gray-500">{{ resource.availability.hours_per_week || 0 }} hrs/week</p>
           </div>
         </div>
 
@@ -144,8 +144,8 @@
               <img src="assets/icons/lucide/lucide/phone.svg" alt="contact" class="w-4 h-4 text-indigo-600" />
               <span class="text-xs font-medium text-gray-500">Contact</span>
             </div>
-            <p class="text-sm font-semibold text-gray-900">{{ resource.contact?.email || 'Not specified' }}</p>
-            <p class="text-xs text-gray-500">{{ resource.contact?.phone || 'Not specified' }}</p>
+            <p class="text-sm font-semibold text-gray-900">{{ resource.contact.email || 'Not specified' }}</p>
+            <p class="text-xs text-gray-500">{{ resource.contact.phone || 'Not specified' }}</p>
           </div>
         </div>
 

@@ -479,13 +479,18 @@ export class VendorApplicationsComponent implements OnInit, OnChanges {
     const status = currentStatus?.toLowerCase();
     
     // Vendor perspective - what actions can vendor take at each status
-    // Vendor can only see "In Process" status and can revoke at any point
+    // For offer_created status, vendor should see "In Process" and no actions available
     
-    // All statuses except final ones - vendor can revoke
-    if (['applied', 'shortlisted', 'interview', 'accepted', 'offer_created', 'offer_accepted'].includes(status)) {
+    // All statuses except final ones and offer_created - vendor can revoke
+    if (['applied', 'shortlisted', 'interview', 'accepted', 'offer_accepted'].includes(status)) {
       return [
         { value: 'withdrawn', label: 'Revoke Application', color: 'bg-red-100 text-red-800' }
       ];
+    }
+    
+    // For offer_created status - no actions available (vendor sees "In Process")
+    if (status === 'offer_created') {
+      return [];
     }
     
     // Final statuses - no actions available

@@ -172,7 +172,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-medium text-gray-600">SOW Reference</label>
-            <p class="text-sm text-gray-900">#{{ selectedSOW._id?.slice(-6) }}</p>
+            <p class="text-sm text-gray-900">#{{ selectedSOW._id.slice(-6) }}</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-600">Status</label>
@@ -206,7 +206,7 @@
         <div>
           <label class="block text-sm font-medium text-gray-600">Estimated Cost</label>
           <p class="text-sm text-gray-900">
-            {{ selectedSOW.estimatedCost?.currency }} {{ selectedSOW.estimatedCost?.amount?.toLocaleString() }}
+            {{ selectedSOW.estimatedCost.currency }} {{ selectedSOW.estimatedCost.amount.toLocaleString() }}
           </p>
         </div>
 
@@ -228,7 +228,7 @@
                 <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + 
                   (selectedSOW.vendorResponse.status === 'accepted' ? 'bg-green-100 text-green-800' : 
                    selectedSOW.vendorResponse.status === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800')">
-                  {{ selectedSOW.vendorResponse.status?.toUpperCase() }}
+                  {{ selectedSOW.vendorResponse.status.toUpperCase() }}
                 </span>
               </div>
               <div *ngIf="selectedSOW.vendorResponse.responseDate">

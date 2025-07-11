@@ -68,7 +68,7 @@
               </div>
               <div class="ml-4">
                 <div class="text-sm font-medium text-gray-900">
-                  {{approval.skill?.skill?.name || 'Unknown Skill'}}
+                  {{approval.skill.skill.name || 'Unknown Skill'}}
                 </div>
                 <div class="text-sm text-gray-500" *ngIf="approval.skill.category">
                   {{approval.skill.category}}
@@ -86,7 +86,7 @@
               <div class="flex-shrink-0 h-8 w-8">
                 <div class="h-8 w-8 rounded-full bg-gray-300 flex items-center justify-center vendor-avatar">
                   <span class="text-sm font-medium text-gray-700">
-                    {{approval.skill.vendor.firstName?.charAt(0)}}{{approval.skill.vendor.lastName?.charAt(0)}}
+                    {{approval.skill.vendor.firstName.charAt(0)}}{{approval.skill.vendor.lastName.charAt(0)}}
                   </span>
                 </div>
               </div>

@@ -681,8 +681,6 @@ export class ApplicationHistoryModalComponent implements OnInit, OnChanges, OnDe
       console.log('🔧 ApplicationHistoryModal: Emitting close event');
       this.close.emit();
       this.cdr.detectChanges();
-    } else {
-      console.log('🔧 ApplicationHistoryModal: Modal not visible, not emitting close');
     }
   }
 
