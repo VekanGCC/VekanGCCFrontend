@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { LucideAngularModule } from 'lucide-angular';
+import { HttpClient } from '@angular/common/http';
 import { VendorRegistrationService } from '../../services/vendor-registration.service';
 import { ClientRegistrationService } from '../../services/client-registration.service';
 import { AuthService } from '../../services/auth.service';
@@ -61,10 +62,14 @@ export class SignupComponent implements OnInit, OnDestroy {
   vendorRegistration: VendorRegistration | null = null;
   clientRegistration: ClientRegistration | null = null;
 
+  // IFSC validation properties
+  isIFSCInvalid = false;
+
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
+    private http: HttpClient,
     private vendorRegistrationService: VendorRegistrationService,
     private clientRegistrationService: ClientRegistrationService,
     private authService: AuthService
@@ -996,5 +1001,44 @@ export class SignupComponent implements OnInit, OnDestroy {
         isValid = false;
     }
     return isValid;
+  }
+
+  // IFSC Code validation and bank details fetching
+  fetchBankDetails(ifscCode: string) {
+    if (ifscCode.length !== 11) {
+      this.clearBankFields();
+      return;
+    }
+
+    const ifscUrl = `https://ifsc.razorpay.com/${ifscCode}`;
+
+    this.http.get(ifscUrl).subscribe(
+      (data: any) => {
+        if (data && data.BANK) {
+          this.isIFSCInvalid = false; // ✅ Reset error flag if IFSC is valid
+          this.step3Form.patchValue({
+            bankName: data.BANK,
+            branchName: data.BRANCH,
+            bankCity: data.CITY
+          });
+        } else {
+          this.isIFSCInvalid = true; // ✅ Mark IFSC as invalid
+          this.clearBankFields();
+        }
+      },
+      (error) => {
+        console.error('Invalid IFSC code or API error:', error);
+        this.isIFSCInvalid = true; // ✅ Mark IFSC as invalid
+        this.clearBankFields();
+      }
+    );
+  }
+
+  private clearBankFields() {
+    this.step3Form.patchValue({
+      bankName: '',
+      branchName: '',
+      bankCity: ''
+    });
   }
 }

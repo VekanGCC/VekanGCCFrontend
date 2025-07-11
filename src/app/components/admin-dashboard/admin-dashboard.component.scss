@@ -28,4 +28,49 @@
   &.rejected {
     @apply bg-red-100 text-red-800;
   }
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .admin-dashboard {
+    .sidebar {
+      width: 100%;
+      position: fixed;
+      z-index: 40;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      
+      &.open {
+        transform: translateX(0);
+      }
+    }
+    
+    .main-content {
+      margin-left: 0;
+    }
+  }
+}
+
+/* Custom scrollbar for navigation */
+nav.overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db #f9fafb;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f9fafb;
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 3px;
+    
+    &:hover {
+      background: #9ca3af;
+    }
+  }
 } 

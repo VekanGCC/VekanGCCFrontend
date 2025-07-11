@@ -1188,4 +1188,25 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.applicationHistory = [];
     this.changeDetectorRef.detectChanges();
   }
+
+  // Header icon methods
+  notificationCount = 0; // Add this property for notification count
+
+  openNotifications(): void {
+    // TODO: Implement notifications functionality
+    console.log('Opening notifications...');
+    // You can implement a notifications modal or dropdown here
+  }
+
+  openSettings(): void {
+    // TODO: Implement settings functionality
+    console.log('Opening settings...');
+    // You can implement a settings modal or navigate to settings page
+  }
+
+  openUserProfile(): void {
+    // TODO: Implement user profile functionality
+    console.log('Opening user profile...');
+    // You can implement a profile modal or navigate to profile page
+  }
 }
