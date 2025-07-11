@@ -18,6 +18,7 @@ export class ForgotPasswordComponent implements OnInit {
   isLoading = false;
   errorMessage = '';
   successMessage = '';
+  resetLink = '';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -45,10 +46,11 @@ export class ForgotPasswordComponent implements OnInit {
       const { email } = this.forgotPasswordForm.value;
 
       this.authService.forgotPassword(email).subscribe({
-        next: (response) => {
+        next: (response: any) => {
           this.isLoading = false;
           if (response.success) {
-            this.successMessage = 'Password reset link generated successfully! Please check the server console for the reset link (for testing purposes).';
+            this.successMessage = response.message || 'Password reset link generated successfully!';
+            this.resetLink = response.resetLink || '';
             // Clear the form
             this.forgotPasswordForm.reset();
           } else {
@@ -97,5 +99,16 @@ export class ForgotPasswordComponent implements OnInit {
 
   goToLogin(): void {
     this.router.navigate(['/login']);
+  }
+
+  copyResetLink(): void {
+    if (this.resetLink) {
+      navigator.clipboard.writeText(this.resetLink).then(() => {
+        // You could add a toast notification here if you have one
+        console.log('Reset link copied to clipboard');
+      }).catch(err => {
+        console.error('Failed to copy reset link:', err);
+      });
+    }
   }
 } 
