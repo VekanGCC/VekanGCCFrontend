@@ -240,9 +240,9 @@
       </div>
 
       <!-- AG Grid -->
-      <div *ngIf="!isLoading && resources.length > 0" class="ag-grid-container">
+      <div *ngIf="!isLoading && resources.length > 0" class="w-full overflow-x-auto">
         <ag-grid-angular
-          class="ag-theme-alpine w-full"
+          class="w-full h-[500px] ag-theme-alpine"
           [columnDefs]="columnDefs"
           [defaultColDef]="defaultColDef"
           [gridOptions]="gridOptions"

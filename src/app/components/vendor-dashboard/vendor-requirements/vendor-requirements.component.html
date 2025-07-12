@@ -230,19 +230,18 @@
       </div>
 
       <!-- AG Grid -->
-      <div *ngIf="!isLoading && requirements.length > 0" class="ag-grid-container">
-        <ag-grid-angular 
-          class="ag-theme-alpine w-full"
-          [rowData]="requirements" 
+      <div *ngIf="!isLoading && requirements.length > 0" class="w-full overflow-x-auto">
+        <ag-grid-angular
+          class="w-full h-[500px] ag-theme-alpine"
           [columnDefs]="columnDefs"
-          [defaultColDef]="defaultColDef" 
-          [pagination]="false" 
+          [defaultColDef]="defaultColDef"
           [gridOptions]="gridOptions"
+          [rowData]="requirements"
           [domLayout]="'autoHeight'"
           [rowSelection]="'single'"
           [animateRows]="true"
           [enableCellTextSelection]="true"
-          [overlayNoRowsTemplate]="'<span>No requirements found</span>'">
+        >
         </ag-grid-angular>
       </div>
 

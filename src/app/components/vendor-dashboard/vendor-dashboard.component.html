@@ -9,18 +9,22 @@
     <div [class]="'sidebar-container shadow-sm border-r border-gray-200 flex flex-col z-30 transition-transform duration-300 ' + 
                   (showMobileMenu ? 'fixed inset-y-0 left-0 w-64 transform translate-x-0' : 
                    'fixed inset-y-0 left-0 w-64 transform -translate-x-full lg:relative lg:translate-x-0')">
-      <!-- Header -->
-      <div class="logo-section">
-        <div class="logo">
-          <img src="assets/icons/lucide/lucide/briefcase.svg" alt="Vendor Portal">
-          <span>Vendor Portal</span>
+      
+      <!-- Sidebar Header -->
+      <div class="p-6 border-b border-gray-200">
+        <div class="flex items-center">
+          <div class="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg p-2">
+            <img src="assets/icons/lucide/lucide/users.svg" class="w-6 h-6 text-white" alt="Vendor">
+          </div>
+          <div class="ml-3">
+            <h2 class="text-lg font-bold text-gray-900">Vendor Portal</h2>
+            <p class="text-xs text-gray-400 mt-1">
+              <span *ngIf="currentUser?.firstName && currentUser?.lastName">
+                {{currentUser?.firstName}} {{currentUser?.lastName}}
+              </span>
+            </p>
+          </div>
         </div>
-        <p class="text-xs text-gray-400 mt-1">
-          <span *ngIf="currentUser?.firstName && currentUser?.lastName">
-            {{currentUser?.firstName}} {{currentUser?.lastName}}
-          </span>
-          <span *ngIf="!currentUser?.firstName || !currentUser?.lastName">Loading...</span>
-        </p>
       </div>
 
       <!-- Navigation Menu with Integrated Stats -->
@@ -104,11 +108,11 @@
     <!-- Right Content Container -->
     <div class="content-container flex-1 flex flex-col relative z-10">
       <!-- Mobile Header -->
-      <div class="lg:hidden bg-white border-b border-gray-200 px-4 py-3">
+      <div class="lg:hidden bg-white border-b border-gray-200 p-4">
         <div class="flex items-center justify-between">
           <button
             (click)="showMobileMenu = true"
-            class="mobile-menu-btn p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg">
+            class="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg">
             <img src="assets/icons/lucide/lucide/list.svg" class="w-5 h-5" alt="Menu">
           </button>
           <h1 class="text-lg font-bold text-gray-900">Vendor Portal</h1>

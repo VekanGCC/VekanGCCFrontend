@@ -6,7 +6,6 @@ import { User } from '../../models/user.model';
 import { Subscription } from 'rxjs';
 import { LayoutComponent } from '../layout/layout.component';
 
-
 @Component({
   selector: 'app-vendor-dashboard',
   standalone: true,

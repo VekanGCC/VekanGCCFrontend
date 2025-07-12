@@ -4,6 +4,7 @@ import { RouterOutlet, Router } from '@angular/router';
 import { AuthService } from './services/auth.service';
 import { User } from './models/user.model';
 import { OfflineIndicatorComponent } from './components/offline-indicator/offline-indicator.component';
+import './shared/responsive-styles.css';
 
 @Component({
   selector: 'app-root',

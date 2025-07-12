@@ -86,7 +86,7 @@ export class AdminService {
   }
 
   getSkillApprovals(page: number, limit: number): Observable<ApiResponse<SkillApproval[]>> {
-    return this.apiService.get<ApiResponse<SkillApproval[]>>(`/vendor/niche-skills?status=pending&page=${page}&limit=${limit}`).pipe(
+    return this.apiService.get<ApiResponse<SkillApproval[]>>(`/vendor/niche-skills?page=${page}&limit=${limit}`).pipe(
       map(response => {
         // Transform vendor skills to skill approvals format
         const skillApprovals = response.data.map((vendorSkill: any) => ({

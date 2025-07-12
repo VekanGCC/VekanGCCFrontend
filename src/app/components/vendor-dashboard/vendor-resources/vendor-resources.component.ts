@@ -324,6 +324,7 @@ export class VendorResourcesComponent implements OnInit, OnChanges {
   }
 
   loadResources(): void {
+    console.log('🔍 VendorResources: Starting to load resources...');
     this.isLoading = true;
     this.paginationState.isLoading = true;
 
@@ -332,18 +333,32 @@ export class VendorResourcesComponent implements OnInit, OnChanges {
       limit: this.paginationState.pageSize
     };
 
+    console.log('🔍 VendorResources: API params:', params);
+
     this.vendorService.getResources(params).subscribe({
       next: (response) => {
+        console.log('✅ VendorResources: API response received:', response);
         this.resources = response.data || [];
+        console.log('✅ VendorResources: Resources array:', this.resources);
+        
+        // Handle API response structure that uses 'pages' instead of 'totalPages'
+        const paginationData = response.pagination as any;
         
         this.paginationState = {
           ...this.paginationState,
-          totalItems: response.meta?.total || response.pagination?.total || 0,
-          totalPages: response.meta?.totalPages || response.pagination?.totalPages || 0,
-          hasNextPage: (response.meta?.page || response.pagination?.page || 1) < (response.meta?.totalPages || response.pagination?.totalPages || 1),
-          hasPreviousPage: (response.meta?.page || response.pagination?.page || 1) > 1,
+          totalItems: paginationData?.total || response.meta?.total || 0,
+          totalPages: paginationData?.pages || response.meta?.totalPages || 0,
+          hasNextPage: (paginationData?.page || response.meta?.page || 1) < (paginationData?.pages || response.meta?.totalPages || 1),
+          hasPreviousPage: (paginationData?.page || response.meta?.page || 1) > 1,
           isLoading: false
         };
+        
+        console.log('✅ VendorResources: Pagination state updated:', this.paginationState);
+        console.log('✅ VendorResources: Total items:', this.paginationState.totalItems);
+        console.log('✅ VendorResources: Total pages:', this.paginationState.totalPages);
+        console.log('✅ VendorResources: Should show pagination:', this.paginationState.totalPages > 1);
+        console.log('✅ VendorResources: API response pagination:', response.pagination);
+        console.log('✅ VendorResources: Current page:', paginationData?.page || 1);
         
         // Load counts for the resources
         this.loadResourcesWithCounts();
@@ -452,21 +467,41 @@ export class VendorResourcesComponent implements OnInit, OnChanges {
   }
 
   private refreshGridData(): void {
+    console.log('🔍 VendorResources: Refreshing grid data...');
+    console.log('🔍 VendorResources: AG Grid instance:', this.agGrid);
+    console.log('🔍 VendorResources: AG Grid API:', this.agGrid?.api);
+    
     if (this.agGrid && this.agGrid.api) {
+      console.log('✅ VendorResources: AG Grid API found, refreshing cells...');
       // Force AG Grid to refresh all data
       this.agGrid.api.refreshCells({ force: true });
+      console.log('✅ VendorResources: Grid refresh completed');
+    } else {
+      console.warn('⚠️ VendorResources: AG Grid API not available');
     }
   }
 
   onGridReady(params: any): void {
+    console.log('✅ VendorResources: AG Grid ready event fired');
+    console.log('✅ VendorResources: Grid params:', params);
+    console.log('✅ VendorResources: Current resources:', this.resources);
+    
     // Set initial data if resources are already available
     if (this.resources && this.resources.length > 0) {
+      console.log('✅ VendorResources: Resources available, refreshing grid');
       this.refreshGridData();
+    } else {
+      console.log('⚠️ VendorResources: No resources available yet');
     }
   }
 
   onPageChange(page: number): void {
+    console.log('🔍 VendorResources: Page change requested to page:', page);
+    console.log('🔍 VendorResources: Current pagination state:', this.paginationState);
+    
     this.paginationState.currentPage = page;
+    console.log('🔍 VendorResources: Updated pagination state:', this.paginationState);
+    
     this.loadResources();
   }
 

@@ -1,13 +1,28 @@
 <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-  <div class="p-6">
+  <div class="responsive-padding-base">
     <!-- Loading state -->
     <div *ngIf="paginationState.isLoading" class="flex justify-center items-center py-8">
       <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      <span class="ml-3 text-gray-600">Loading applications...</span>
     </div>
 
-    <!-- Error state -->
-    <div *ngIf="!paginationState.isLoading && applications.length === 0 && paginationState.totalItems === 0" class="text-center py-8">
+    <!-- Applications Grid -->
+    <div *ngIf="!paginationState.isLoading && applications.length > 0" class="responsive-ag-grid-container">
+      <ag-grid-angular
+        #agGrid
+        [columnDefs]="columnDefs"
+        [defaultColDef]="defaultColDef"
+        [rowData]="applications"
+        [pagination]="true"
+        [paginationPageSize]="paginationState.pageSize"
+        [gridOptions]="gridOptions"
+        (gridReady)="onGridReady($event)"
+        class="responsive-ag-grid ag-theme-alpine"
+        style="height: 600px;">
+      </ag-grid-angular>
+    </div>
+
+    <!-- Empty state -->
+    <div *ngIf="!paginationState.isLoading && applications.length === 0" class="text-center py-8">
       <div class="text-gray-500 mb-4">
         <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -16,25 +31,12 @@
       <p class="text-gray-500 mb-4">No applications found</p>
       <button 
         (click)="refreshPage()"
-        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+        class="responsive-btn inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
         <svg class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
         </svg>
-        Retry
+        Refresh
       </button>
-    </div>
-
-    <!-- Applications Grid -->
-    <div *ngIf="!paginationState.isLoading && applications.length > 0" class="ag-theme-alpine w-full" style="height: 600px;">
-      <ag-grid-angular
-        #agGrid
-        [rowData]="applications"
-        [columnDefs]="columnDefs"
-        [defaultColDef]="defaultColDef"
-        [gridOptions]="gridOptions"
-        (gridReady)="onGridReady($event)"
-        class="w-full h-full">
-      </ag-grid-angular>
     </div>
     
     <!-- Pagination -->
