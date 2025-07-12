@@ -11,7 +11,7 @@ import { AppService } from '../../../services/app.service';
 import { SkillsService } from '../../../services/skills.service';
 import { ApiService } from '../../../services/api.service';
 import { User } from '../../../models/user.model';
-import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Subject, debounceTime, distinctUntilChanged, firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-apply-resources-page',
@@ -93,7 +93,7 @@ export class ApplyResourcesPageComponent implements OnInit {
     
     // Use Promise.all to fetch all resources in parallel
     const resourcePromises = resourceIds.map(id => 
-      this.apiService.getResource(id).toPromise()
+      firstValueFrom(this.apiService.getResource(id))
     );
     
     Promise.all(resourcePromises)

@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, firstValueFrom } from 'rxjs';
 import { FileService } from '../../services/file.service';
 import { File as CustomFile } from '../../models/file.model';
 
@@ -131,7 +131,7 @@ export class FileUploadComponent implements OnInit, OnDestroy {
         tags: this.tags
       };
 
-      return this.fileService.uploadFile(file, this.entityType, this.entityId, metadata).toPromise();
+      return firstValueFrom(this.fileService.uploadFile(file, this.entityType, this.entityId, metadata));
     });
 
     Promise.all(uploadPromises)

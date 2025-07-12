@@ -8,7 +8,7 @@ import { Requirement } from '../../../models/requirement.model';
 import { AuthService } from '../../../services/auth.service';
 import { ApiService } from '../../../services/api.service';
 import { User } from '../../../models/user.model';
-import { Subject } from 'rxjs';
+import { Subject, firstValueFrom } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
@@ -249,7 +249,7 @@ export class ApplyRequirementPageComponent implements OnInit, AfterViewInit, OnD
         resource: resourceId,                // Backend expects 'resource', not 'resourceId'
       };
 
-      return this.apiService.createApplication(application).toPromise();
+      return firstValueFrom(this.apiService.createApplication(application));
     });
 
     Promise.all(applicationPromises)

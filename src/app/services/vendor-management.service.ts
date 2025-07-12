@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, firstValueFrom } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { VendorUser } from '../models/vendor-user.model';
 import { VendorSkill } from '../models/vendor-skill.model';
@@ -32,7 +32,7 @@ export class VendorManagementService {
 
   private async loadVendorUsers(): Promise<void> {
     try {
-      const response = await this.apiService.getVendorUsers().toPromise();
+      const response = await firstValueFrom(this.apiService.getVendorUsers());
       if (response && response.success && response.data) {
         console.log('✅ Loaded vendor users:', response.data.length);
         
@@ -80,7 +80,7 @@ export class VendorManagementService {
 
   private async loadVendorSkills(): Promise<void> {
     try {
-      const response = await this.apiService.getVendorSkills().toPromise();
+      const response = await firstValueFrom(this.apiService.getVendorSkills());
       if (response && response.success && response.data) {
         console.log('✅ Loaded vendor skills:', response.data.length);
         this.vendorSkillsSubject.next(response.data);
@@ -96,7 +96,7 @@ export class VendorManagementService {
 
   async addVendorUser(userData: Omit<VendorUser, 'id' | 'createdAt'>): Promise<void> {
     try {
-      const response = await this.apiService.createVendorUser(userData).toPromise();
+      const response = await firstValueFrom(this.apiService.createVendorUser(userData));
       if (response.success) {
         const currentUsers = this.vendorUsersSubject.value;
         this.vendorUsersSubject.next([...currentUsers, response.data]);
@@ -109,7 +109,7 @@ export class VendorManagementService {
 
   async addVendorSkill(skillData: Omit<VendorSkill, '_id' | 'createdAt' | 'updatedAt'>): Promise<void> {
     try {
-      const response = await this.apiService.createVendorSkill(skillData).toPromise();
+      const response = await firstValueFrom(this.apiService.createVendorSkill(skillData));
       if (response.success) {
         const currentSkills = this.vendorSkillsSubject.value;
         this.vendorSkillsSubject.next([...currentSkills, response.data]);
@@ -122,7 +122,7 @@ export class VendorManagementService {
 
   async updateUserStatus(userId: string, status: VendorUser['status']): Promise<void> {
     try {
-      const response = await this.apiService.updateVendorUserStatus(userId, status).toPromise();
+      const response = await firstValueFrom(this.apiService.updateVendorUserStatus(userId, status));
       if (response.success) {
         const currentUsers = this.vendorUsersSubject.value;
         const updatedUsers = currentUsers.map(user => 
@@ -138,7 +138,7 @@ export class VendorManagementService {
 
   async updateSkillStatus(skillId: string, status: VendorSkill['status'], reviewNotes?: string): Promise<void> {
     try {
-      const response = await this.apiService.updateVendorSkillStatus(skillId, status, reviewNotes).toPromise();
+      const response = await firstValueFrom(this.apiService.updateVendorSkillStatus(skillId, status, reviewNotes));
       if (response.success) {
         const currentSkills = this.vendorSkillsSubject.value;
         const updatedSkills = currentSkills.map(skill => 

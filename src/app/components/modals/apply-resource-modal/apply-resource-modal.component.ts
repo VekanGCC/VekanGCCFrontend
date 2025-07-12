@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, ChangeDetectorRef, Host
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule } from 'lucide-angular';
+import { firstValueFrom } from 'rxjs';
 import { Resource } from '../../../models/resource.model';
 import { Requirement } from '../../../models/requirement.model';
 import { Application } from '../../../models/application.model';
@@ -160,7 +161,7 @@ export class ApplyResourceModalComponent implements OnInit {
           notes: this.notes
         };
 
-        const promise = this.clientService.createApplication(applicationData).toPromise().then(
+        const promise = firstValueFrom(this.clientService.createApplication(applicationData)).then(
           (response: any) => {
             return {
               success: response.success,

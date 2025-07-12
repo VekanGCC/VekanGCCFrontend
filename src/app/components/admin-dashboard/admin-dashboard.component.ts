@@ -606,10 +606,10 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   // Skill Management
   async toggleSkillStatus(skill: AdminSkill): Promise<void> {
     try {
-      const updatedSkill = await this.adminService.updateSkill(skill.id, {
+      const updatedSkill = await firstValueFrom(this.adminService.updateSkill(skill.id, {
         ...skill,
         isActive: !skill.isActive
-      }).toPromise();
+      }));
     } catch (error) {
       console.error('Error updating skill status:', error);
     }

@@ -91,7 +91,7 @@ export class AppService {
 
   async addResource(resourceData: Omit<Resource, '_id' | 'createdAt' | 'updatedAt'>): Promise<void> {
     try {
-      const response = await this.apiService.createResource(resourceData).toPromise();
+      const response = await firstValueFrom(this.apiService.createResource(resourceData));
       if (response.success) {
         await this.loadResources();
       }
@@ -117,7 +117,7 @@ export class AppService {
 
   async addApplication(applicationData: Omit<Application, '_id' | 'createdAt' | 'updatedAt'>): Promise<void> {
     try {
-      const response = await this.apiService.createApplication(applicationData).toPromise();
+      const response = await firstValueFrom(this.apiService.createApplication(applicationData));
       if (response.success) {
         const currentApplications = this.applicationsSubject.value;
         this.applicationsSubject.next([...currentApplications, response.data]);
@@ -130,7 +130,7 @@ export class AppService {
 
   async updateApplicationStatus(applicationId: string, status: Application['status'], notes?: string): Promise<void> {
     try {
-      const response = await this.apiService.updateApplicationStatus(applicationId, status, notes).toPromise();
+      const response = await firstValueFrom(this.apiService.updateApplicationStatus(applicationId, status, notes));
       if (response.success) {
         const currentApplications = this.applicationsSubject.value;
         const updatedApplications = currentApplications.map(app => 
@@ -148,7 +148,7 @@ export class AppService {
 
   async updateRequirementStatus(requirementId: string, status: Requirement['status']): Promise<void> {
     try {
-      const response = await this.apiService.updateRequirementStatus(requirementId, status).toPromise();
+      const response = await firstValueFrom(this.apiService.updateRequirementStatus(requirementId, status));
       if (response.success) {
         const currentRequirements = this.requirementsSubject.value;
         const updatedRequirements = currentRequirements.map(req => 
