@@ -54,7 +54,7 @@ export class AdminService {
   constructor(private apiService: ApiService) {}
 
   getUsers(page: number, limit: number): Observable<ApiResponse<User[]>> {
-    return this.apiService.get<ApiResponse<User[]>>(`/admin/users?page=${page}&limit=${limit}`).pipe(
+    return this.apiService.get<ApiResponse<User[]>>(`/admin/users/all?page=${page}&limit=${limit}`).pipe(
       map(response => {
         console.log('Admin Service: Users response:', response);
         // Ensure pagination data is present
@@ -86,10 +86,32 @@ export class AdminService {
   }
 
   getSkillApprovals(page: number, limit: number): Observable<ApiResponse<SkillApproval[]>> {
-    return this.apiService.get<ApiResponse<SkillApproval[]>>(`/admin/skill-approvals?page=${page}&limit=${limit}`).pipe(
+    return this.apiService.get<ApiResponse<SkillApproval[]>>(`/vendor/niche-skills?status=pending&page=${page}&limit=${limit}`).pipe(
       map(response => {
-        this.skillApprovalsSubject.next(response);
-        return response;
+        // Transform vendor skills to skill approvals format
+        const skillApprovals = response.data.map((vendorSkill: any) => ({
+          id: vendorSkill._id,
+          skill: vendorSkill,
+          status: vendorSkill.status,
+          submittedAt: vendorSkill.createdAt,
+          reviewNotes: vendorSkill.reviewNotes
+        }));
+        
+        const transformedResponse = {
+          ...response,
+          data: skillApprovals
+        };
+        
+        this.skillApprovalsSubject.next(transformedResponse);
+        return transformedResponse;
+      }),
+      catchError(error => {
+        console.error('Admin Service: Error fetching skill approvals:', error);
+        return of({
+          success: false,
+          data: [],
+          message: 'Failed to load skill approvals'
+        });
       })
     );
   }

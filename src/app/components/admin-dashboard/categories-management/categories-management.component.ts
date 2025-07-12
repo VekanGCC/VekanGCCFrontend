@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AdminService } from '../../../services/admin.service';
@@ -25,12 +25,9 @@ import { ApiResponse } from '../../../models/api-response.model';
   `]
 })
 export class CategoriesManagementComponent implements OnInit {
-  @Input() categories: Category[] = [];
-  @Input() isLoading = false;
-  @Output() openAddModal = new EventEmitter<void>();
-  @Output() openEditModal = new EventEmitter<Category>();
-  @Output() categoryUpdated = new EventEmitter<Category>();
-  @Output() categoryAdded = new EventEmitter<Category>();
+  categories: Category[] = [];
+  isLoading = false;
+  error: string | null = null;
   
   pagination: any = null;
   currentPage = 1;
@@ -53,33 +50,70 @@ export class CategoriesManagementComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Categories are now passed as input from parent component
-    console.log('Categories received:', this.categories);
+    console.log('🔧 CategoriesManagementComponent: ngOnInit called');
+    this.loadCategories();
+  }
+
+  loadCategories(): void {
+    console.log('🔄 CategoriesManagement: Loading categories...');
+    this.isLoading = true;
+    this.error = null;
+
+    this.adminService.getCategories().subscribe({
+      next: (response) => {
+        console.log('✅ CategoriesManagement: Categories loaded:', response);
+        if (response.success) {
+          this.categories = response.data;
+        }
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('❌ CategoriesManagement: Error loading categories:', error);
+        this.error = 'Failed to load categories';
+        this.isLoading = false;
+      }
+    });
   }
 
   onSearch(): void {
-    // Implement search functionality if needed
     console.log('Search term:', this.searchTerm);
+    // TODO: Implement search functionality
   }
 
   changePage(page: number): void {
-    // Implement pagination if needed
     console.log('Change to page:', page);
+    this.currentPage = page;
+    this.loadCategories();
   }
 
   getPageNumbers(): number[] {
-    // Return empty array for now since we're using input data
-    return [];
+    if (!this.pagination) return [];
+    
+    const totalPages = this.pagination.totalPages || 1;
+    const currentPage = this.pagination.page || 1;
+    const pages: number[] = [];
+    
+    const startPage = Math.max(1, currentPage - 2);
+    const endPage = Math.min(totalPages, currentPage + 2);
+    
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    
+    return pages;
   }
 
   editCategory(category: Category): void {
-    this.openEditModal.emit(category);
+    console.log('Edit category:', category);
+    // TODO: Implement edit functionality
   }
-
-
 
   closeModal(): void {
     this.isSubmitting = false;
     this.categoryForm.reset({ isActive: true });
+  }
+
+  refreshData(): void {
+    this.loadCategories();
   }
 } 

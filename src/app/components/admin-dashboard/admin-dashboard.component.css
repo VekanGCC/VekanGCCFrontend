@@ -1,1 +1,251 @@
 /* Component-specific styles can be added here */
+
+/* Container-based Layout Styles */
+.main-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.sidebar-container {
+  width: 256px; /* w-64 */
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.content-container {
+  flex: 1;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.content-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar for content area */
+.content-area::-webkit-scrollbar {
+  width: 8px;
+}
+
+.content-area::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.content-area::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.content-area::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Dark Theme Sidebar Styles - Inspired by assets sidebar */
+.sidebar {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.logo-section {
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 20px;
+  font-weight: 500;
+  color: white;
+}
+
+.logo img {
+  width: 24px;
+  height: 24px;
+  filter: brightness(0) invert(1);
+}
+
+.nav-menu {
+  flex: 1;
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Stats section styling - Integrated into navigation */
+.stats-section-integrated {
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto;
+}
+
+.nav-group {
+  margin-bottom: 24px;
+}
+
+.nav-group-title {
+  padding: 0 20px 12px 20px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  opacity: 0.7;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  position: relative;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.nav-item.active {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white;
+  border-right: 3px solid #fbbf24;
+}
+
+.nav-item img {
+  margin-right: 12px;
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1);
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.nav-item:hover img,
+.nav-item.active img {
+  opacity: 1;
+}
+
+.nav-item span {
+  flex: 1;
+  font-size: 14px;
+}
+
+.nav-badge {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 500;
+  margin-left: auto;
+}
+
+/* Submenu Styles */
+.submenu-container {
+  margin-left: 20px;
+  margin-top: 4px;
+  animation: slideDown 0.2s ease-out;
+  transition: all 0.3s ease-in-out;
+  overflow: hidden;
+}
+
+.submenu-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 20px;
+  color: rgba(255, 255, 255, 0.6);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.submenu-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.8);
+  transform: translateX(4px);
+}
+
+.submenu-item.active {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-right: 2px solid #fbbf24;
+}
+
+.submenu-dot {
+  width: 8px;
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  margin-right: 12px;
+  transition: all 0.2s ease;
+}
+
+.submenu-item:hover .submenu-dot {
+  background-color: #fbbf24;
+  transform: scale(1.2);
+}
+
+.submenu-item.active .submenu-dot {
+  background-color: #fbbf24;
+}
+
+/* Chevron rotation for submenu */
+.chevron-rotate {
+  transition: transform 0.2s ease;
+  filter: brightness(0) invert(1);
+  opacity: 0.8;
+}
+
+.chevron-rotate.expanded {
+  transform: rotate(180deg);
+}
+
+/* Stats section styling */
+.stats-section {
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding: 8px 0;
+}
+
+.stat-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+}

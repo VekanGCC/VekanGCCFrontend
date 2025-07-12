@@ -1,122 +1,225 @@
 <div class="space-y-6">
-  <!-- Platform Statistics Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-    <!-- Total Users -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center">
-          <div class="p-2 rounded-lg bg-blue-50">
-            <img src="assets/icons/lucide/lucide/users.svg" alt="users" class="w-4 h-4 text-blue-600" />
-          </div>
-          <span class="ml-3 text-sm font-medium text-gray-700">Total Users</span>
-        </div>
-        <span class="text-2xl font-bold text-gray-900">{{platformStats.totalUsers || 0}}</span>
+  <!-- Header Section -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+        <p class="text-gray-600 mt-1">Welcome back! Here's what's happening on your platform.</p>
       </div>
-    </div>
-
-    <!-- Total Applications -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center">
-          <div class="p-2 rounded-lg bg-green-50">
-            <img src="assets/icons/lucide/lucide/trending-up.svg" alt="trending-up" class="w-4 h-4 text-green-600" />
-          </div>
-          <span class="ml-3 text-sm font-medium text-gray-700">Total Applications</span>
-        </div>
-        <span class="text-2xl font-bold text-gray-900">{{platformStats.totalApplications || 0}}</span>
-      </div>
-    </div>
-
-    <!-- Total Resources -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center">
-          <div class="p-2 rounded-lg bg-purple-50">
-            <img src="assets/icons/lucide/lucide/briefcase.svg" alt="briefcase" class="w-4 h-4 text-purple-600" />
-          </div>
-          <span class="ml-3 text-sm font-medium text-gray-700">Total Resources</span>
-        </div>
-        <span class="text-2xl font-bold text-gray-900">{{platformStats.totalResources || 0}}</span>
-      </div>
-    </div>
-
-    <!-- Total Requirements -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center">
-          <div class="p-2 rounded-lg bg-yellow-50">
-            <img src="assets/icons/lucide/lucide/file-text.svg" alt="file-text" class="w-4 h-4 text-yellow-600" />
-          </div>
-          <span class="ml-3 text-sm font-medium text-gray-700">Total Requirements</span>
-        </div>
-        <span class="text-2xl font-bold text-gray-900">{{platformStats.totalRequirements || 0}}</span>
+      <div class="flex items-center space-x-3">
+        <button 
+          (click)="refreshData()" 
+          class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          <svg class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Refresh
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Additional Statistics Row -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    <!-- Total Vendors -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center">
-          <div class="p-2 rounded-lg bg-indigo-50">
-            <img src="assets/icons/lucide/lucide/user-check.svg" alt="vendors" class="w-4 h-4 text-indigo-600" />
-          </div>
-          <span class="ml-3 text-sm font-medium text-gray-700">Total Vendors</span>
-        </div>
-        <span class="text-xl font-bold text-gray-900">{{platformStats.totalVendors || 0}}</span>
-      </div>
-    </div>
-
-    <!-- Total Clients -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center">
-          <div class="p-2 rounded-lg bg-orange-50">
-            <img src="assets/icons/lucide/lucide/building.svg" alt="clients" class="w-4 h-4 text-orange-600" />
-          </div>
-          <span class="ml-3 text-sm font-medium text-gray-700">Total Clients</span>
-        </div>
-        <span class="text-xl font-bold text-gray-900">{{platformStats.totalClients || 0}}</span>
-      </div>
-    </div>
-
-    <!-- Active Skills -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center">
-          <div class="p-2 rounded-lg bg-teal-50">
-            <img src="assets/icons/lucide/lucide/award.svg" alt="skills" class="w-4 h-4 text-teal-600" />
-          </div>
-          <span class="ml-3 text-sm font-medium text-gray-700">Active Skills</span>
-        </div>
-        <span class="text-xl font-bold text-gray-900">{{platformStats.activeSkills || 0}}</span>
-      </div>
-    </div>
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+    <span class="ml-3 text-gray-600">Loading dashboard data...</span>
   </div>
 
-  <!-- Recent Skill Approvals -->
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-      <div class="p-6 border-b border-gray-100">
-        <h3 class="text-lg font-semibold text-gray-900">Recent Skill Approvals</h3>
-      </div>
-      <div class="p-6">
-        <div *ngFor="let approval of skillApprovals.slice(0, 5); trackBy: trackById" 
-             class="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
-          <div>
-            <p class="font-medium text-gray-900">{{approval.skill.skill.name}}</p>
-            <p class="text-sm text-gray-600" *ngIf="approval.skill.category">{{approval.skill.category}}</p>
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="bg-red-50 border border-red-200 rounded-lg p-4">
+    <div class="flex items-center">
+      <svg class="w-5 h-5 text-red-400 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <p class="text-red-800">{{ error }}</p>
+    </div>
+    <button 
+      (click)="refreshData()" 
+      class="mt-2 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors">
+      Retry
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!isLoading && !error">
+    <!-- Platform Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Total Users -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <div class="p-3 rounded-lg bg-blue-50">
+              <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+              </svg>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Total Users</p>
+              <p class="text-2xl font-bold text-gray-900">{{platformStats.totalUsers || 0}}</p>
+            </div>
           </div>
-          <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + 
-            (approval.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-             approval.status === 'approved' ? 'bg-green-100 text-green-800' :
-             'bg-red-100 text-red-800')">
-            {{approval.status}}
-          </span>
         </div>
-        <p *ngIf="skillApprovals.length === 0" class="text-gray-500 text-center py-8">No pending skill approvals</p>
+      </div>
+
+      <!-- Total Applications -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <div class="p-3 rounded-lg bg-green-50">
+              <svg class="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Total Applications</p>
+              <p class="text-2xl font-bold text-gray-900">{{platformStats.totalApplications || 0}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Resources -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <div class="p-3 rounded-lg bg-purple-50">
+              <svg class="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H8a2 2 0 01-2-2V8a2 2 0 012-2V6" />
+              </svg>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Total Resources</p>
+              <p class="text-2xl font-bold text-gray-900">{{platformStats.totalResources || 0}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Requirements -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <div class="p-3 rounded-lg bg-yellow-50">
+              <svg class="w-6 h-6 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Total Requirements</p>
+              <p class="text-2xl font-bold text-gray-900">{{platformStats.totalRequirements || 0}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Statistics Row -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Total Vendors -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <div class="p-3 rounded-lg bg-indigo-50">
+              <svg class="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Total Vendors</p>
+              <p class="text-xl font-bold text-gray-900">{{platformStats.totalVendors || 0}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Total Clients -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <div class="p-3 rounded-lg bg-orange-50">
+              <svg class="w-6 h-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Total Clients</p>
+              <p class="text-xl font-bold text-gray-900">{{platformStats.totalClients || 0}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Skills -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <div class="p-3 rounded-lg bg-teal-50">
+              <svg class="w-6 h-6 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+              </svg>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-600">Active Skills</p>
+              <p class="text-xl font-bold text-gray-900">{{platformStats.activeSkills || 0}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Skill Approvals -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div class="p-6 border-b border-gray-100">
+          <h3 class="text-lg font-semibold text-gray-900">Recent Skill Approvals</h3>
+          <p class="text-sm text-gray-600 mt-1">Latest vendor skill submissions</p>
+        </div>
+        <div class="p-6">
+          <div *ngFor="let approval of skillApprovals.slice(0, 5); trackBy: trackById" 
+               class="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+            <div>
+              <p class="font-medium text-gray-900">{{approval.skill.skill.name}}</p>
+              <p class="text-sm text-gray-600" *ngIf="approval.skill.category">{{approval.skill.category}}</p>
+            </div>
+            <span [class]="'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ' + 
+              (approval.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+               approval.status === 'approved' ? 'bg-green-100 text-green-800' :
+               'bg-red-100 text-red-800')">
+              {{approval.status}}
+            </span>
+          </div>
+          <p *ngIf="skillApprovals.length === 0" class="text-gray-500 text-center py-8">No pending skill approvals</p>
+        </div>
+      </div>
+
+      <!-- Monthly Growth -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div class="p-6 border-b border-gray-100">
+          <h3 class="text-lg font-semibold text-gray-900">Monthly Growth</h3>
+          <p class="text-sm text-gray-600 mt-1">Platform growth metrics</p>
+        </div>
+        <div class="p-6">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-medium text-gray-600">Users Growth</span>
+              <span [class]="'text-sm font-semibold ' + ((platformStats.monthlyGrowth?.users || 0) > 0 ? 'text-green-600' : 'text-red-600')">
+                {{(platformStats.monthlyGrowth?.users || 0) > 0 ? '+' : ''}}{{platformStats.monthlyGrowth?.users || 0}}%
+              </span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-medium text-gray-600">Applications Growth</span>
+              <span [class]="'text-sm font-semibold ' + ((platformStats.monthlyGrowth?.applications || 0) > 0 ? 'text-green-600' : 'text-red-600')">
+                {{(platformStats.monthlyGrowth?.applications || 0) > 0 ? '+' : ''}}{{platformStats.monthlyGrowth?.applications || 0}}%
+              </span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-medium text-gray-600">Placements Growth</span>
+              <span [class]="'text-sm font-semibold ' + ((platformStats.monthlyGrowth?.placements || 0) > 0 ? 'text-green-600' : 'text-red-600')">
+                {{(platformStats.monthlyGrowth?.placements || 0) > 0 ? '+' : ''}}{{platformStats.monthlyGrowth?.placements || 0}}%
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

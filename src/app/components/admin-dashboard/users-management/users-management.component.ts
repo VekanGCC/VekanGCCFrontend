@@ -1,8 +1,11 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { User } from '../../../models/user.model';
 import { PaginationComponent } from '../../pagination/pagination.component';
 import { PaginationState } from '../../../models/pagination.model';
+import { AdminService } from '../../../services/admin.service';
+import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-users-management',
@@ -11,9 +14,9 @@ import { PaginationState } from '../../../models/pagination.model';
   templateUrl: './users-management.component.html',
   styleUrls: ['./users-management.component.scss']
 })
-export class UsersManagementComponent {
-  @Input() users: User[] = [];
-  @Input() paginationState: PaginationState = {
+export class UsersManagementComponent implements OnInit, OnDestroy {
+  users: User[] = [];
+  paginationState: PaginationState = {
     currentPage: 1,
     pageSize: 10,
     totalItems: 0,
@@ -23,11 +26,53 @@ export class UsersManagementComponent {
     hasPreviousPage: false
   };
 
-  @Output() pageChange = new EventEmitter<number>();
-  @Output() editUser = new EventEmitter<User>();
-  @Output() toggleUserStatus = new EventEmitter<User>();
+  private subscriptions: Subscription[] = [];
 
-  constructor() {}
+  constructor(private adminService: AdminService, private router: Router) {}
+
+  ngOnInit(): void {
+    this.loadUsers();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  loadUsers(): void {
+    this.paginationState.isLoading = true;
+
+    const subscription = this.adminService.getUsers(
+      this.paginationState.currentPage,
+      this.paginationState.pageSize
+    ).subscribe({
+      next: (response) => {
+        console.log('🔧 UsersManagementComponent: Users loaded:', response);
+        this.users = response.data || [];
+        
+        // Update pagination state
+        if (response.pagination) {
+          this.paginationState = {
+            currentPage: response.pagination.page || 1,
+            pageSize: response.pagination.limit || 10,
+            totalItems: response.pagination.total || 0,
+            totalPages: response.pagination.totalPages || 0,
+            isLoading: false,
+            hasNextPage: (response.pagination.page || 1) < (response.pagination.totalPages || 0),
+            hasPreviousPage: (response.pagination.page || 1) > 1
+          };
+        } else {
+          this.paginationState.isLoading = false;
+        }
+      },
+      error: (error) => {
+        console.error('🔧 UsersManagementComponent: Error loading users:', error);
+        this.paginationState.isLoading = false;
+        this.users = [];
+      }
+    });
+
+    this.subscriptions.push(subscription);
+  }
 
   getUserTypeColor(userType: string): string {
     const colors: { [key: string]: string } = {
@@ -97,15 +142,37 @@ export class UsersManagementComponent {
   }
 
   onPageChange(page: number): void {
-    this.pageChange.emit(page);
+    this.paginationState.currentPage = page;
+    this.loadUsers();
   }
 
   onEditUser(user: User): void {
-    this.editUser.emit(user);
+    console.log('🔧 UsersManagementComponent: Edit user:', user);
+    // Navigate to admin user profile page for editing
+    this.router.navigate(['/admin/user-profile', user._id]);
   }
 
   onToggleUserStatus(user: User): void {
-    this.toggleUserStatus.emit(user);
+    console.log('🔧 UsersManagementComponent: Toggle user status:', user);
+    
+    const subscription = this.adminService.toggleUserStatus(user._id).subscribe({
+      next: (response) => {
+        console.log('🔧 UsersManagementComponent: User status updated successfully:', response);
+        // Reload users to reflect changes
+        this.loadUsers();
+      },
+      error: (error) => {
+        console.error('🔧 UsersManagementComponent: Error updating user status:', error);
+        // Reload users to ensure UI is in sync
+        this.loadUsers();
+      }
+    });
+
+    this.subscriptions.push(subscription);
+  }
+
+  refreshPage(): void {
+    this.loadUsers();
   }
 
   trackById(index: number, item: any): string {

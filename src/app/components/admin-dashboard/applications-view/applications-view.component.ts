@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AgGridAngular, AgGridModule } from 'ag-grid-angular';
 import { ColDef, GridOptions, SortChangedEvent } from 'ag-grid-community';
@@ -6,6 +6,8 @@ import { Application } from '../../../models/application.model';
 import { PaginationComponent } from '../../pagination/pagination.component';
 import { PaginationState } from '../../../models/pagination.model';
 import { AdminApplicationsService } from '../../../services/admin-applications.service';
+import { AdminService } from '../../../services/admin.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-applications-view',
@@ -14,9 +16,9 @@ import { AdminApplicationsService } from '../../../services/admin-applications.s
   templateUrl: './applications-view.component.html',
   styleUrls: ['./applications-view.component.scss']
 })
-export class ApplicationsViewComponent {
-  @Input() applications: Application[] = [];
-  @Input() paginationState: PaginationState = {
+export class ApplicationsViewComponent implements OnInit, OnDestroy {
+  applications: Application[] = [];
+  paginationState: PaginationState = {
     currentPage: 1,
     pageSize: 10,
     totalItems: 0,
@@ -26,11 +28,9 @@ export class ApplicationsViewComponent {
     hasPreviousPage: false
   };
 
-  @Output() pageChange = new EventEmitter<number>();
-  @Output() statusUpdate = new EventEmitter<{applicationId: string, status: string, notes?: string}>();
-  @Output() viewHistory = new EventEmitter<string>();
-
   @ViewChild(AgGridAngular) agGrid!: AgGridAngular;
+
+  private subscriptions: Subscription[] = [];
 
   columnDefs: ColDef[] = [
     {
@@ -187,8 +187,57 @@ export class ApplicationsViewComponent {
 
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
-    private adminApplicationsService: AdminApplicationsService
+    private adminApplicationsService: AdminApplicationsService,
+    private adminService: AdminService
   ) {}
+
+  ngOnInit(): void {
+    this.loadApplications();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  loadApplications(): void {
+    this.paginationState.isLoading = true;
+    this.changeDetectorRef.detectChanges();
+
+    const subscription = this.adminService.getApplications(
+      this.paginationState.currentPage,
+      this.paginationState.pageSize
+    ).subscribe({
+      next: (response) => {
+        console.log('🔧 ApplicationsViewComponent: Applications loaded:', response);
+        this.applications = response.data || [];
+        
+        // Update pagination state
+        if (response.pagination) {
+          this.paginationState = {
+            currentPage: response.pagination.page || 1,
+            pageSize: response.pagination.limit || 10,
+            totalItems: response.pagination.total || 0,
+            totalPages: response.pagination.totalPages || 0,
+            isLoading: false,
+            hasNextPage: (response.pagination.page || 1) < (response.pagination.totalPages || 0),
+            hasPreviousPage: (response.pagination.page || 1) > 1
+          };
+        } else {
+          this.paginationState.isLoading = false;
+        }
+        
+        this.changeDetectorRef.detectChanges();
+      },
+      error: (error) => {
+        console.error('🔧 ApplicationsViewComponent: Error loading applications:', error);
+        this.paginationState.isLoading = false;
+        this.applications = [];
+        this.changeDetectorRef.detectChanges();
+      }
+    });
+
+    this.subscriptions.push(subscription);
+  }
 
   getResourceName(resource: any): string {
     if (this.isObject(resource)) {
@@ -263,63 +312,73 @@ export class ApplicationsViewComponent {
   }
 
   getAvailableStatusOptions(currentStatus: string): any[] {
-    const status = currentStatus?.toLowerCase();
-    const options = [];
-
-    // Admin can approve/reject applications in 'applied' status
-    if (status === 'applied') {
-      options.push(
-        { value: 'shortlisted', label: 'Approve & Shortlist' },
+    const statusOptions: { [key: string]: any[] } = {
+      'applied': [
+        { value: 'shortlisted', label: 'Shortlist' },
         { value: 'rejected', label: 'Reject' }
-      );
-    }
-
-    // Admin can approve/reject offers in 'offer_created' status
-    if (status === 'offer_created') {
-      options.push(
-        { value: 'offer_accepted', label: 'Accept Offer' },
-        { value: 'rejected', label: 'Reject Offer' }
-      );
-    }
-
-    // Admin can revoke at any point (except for offer_created which has specific accept/reject options)
-    if (['applied', 'shortlisted', 'interview', 'accepted', 'offer_accepted'].includes(status)) {
-      options.push(
-        { value: 'withdrawn', label: 'Revoke' }
-      );
-    }
-
-    return options;
+      ],
+      'pending': [
+        { value: 'shortlisted', label: 'Shortlist' },
+        { value: 'rejected', label: 'Reject' }
+      ],
+      'shortlisted': [
+        { value: 'interview', label: 'Schedule Interview' },
+        { value: 'rejected', label: 'Reject' }
+      ],
+      'interview': [
+        { value: 'accepted', label: 'Accept' },
+        { value: 'rejected', label: 'Reject' }
+      ],
+      'accepted': [
+        { value: 'offer_created', label: 'Create Offer' }
+      ],
+      'offer_created': [
+        { value: 'offer_accepted', label: 'Mark Offer Accepted' },
+        { value: 'did_not_join', label: 'Did Not Join' }
+      ],
+      'offer_accepted': [
+        { value: 'onboarded', label: 'Mark Onboarded' }
+      ]
+    };
+    
+    return statusOptions[currentStatus.toLowerCase()] || [];
   }
 
   onStatusChange(applicationId: string, newStatus: string): void {
-    this.statusUpdate.emit({
-      applicationId,
-      status: newStatus,
-      notes: `Admin action: ${newStatus}`
-    });
+    console.log('🔧 ApplicationsViewComponent: Updating application status:', applicationId, newStatus);
     
-    // Trigger page refresh after status change
-    setTimeout(() => {
-      this.refreshPage();
-    }, 1000); // Small delay to allow API call to complete
+    const subscription = this.adminService.updateApplicationStatus(applicationId, newStatus).subscribe({
+      next: (response) => {
+        console.log('🔧 ApplicationsViewComponent: Status updated successfully:', response);
+        // Reload applications to reflect changes
+        this.loadApplications();
+      },
+      error: (error) => {
+        console.error('🔧 ApplicationsViewComponent: Error updating status:', error);
+        // Reload applications to ensure UI is in sync
+        this.loadApplications();
+      }
+    });
+
+    this.subscriptions.push(subscription);
   }
 
   onViewHistory(applicationId: string): void {
+    console.log('🔧 ApplicationsViewComponent: Viewing history for application:', applicationId);
     this.adminApplicationsService.viewApplicationHistory(applicationId);
   }
 
   refreshPage(): void {
-    // Emit current page to trigger refresh
-    this.pageChange.emit(this.paginationState.currentPage);
+    this.loadApplications();
   }
 
   isObject(val: any): boolean {
-    return val && typeof val === 'object';
+    return val !== null && typeof val === 'object';
   }
 
   onPageChange(page: number): void {
-    this.pageChange.emit(page);
+    this.paginationState.currentPage = page;
+    this.loadApplications();
   }
 
   trackById(index: number, item: any): string {
@@ -327,6 +386,6 @@ export class ApplicationsViewComponent {
   }
 
   onGridReady(event: any): void {
-    this.changeDetectorRef.detectChanges();
+    // Grid is ready, no additional setup needed
   }
 } 

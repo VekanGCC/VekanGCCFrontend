@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ProfileService, ProfileData } from '../../services/profile.service';
 import { User as UserModel, UserAddress } from '../../models/user.model';
@@ -57,11 +58,22 @@ export class ProfileDashboardComponent implements OnInit, OnDestroy, OnChanges {
   constructor(
     private profileService: ProfileService,
     private authService: AuthService,
-    private adminService: AdminService
+    private adminService: AdminService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.loadProfileData();
+    // Check if we're in admin view by checking route parameters
+    this.subscriptions.add(
+      this.route.params.subscribe(params => {
+        if (params['id']) {
+          this.userId = params['id'];
+          this.isAdminView = true;
+        }
+        this.loadProfileData();
+      })
+    );
   }
 
   ngOnDestroy(): void {
@@ -123,12 +135,26 @@ export class ProfileDashboardComponent implements OnInit, OnDestroy, OnChanges {
 
   // Admin-only methods
   onBackToUsers(): void {
-    this.backToUsers.emit();
+    this.router.navigate(['/admin/users']);
   }
 
   onApproveUser(): void {
     if (this.profileData?.user) {
-      this.approveUser.emit(this.profileData.user);
+      this.isLoading = true;
+      this.subscriptions.add(
+        this.adminService.approveUser(this.profileData.user._id).subscribe({
+          next: (response) => {
+            console.log('User approved successfully:', response);
+            this.isLoading = false;
+            // Refresh profile data to show updated status
+            this.loadProfileData();
+          },
+          error: (error) => {
+            console.error('Error approving user:', error);
+            this.isLoading = false;
+          }
+        })
+      );
     }
   }
 
@@ -144,14 +170,42 @@ export class ProfileDashboardComponent implements OnInit, OnDestroy, OnChanges {
 
   onRejectUser(): void {
     if (this.profileData?.user && this.rejectNotes.trim()) {
-      this.rejectUser.emit({ user: this.profileData.user, notes: this.rejectNotes });
-      this.onCloseRejectModal();
+      this.isLoading = true;
+      this.subscriptions.add(
+        this.adminService.rejectUser(this.profileData.user._id, this.rejectNotes).subscribe({
+          next: (response) => {
+            console.log('User rejected successfully:', response);
+            this.isLoading = false;
+            this.onCloseRejectModal();
+            // Refresh profile data to show updated status
+            this.loadProfileData();
+          },
+          error: (error) => {
+            console.error('Error rejecting user:', error);
+            this.isLoading = false;
+          }
+        })
+      );
     }
   }
 
   onToggleUserStatus(): void {
     if (this.profileData?.user) {
-      this.toggleUserStatus.emit(this.profileData.user);
+      this.isLoading = true;
+      this.subscriptions.add(
+        this.adminService.toggleUserStatus(this.profileData.user._id).subscribe({
+          next: (response) => {
+            console.log('User status toggled successfully:', response);
+            this.isLoading = false;
+            // Refresh profile data to show updated status
+            this.loadProfileData();
+          },
+          error: (error) => {
+            console.error('Error toggling user status:', error);
+            this.isLoading = false;
+          }
+        })
+      );
     }
   }
 

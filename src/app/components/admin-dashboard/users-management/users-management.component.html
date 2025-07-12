@@ -1,7 +1,31 @@
 <div class="bg-white rounded-xl shadow-sm border border-gray-100">
   <div class="p-6">
-    <!-- Table Header -->
-    <div class="overflow-x-auto">
+    <!-- Loading state -->
+    <div *ngIf="paginationState.isLoading" class="flex justify-center items-center py-8">
+      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <span class="ml-3 text-gray-600">Loading users...</span>
+    </div>
+
+    <!-- Error state -->
+    <div *ngIf="!paginationState.isLoading && users.length === 0 && paginationState.totalItems === 0" class="text-center py-8">
+      <div class="text-gray-500 mb-4">
+        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+        </svg>
+      </div>
+      <p class="text-gray-500 mb-4">No users found</p>
+      <button 
+        (click)="refreshPage()"
+        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+        <svg class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        Retry
+      </button>
+    </div>
+
+    <!-- Users Table -->
+    <div *ngIf="!paginationState.isLoading && users.length > 0" class="overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
@@ -92,8 +116,6 @@
         </tbody>
       </table>
     </div>
-    
-    <p *ngIf="users.length === 0" class="text-gray-500 text-center py-8">No users found</p>
     
     <!-- Pagination -->
     <app-pagination

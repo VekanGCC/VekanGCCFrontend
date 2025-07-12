@@ -8,8 +8,6 @@ import { LoginComponent } from './components/login/login.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
-import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
-import { ClientDashboardComponent } from './components/client-dashboard/client-dashboard.component';
 import { ProfileComponent } from './components/profile/profile.component';
 console.log('🔧 AppRoutes: Loading main app routes configuration');
 
@@ -41,8 +39,63 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    component: AdminDashboardComponent,
-    canActivate: [AuthGuard, AdminGuard]
+    loadComponent: () => import('./components/admin-dashboard/admin-dashboard.component')
+      .then(m => m.AdminDashboardComponent),
+    canActivate: [AuthGuard, AdminGuard],
+    data: { preload: true },
+    children: [
+      { path: '', redirectTo: 'overview', pathMatch: 'full' },
+      { 
+        path: 'overview', 
+        loadComponent: () => import('./components/admin-dashboard/admin-overview/admin-overview.component')
+          .then(m => m.AdminOverviewComponent)
+      },
+      { 
+        path: 'skill-approvals', 
+        loadComponent: () => import('./components/admin-dashboard/skill-approvals/skill-approvals.component')
+          .then(m => m.SkillApprovalsComponent)
+      },
+      { 
+        path: 'skills', 
+        loadComponent: () => import('./components/admin-dashboard/skills-management/skills-management.component')
+          .then(m => m.SkillsManagementComponent)
+      },
+      { 
+        path: 'categories', 
+        loadComponent: () => import('./components/admin-dashboard/categories-management/categories-management.component')
+          .then(m => m.CategoriesManagementComponent)
+      },
+      { 
+        path: 'applications', 
+        loadComponent: () => import('./components/admin-dashboard/applications-view/applications-view.component')
+          .then(m => m.ApplicationsViewComponent)
+      },
+      { 
+        path: 'users', 
+        loadComponent: () => import('./components/admin-dashboard/users-management/users-management.component')
+          .then(m => m.UsersManagementComponent)
+      },
+      { 
+        path: 'user-profile/:id', 
+        loadComponent: () => import('./components/profile/profile-dashboard.component')
+          .then(m => m.ProfileDashboardComponent)
+      },
+      { 
+        path: 'reports', 
+        loadComponent: () => import('./components/admin-dashboard/admin-reports/admin-reports.component')
+          .then(m => m.AdminReportsComponent)
+      },
+      { 
+        path: 'custom-report-builder', 
+        loadComponent: () => import('./components/admin-dashboard/custom-report-builder/custom-report-builder.component')
+          .then(m => m.CustomReportBuilderComponent)
+      },
+      { 
+        path: 'workflows', 
+        loadComponent: () => import('./components/admin-dashboard/workflow-management/workflow-management.component')
+          .then(m => m.WorkflowManagementComponent)
+      }
+    ]
   },
   {
     path: 'vendor',

@@ -1,0 +1,195 @@
+<div class="min-h-screen bg-gray-50 py-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <!-- Header with Back Button -->
+    <div class="mb-8 flex items-center justify-between">
+      <div>
+        <button
+          (click)="onBackToUsers()"
+          class="flex items-center text-blue-600 hover:text-blue-800 mb-2">
+          <img src="assets/icons/lucide/lucide/arrow-left.svg" class="w-4 h-4 mr-2" alt="Back">
+          Back to Users
+        </button>
+        <h1 class="text-3xl font-bold text-gray-900">User Profile</h1>
+        <p class="mt-2 text-gray-600">View and manage user information</p>
+      </div>
+      
+      <!-- Action Buttons -->
+      <div *ngIf="selectedUser" class="flex space-x-3">
+        <button
+          (click)="onApproveUserFromProfile(selectedUser)"
+          class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors">
+          Approve User
+        </button>
+        <button
+          (click)="onOpenRejectModalFromProfile(selectedUser)"
+          class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors">
+          Reject User
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isProfileLoading" class="flex justify-center items-center py-12">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+    </div>
+
+    <!-- Profile Content -->
+    <div *ngIf="!isProfileLoading && selectedUser" class="bg-white shadow rounded-lg">
+      <!-- Tab Navigation -->
+      <div class="border-b border-gray-200">
+        <nav class="-mb-px flex space-x-8 px-6">
+          <button
+            *ngFor="let tab of profileTabList"
+            (click)="setActiveProfileTab(tab.value)"
+            [class]="'py-4 px-1 border-b-2 font-medium text-sm ' + 
+              (activeProfileTab === tab.value 
+                ? 'border-blue-500 text-blue-600' 
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300')">
+            {{ tab.label }}
+          </button>
+        </nav>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="p-6">
+        <!-- Personal Information Tab -->
+        <div *ngIf="activeProfileTab === 'personal'">
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">Personal Information</h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700">First Name</label>
+              <p class="mt-1 text-sm text-gray-900">{{ selectedUser.firstName || 'N/A' }}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Last Name</label>
+              <p class="mt-1 text-sm text-gray-900">{{ selectedUser.lastName || 'N/A' }}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Email</label>
+              <p class="mt-1 text-sm text-gray-900">{{ selectedUser.email || 'N/A' }}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Phone</label>
+              <p class="mt-1 text-sm text-gray-900">{{ selectedUser.phone || 'N/A' }}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">User Type</label>
+              <p class="mt-1 text-sm text-gray-900">{{ selectedUser.userType || 'N/A' }}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Organization Role</label>
+              <p class="mt-1 text-sm text-gray-900">{{ selectedUser.organizationRole || 'N/A' }}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Company Name</label>
+              <p class="mt-1 text-sm text-gray-900">{{ selectedUser.companyName || 'N/A' }}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Approval Status</label>
+              <span [class]="'inline-flex px-2 py-1 text-xs font-semibold rounded-full ' + 
+                (selectedUser.approvalStatus === 'approved' ? 'bg-green-100 text-green-800' : 
+                 selectedUser.approvalStatus === 'pending' ? 'bg-yellow-100 text-yellow-800' : 
+                 'bg-red-100 text-red-800')">
+                {{ selectedUser.approvalStatus || 'N/A' }}
+              </span>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Active Status</label>
+              <span [class]="'inline-flex px-2 py-1 text-xs font-semibold rounded-full ' + 
+                (selectedUser.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800')">
+                {{ selectedUser.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Business Information Tab -->
+        <div *ngIf="activeProfileTab === 'business'">
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">Business Information</h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Contact Person</label>
+              <p class="mt-1 text-sm text-gray-900">{{ selectedUser.contactPerson || 'N/A' }}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">GST Number</label>
+              <p class="mt-1 text-sm text-gray-900">{{ selectedUser.gstNumber || 'N/A' }}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Service Type</label>
+              <p class="mt-1 text-sm text-gray-900">{{ selectedUser.serviceType || 'N/A' }}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Payment Terms</label>
+              <p class="mt-1 text-sm text-gray-900">{{ selectedUser.paymentTerms || 'N/A' }}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Created At</label>
+              <p class="mt-1 text-sm text-gray-900">{{ selectedUser.createdAt | date:'medium' || 'N/A' }}</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Last Updated</label>
+              <p class="mt-1 text-sm text-gray-900">{{ selectedUser.updatedAt | date:'medium' || 'N/A' }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Documents Tab -->
+        <div *ngIf="activeProfileTab === 'documents'">
+          <h2 class="text-xl font-semibold text-gray-900 mb-6">Documents</h2>
+          
+          <div *ngIf="selectedUserProfileData?.documents?.length; else noDocuments" class="space-y-4">
+            <div *ngFor="let document of selectedUserProfileData.documents" class="border border-gray-200 rounded-lg p-4">
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="text-sm font-medium text-gray-900">{{ document.name || 'Document' }}</h3>
+                  <p class="text-sm text-gray-500">{{ document.type || 'Unknown type' }}</p>
+                </div>
+                <button class="text-blue-600 hover:text-blue-800 text-sm">View</button>
+              </div>
+            </div>
+          </div>
+          
+          <ng-template #noDocuments>
+            <p class="text-gray-500 text-center py-8">No documents uploaded</p>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+
+    <!-- No User Selected -->
+    <div *ngIf="!isProfileLoading && !selectedUser" class="text-center py-12">
+      <p class="text-gray-500">No user selected</p>
+    </div>
+  </div>
+</div>
+
+<!-- Reject Modal -->
+<div *ngIf="showProfileRejectModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Reject User</h3>
+    <p class="text-sm text-gray-600 mb-4">Please provide a reason for rejecting this user:</p>
+    
+    <textarea
+      [(ngModel)]="profileRejectNotes"
+      placeholder="Enter rejection reason..."
+      class="w-full border border-gray-300 rounded-md p-3 text-sm focus:ring-blue-500 focus:border-blue-500"
+      rows="4"></textarea>
+    
+    <div class="flex justify-end space-x-3 mt-6">
+      <button
+        (click)="onCloseRejectModalFromProfile()"
+        class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+        Cancel
+      </button>
+      <button
+        (click)="onRejectUserFromProfile(selectedUser!, profileRejectNotes)"
+        [disabled]="!profileRejectNotes?.trim()"
+        class="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 disabled:bg-gray-400 transition-colors">
+        Reject User
+      </button>
+    </div>
+  </div>
+</div> 

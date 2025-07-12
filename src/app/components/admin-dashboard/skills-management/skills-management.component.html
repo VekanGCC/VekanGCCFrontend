@@ -1,12 +1,32 @@
 <div class="space-y-6">
-  <!-- Header -->
-  <div class="flex items-center justify-between">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="bg-red-50 border border-red-200 rounded-lg p-4">
+    <div class="flex items-center">
+      <img src="assets/icons/lucide/lucide/alert-circle.svg" class="w-5 h-5 text-red-400 mr-2" alt="Error">
+      <p class="text-red-800">{{ error }}</p>
+    </div>
+    <button 
+      (click)="refreshData()" 
+      class="mt-2 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors">
+      Retry
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!isLoading && !error">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
     <div>
       <h3 class="text-lg font-semibold text-gray-900">Skills</h3>
       <p class="text-sm text-gray-600">Manage platform skills</p>
     </div>
     <button 
-      (click)="openAddModal.emit()"
+      (click)="refreshData()"
       class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 flex items-center">
       <img src="assets/icons/lucide/lucide/plus.svg" alt="plus" class="w-4 h-4 mr-2" />
       Add Skill
@@ -117,4 +137,5 @@
     (save)="onEditSkillSave($event)"
     (cancel)="closeEditSkillModal()">
   </app-edit-skill-modal>
+  </div>
 </div> 
