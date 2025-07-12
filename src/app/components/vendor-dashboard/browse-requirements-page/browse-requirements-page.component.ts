@@ -48,17 +48,14 @@ export class BrowseRequirementsPageComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router
   ) {
-    console.log('🔧 BrowseRequirementsPage: Constructor called');
   }
 
   ngOnInit(): void {
-    console.log('🔧 BrowseRequirementsPage: Component initialized');
     this.currentUser = this.authService.getCurrentUser();
     
     // Get requirement ID from query parameters
     this.route.queryParams.subscribe(params => {
       this.selectedRequirementId = params['requirementId'] || '';
-      console.log('🔧 BrowseRequirementsPage: Selected requirement ID from query params:', this.selectedRequirementId);
       this.loadRequirementFromInput();
     });
     
@@ -66,32 +63,24 @@ export class BrowseRequirementsPageComponent implements OnInit {
   }
 
   private loadRequirementFromInput(): void {
-    console.log('🔧 BrowseRequirementsPage: Loading requirement from input:', this.selectedRequirementId);
-    
     if (!this.selectedRequirementId) {
       this.errorMessage = 'No requirement selected';
       return;
     }
     
-    console.log('🔧 BrowseRequirementsPage: Loading requirement with ID:', this.selectedRequirementId);
-    
     // Load requirement from API
     this.isLoading = true;
     this.apiService.getRequirement(this.selectedRequirementId).subscribe({
       next: (response: any) => {
-        console.log('🔧 BrowseRequirementsPage: API response:', response);
         if (response.success && response.data) {
           this.requirement = response.data;
-          console.log('🔧 BrowseRequirementsPage: Loaded requirement:', this.requirement);
         } else {
-          console.error('🔧 BrowseRequirementsPage: No requirement found with ID:', this.selectedRequirementId);
           this.errorMessage = 'Requirement not found';
         }
         this.isLoading = false;
         this.changeDetectorRef.detectChanges();
       },
       error: (error: any) => {
-        console.error('🔧 BrowseRequirementsPage: Error loading requirement:', error);
         this.errorMessage = 'Failed to load requirement';
         this.isLoading = false;
         this.changeDetectorRef.detectChanges();
@@ -100,22 +89,18 @@ export class BrowseRequirementsPageComponent implements OnInit {
   }
 
   private loadResources(): void {
-    console.log('🔧 Loading vendor resources...');
     this.isLoading = true;
     this.vendorService.getResources().subscribe({
       next: (response) => {
-        console.log('🔧 Resources response:', response);
         if (response.success && response.data) {
           // Only show active resources
           this.resources = response.data.filter((resource: Resource) => resource.status === 'active');
           this.filteredResources = [...this.resources];
-          console.log('🔧 Loaded resources:', this.resources.length);
         }
         this.isLoading = false;
         this.changeDetectorRef.detectChanges();
       },
       error: (error) => {
-        console.error('Error loading resources:', error);
         this.errorMessage = 'Failed to load resources';
         this.isLoading = false;
         this.changeDetectorRef.detectChanges();
@@ -125,23 +110,16 @@ export class BrowseRequirementsPageComponent implements OnInit {
 
   // Multi-select dropdown methods
   toggleResourcesDropdown() {
-    console.log('🔧 Toggle dropdown clicked, current state:', this.showResourcesDropdown);
-    console.log('🔧 Available resources:', this.resources.length);
     this.showResourcesDropdown = !this.showResourcesDropdown;
     if (this.showResourcesDropdown) {
       this.filteredResources = [...this.resources];
     }
-    console.log('🔧 New dropdown state:', this.showResourcesDropdown);
     this.changeDetectorRef.detectChanges();
   }
 
   filterResources() {
-    console.log('🔧 Filtering resources, search term:', this.resourceSearchTerm);
-    console.log('🔧 Total resources available:', this.resources.length);
-    
     if (!this.resourceSearchTerm.trim()) {
       this.filteredResources = [...this.resources];
-      console.log('🔧 No search term, showing all resources:', this.filteredResources.length);
     } else {
       const searchTerm = this.resourceSearchTerm.toLowerCase();
       this.filteredResources = this.resources.filter(resource =>
@@ -149,7 +127,6 @@ export class BrowseRequirementsPageComponent implements OnInit {
         resource.description.toLowerCase().includes(searchTerm) ||
         (resource.skills && resource.skills.length > 0 && resource.skills[0].name && resource.skills[0].name.toLowerCase().includes(searchTerm))
       );
-      console.log('🔧 Filtered resources:', this.filteredResources.length);
     }
     
     this.changeDetectorRef.detectChanges();
@@ -255,12 +232,10 @@ export class BrowseRequirementsPageComponent implements OnInit {
   }
 
   navigateBackToBrowse(): void {
-    console.log('🔧 BrowseRequirementsPage: Navigating back to requirements');
     this.router.navigate(['/vendor/requirements']);
   }
 
   onCancel(): void {
-    console.log('🔧 BrowseRequirementsPage: Cancel clicked');
     this.router.navigate(['/vendor/requirements']);
   }
 

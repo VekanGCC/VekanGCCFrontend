@@ -269,14 +269,11 @@ export class VendorApplicationsComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnInit(): void {
-    console.log('🔧 VendorApplicationsComponent: ngOnInit called');
-    
     this.initializeFilters();
     
     // Get resourceId from route parameters
     this.activatedRoute.queryParams.subscribe(params => {
       this.resourceFilter = params['resourceId'] || '';
-      console.log('🔧 VendorApplicationsComponent: Resource filter from route:', this.resourceFilter);
       this.loadApplications();
     });
   }
@@ -312,17 +309,14 @@ export class VendorApplicationsComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     // This will be called whenever the properties change
-    console.log('🔧 VendorApplications: Applications data changed:', this.applications);
     
     // If applications data changed, refresh the grid
     if (changes['applications'] && this.agGrid && this.agGrid.api) {
-      console.log('🔧 VendorApplications: Applications changed, refreshing grid');
       this.refreshGridData();
     }
   }
 
   loadApplications(): void {
-    console.log('🔄 VendorApplications: Loading applications...');
     this.isLoading = true;
     this.paginationState.isLoading = true;
 
@@ -362,23 +356,17 @@ export class VendorApplicationsComponent implements OnInit, OnChanges {
         (params as any).search = this.currentFilters.searchTerm;
       }
 
-    console.log('🔄 VendorApplications: Loading applications with filters:', this.currentFilters);
-    console.log('🔄 VendorApplications: API params:', params);
-
     // Use different service method based on whether resource filter is provided
     let observable: Observable<PaginatedResponse<any>>;
     
     if (this.resourceFilter) {
-      console.log('🔄 VendorApplications: Loading applications filtered by resource ID:', this.resourceFilter);
       observable = this.vendorService.getApplicationsByResourceId(this.resourceFilter, params);
     } else {
-      console.log('🔄 VendorApplications: Loading all applications');
       observable = this.vendorService.getApplications(params);
     }
 
           observable.subscribe({
         next: (response) => {
-          console.log('✅ VendorApplications: Applications loaded successfully:', response);
           this.applications = response.data || [];
           
           // Handle pagination data - check both meta and pagination properties
@@ -391,9 +379,6 @@ export class VendorApplicationsComponent implements OnInit, OnChanges {
             hasPreviousPage: (paginationData?.page || 1) > 1,
             isLoading: false
           };
-          
-          console.log('✅ VendorApplications: Pagination state updated:', this.paginationState);
-          console.log('✅ VendorApplications: Applications array:', this.applications);
           
           this.isLoading = false;
           this.loadApplicationCounts(); // Update counts after loading applications
@@ -412,16 +397,12 @@ export class VendorApplicationsComponent implements OnInit, OnChanges {
     if (this.agGrid && this.agGrid.api) {
       // Force AG Grid to refresh all data
       this.agGrid.api.refreshCells({ force: true });
-      console.log('🔧 VendorApplications: Grid data refreshed');
     }
   }
 
   onGridReady(event: any): void {
-    console.log('🔧 VendorApplications: Grid ready, API captured');
-    
     // Set initial data if applications are already available
     if (this.applications && this.applications.length > 0) {
-      console.log('🔧 VendorApplications: Setting initial data in grid');
       this.refreshGridData();
     }
   }
@@ -520,8 +501,6 @@ export class VendorApplicationsComponent implements OnInit, OnChanges {
   }
 
   onStatusChange(applicationId: string, newStatus: string, application: Application): void {
-    console.log('🔄 VendorApplications: Status change requested:', { applicationId, newStatus });
-    
     // Determine action type based on new status
     let actionType: 'revoke' | 'accept_offer' | 'reject_offer' = 'revoke';
     
@@ -533,14 +512,10 @@ export class VendorApplicationsComponent implements OnInit, OnChanges {
       actionType = 'revoke';
     }
     
-    console.log('🔄 VendorApplications: Determined actionType:', actionType);
-    
     // Show confirmation modal
     this.selectedApplication = application;
     this.selectedActionType = actionType;
     this.showActionModal = true;
-    
-    console.log('🔄 VendorApplications: Modal state set - showActionModal:', this.showActionModal, 'selectedActionType:', this.selectedActionType);
     
     // Force change detection to ensure the modal appears
     this.changeDetectorRef.detectChanges();
@@ -558,8 +533,6 @@ export class VendorApplicationsComponent implements OnInit, OnChanges {
   }
 
   onActionModalConfirm(actionData: ApplicationActionData): void {
-    console.log('🔧 VendorApplicationsComponent: Action confirmed:', actionData);
-    
     // Close modal first
     this.showActionModal = false;
     this.selectedApplication = null;
@@ -582,7 +555,6 @@ export class VendorApplicationsComponent implements OnInit, OnChanges {
   }
 
   onClearFilter(): void {
-    console.log('🔄 VendorApplications: Clearing resource filter');
     this.resourceFilter = '';
     this.paginationState.currentPage = 1; // Reset to first page
     this.loadApplications();
@@ -594,7 +566,6 @@ export class VendorApplicationsComponent implements OnInit, OnChanges {
 
   // Application History Modal Methods
   onViewHistory(applicationId: string): void {
-    console.log('🔧 VendorApplications: Opening history modal for application:', applicationId);
     this.selectedApplicationId = applicationId;
     this.showHistoryModal = true;
     this.isLoadingHistory = true;
@@ -607,7 +578,6 @@ export class VendorApplicationsComponent implements OnInit, OnChanges {
     // Load application history
     this.vendorService.getApplicationHistory(applicationId).subscribe({
       next: (response) => {
-        console.log('🔧 VendorApplications: History response:', response);
         this.applicationHistory = response.data?.history || [];
         this.applicationDetails = response.data?.application || null;
         this.isLoadingHistory = false;
@@ -626,7 +596,6 @@ export class VendorApplicationsComponent implements OnInit, OnChanges {
   }
 
   closeHistoryModal(): void {
-    console.log('🔧 VendorApplications: Closing history modal');
     this.showHistoryModal = false;
     this.selectedApplicationId = '';
     this.applicationHistory = [];

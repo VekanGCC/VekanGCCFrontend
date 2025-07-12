@@ -74,10 +74,6 @@ export class AdminReportsComponent implements OnInit, OnDestroy {
   }
 
   onDateRangeChange(): void {
-    console.log('📊 Reports: Date range changed to:', this.dateRange);
-    if (this.dateRange === 'custom') {
-      console.log('📊 Reports: Custom dates - startDate:', this.startDate, 'endDate:', this.endDate);
-    }
     this.loadReport();
   }
 
@@ -120,12 +116,10 @@ export class AdminReportsComponent implements OnInit, OnDestroy {
         params.startDate = this.startDate;
         params.endDate = this.endDate;
       } else {
-        console.warn('📊 Reports: Custom date range selected but dates are missing. Using default period.');
         params.period = 'month'; // Fallback to month if custom dates are not set
       }
     }
     
-    console.log('📊 Reports: Built query params:', params);
     return params;
   }
 
@@ -133,13 +127,11 @@ export class AdminReportsComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.apiService.getUserRegistrationReport(params).subscribe({
         next: (response) => {
-          console.log('📊 Reports: User registration data received:', response);
           this.userRegistrationData = response.data || response;
           this.createUserRegistrationCharts();
           this.isLoading = false;
         },
         error: (error) => {
-          console.error('Error loading user registration report:', error);
           this.isLoading = false;
         }
       })
@@ -150,13 +142,11 @@ export class AdminReportsComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.apiService.getResourcesReport(params).subscribe({
         next: (response) => {
-          console.log('📊 Reports: Resources data received:', response);
           this.resourcesData = response.data || response;
           this.createResourcesCharts();
           this.isLoading = false;
         },
         error: (error) => {
-          console.error('Error loading resources report:', error);
           this.isLoading = false;
         }
       })
@@ -167,13 +157,11 @@ export class AdminReportsComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.apiService.getRequirementsReport(params).subscribe({
         next: (response) => {
-          console.log('📊 Reports: Requirements data received:', response);
           this.requirementsData = response.data || response;
           this.createRequirementsCharts();
           this.isLoading = false;
         },
         error: (error) => {
-          console.error('Error loading requirements report:', error);
           this.isLoading = false;
         }
       })
@@ -184,13 +172,11 @@ export class AdminReportsComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.apiService.getApplicationsReport(params).subscribe({
         next: (response) => {
-          console.log('📊 Reports: Applications data received:', response);
           this.applicationsData = response.data || response;
           this.createApplicationsCharts();
           this.isLoading = false;
         },
         error: (error) => {
-          console.error('Error loading applications report:', error);
           this.isLoading = false;
         }
       })
@@ -201,13 +187,11 @@ export class AdminReportsComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.apiService.getSkillsReport(params).subscribe({
         next: (response) => {
-          console.log('📊 Reports: Skills data received:', response);
           this.skillsData = response.data || response;
           this.createSkillsCharts();
           this.isLoading = false;
         },
         error: (error) => {
-          console.error('Error loading skills report:', error);
           this.isLoading = false;
         }
       })
@@ -218,13 +202,11 @@ export class AdminReportsComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.apiService.getFinancialReport(params).subscribe({
         next: (response) => {
-          console.log('📊 Reports: Financial data received:', response);
           this.financialData = response.data || response;
           this.createFinancialCharts();
           this.isLoading = false;
         },
         error: (error) => {
-          console.error('Error loading financial report:', error);
           this.isLoading = false;
         }
       })
@@ -235,13 +217,11 @@ export class AdminReportsComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.apiService.getMonthlyGrowthReport(params).subscribe({
         next: (response) => {
-          console.log('📊 Reports: Monthly growth data received:', response);
           this.monthlyGrowthData = response.data || response;
           this.createMonthlyGrowthCharts();
           this.isLoading = false;
         },
         error: (error) => {
-          console.error('Error loading monthly growth report:', error);
           this.isLoading = false;
         }
       })
@@ -719,6 +699,5 @@ export class AdminReportsComponent implements OnInit, OnDestroy {
 
   exportReport(): void {
     // TODO: Implement report export functionality
-    console.log('Exporting report:', this.selectedReport);
   }
 } 

@@ -36,26 +36,23 @@ export class AppService {
       console.error('Error loading initial data:', error);
       // Don't retry immediately for connection errors
       if (error instanceof Error && error.message.includes('Server is not available')) {
-        console.log('AppService: Server unavailable, skipping initial data load');
+        // Server unavailable, skipping initial data load
       }
     }
   }
 
   private async loadResources(): Promise<void> {
     try {
-      console.log('AppService: Loading resources...');
       const response = await firstValueFrom(this.apiService.getResources());
-      console.log('AppService: Resources response:', response);
       if (response.success && response.data) {
         const filteredResources = response.data.filter((item: any) => item != null);
-        console.log('AppService: Filtered resources:', filteredResources);
         this.resourcesSubject.next(filteredResources);
       }
     } catch (error) {
       console.error('Error loading resources:', error);
       // Don't retry for connection errors
       if (error instanceof Error && error.message.includes('Server is not available')) {
-        console.log('AppService: Server unavailable, skipping resources load');
+        // Server unavailable, skipping resources load
       }
     }
   }
@@ -71,7 +68,7 @@ export class AppService {
       console.error('Error loading requirements:', error);
       // Don't retry for connection errors
       if (error instanceof Error && error.message.includes('Server is not available')) {
-        console.log('AppService: Server unavailable, skipping requirements load');
+        // Server unavailable, skipping requirements load
       }
     }
   }
@@ -87,7 +84,7 @@ export class AppService {
       console.error('Error loading applications:', error);
       // Don't retry for connection errors
       if (error instanceof Error && error.message.includes('Server is not available')) {
-        console.log('AppService: Server unavailable, skipping applications load');
+        // Server unavailable, skipping applications load
       }
     }
   }
@@ -106,11 +103,7 @@ export class AppService {
 
   async addRequirement(requirementData: Omit<Requirement, '_id' | 'createdAt' | 'updatedAt'>): Promise<void> {
     try {
-      console.log('🔧 AppService: addRequirement called with data:', requirementData);
-      console.log('🔧 AppService: Budget data in requirementData:', requirementData.budget);
-      
       const response = await firstValueFrom(this.apiService.createRequirement(requirementData));
-      console.log('🔧 AppService: API response:', response);
       
       if (response.success) {
         const currentRequirements = this.requirementsSubject.value;

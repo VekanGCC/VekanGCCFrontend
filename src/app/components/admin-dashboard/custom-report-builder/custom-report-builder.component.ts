@@ -90,18 +90,8 @@ export class CustomReportBuilderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    console.log('🚀 Custom Report Builder initialized');
     this.loadTemplates();
     this.setupFormListeners();
-    
-    // Add a simple test to verify the component is working
-    setTimeout(() => {
-      console.log('🧪 Testing form state:', {
-        valid: this.reportForm.valid,
-        value: this.reportForm.value,
-        errors: this.reportForm.errors
-      });
-    }, 1000);
   }
 
   ngOnDestroy(): void {
@@ -253,16 +243,11 @@ export class CustomReportBuilderComponent implements OnInit, OnDestroy {
 
   // Generate report
   generateReport(): void {
-    console.log('🔍 Form valid:', this.reportForm.valid);
-    console.log('🔍 Form value:', this.reportForm.value);
-    console.log('🔍 Form errors:', this.reportForm.errors);
-    
     if (this.reportForm.valid) {
       this.isLoading = true;
       this.destroyChart();
 
       const formValue = this.reportForm.value;
-      console.log('📊 Form value before processing:', formValue);
       
       // Convert form arrays to regular arrays
       const reportConfig = {
@@ -282,12 +267,9 @@ export class CustomReportBuilderComponent implements OnInit, OnDestroy {
         excludeFields: formValue.excludeFields
       };
 
-      console.log('📊 Report config being sent:', reportConfig);
-
       this.subscriptions.add(
         this.apiService.createCustomReport(reportConfig).subscribe({
           next: (response) => {
-            console.log('📊 Custom report data received:', response);
             this.reportData = response.data;
             this.createChart();
             this.isLoading = false;
@@ -298,8 +280,6 @@ export class CustomReportBuilderComponent implements OnInit, OnDestroy {
           }
         })
       );
-    } else {
-      console.log('❌ Form is invalid:', this.reportForm.errors);
     }
   }
 
@@ -405,7 +385,6 @@ export class CustomReportBuilderComponent implements OnInit, OnDestroy {
       this.subscriptions.add(
         this.apiService.saveReportTemplate(templateData).subscribe({
           next: (response) => {
-            console.log('Template saved:', response);
             this.loadTemplates(); // Reload templates
           },
           error: (error) => {

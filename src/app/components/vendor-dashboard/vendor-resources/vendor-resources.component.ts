@@ -180,12 +180,8 @@ export class VendorResourcesComponent implements OnInit, OnChanges {
         const target = params.event.target as HTMLElement;
         const resource = params.data;
         
-        console.log('🔧 VendorResources: Attachment cell clicked, target:', target);
-        console.log('🔧 VendorResources: Resource data:', resource);
-        
         // Check if the download button or its child was clicked
         if (target.classList.contains('download-btn') || target.closest('.download-btn')) {
-          console.log('🔧 VendorResources: Download button clicked for resource:', resource._id);
           this.downloadAttachment(resource);
         }
       }
@@ -284,18 +280,10 @@ export class VendorResourcesComponent implements OnInit, OnChanges {
         const target = params.event.target as HTMLElement;
         const resource = params.data;
         
-        console.log('🔧 VendorResources: Actions cell clicked, target:', target);
-        console.log('🔧 VendorResources: Target classes:', target.classList);
-        console.log('🔧 VendorResources: Resource data:', resource);
-        
         if (target.classList.contains('edit-btn')) {
-          console.log('🔧 VendorResources: Edit button clicked for resource:', resource._id);
           this.onEditResource(resource);
         } else if (target.classList.contains('toggle-btn')) {
-          console.log('🔧 VendorResources: Toggle button clicked for resource:', resource._id);
           this.onToggleResourceStatus(resource);
-        } else {
-          console.log('🔧 VendorResources: Unknown button clicked');
         }
       }
     }
@@ -317,32 +305,25 @@ export class VendorResourcesComponent implements OnInit, OnChanges {
     rowHeight: 60,
     tooltipShowDelay: 500,
     suppressRowClickSelection: true,
-    allowCellClick: true,
-    onCellClicked: (params: any) => {
-      console.log('🔧 VendorResources: Grid onCellClicked event:', params);
-    }
+    allowCellClick: true
   };
 
   constructor(private vendorService: VendorService, private apiService: ApiService, private router: Router) {}
 
   ngOnInit(): void {
-    console.log('🔧 VendorResourcesComponent: ngOnInit called');
     this.loadResources();
   }
 
   ngOnChanges(changes: any): void {
     // This will be called whenever the properties change
-    console.log('🔧 VendorResources: Resources data changed:', this.resources);
     
     // If resources data changed, refresh the grid
     if (changes['resources'] && this.agGrid && this.agGrid.api) {
-      console.log('🔧 VendorResources: Resources changed, refreshing grid');
       this.refreshGridData();
     }
   }
 
   loadResources(): void {
-    console.log('🔄 VendorResources: Loading resources...');
     this.isLoading = true;
     this.paginationState.isLoading = true;
 
@@ -353,10 +334,7 @@ export class VendorResourcesComponent implements OnInit, OnChanges {
 
     this.vendorService.getResources(params).subscribe({
       next: (response) => {
-        console.log('✅ VendorResources: Resources loaded successfully:', response);
         this.resources = response.data || [];
-        console.log('✅ VendorResources: Resources array:', this.resources);
-        console.log('✅ VendorResources: Resources with IDs:', this.resources.map(r => ({ id: r._id, name: r.name })));
         
         this.paginationState = {
           ...this.paginationState,
@@ -368,7 +346,6 @@ export class VendorResourcesComponent implements OnInit, OnChanges {
         };
         
         // Load counts for the resources
-        console.log('🔄 VendorResources: About to call loadResourcesWithCounts');
         this.loadResourcesWithCounts();
         
         this.isLoading = false;
@@ -383,16 +360,11 @@ export class VendorResourcesComponent implements OnInit, OnChanges {
   }
 
   private loadResourcesWithCounts(): void {
-    console.log('🔄 VendorResources: loadResourcesWithCounts method called');
-    console.log('🔄 VendorResources: Loading counts for resources...');
-    
     if (this.resources.length === 0) {
-      console.log('🔄 VendorResources: No resources to load counts for');
       return;
     }
 
     const resourceIds = this.resources.map(resource => resource._id!);
-    console.log('🔄 VendorResources: Resource IDs for counts:', resourceIds);
     
     // Use forkJoin to load both application counts and matching requirements counts in parallel
     const requests = {
@@ -410,27 +382,18 @@ export class VendorResourcesComponent implements OnInit, OnChanges {
       )
     };
 
-    console.log('🔄 VendorResources: About to call forkJoin with requests:', requests);
-
     forkJoin(requests).subscribe({
       next: (results) => {
-        console.log('✅ VendorResources: Counts loaded:', results);
-        console.log('✅ VendorResources: Application counts result:', results.applicationCounts);
-        console.log('✅ VendorResources: Matching requirements counts result:', results.matchingRequirementsCounts);
-        
         // Update resources with application counts
         if (results.applicationCounts.success && results.applicationCounts.data) {
-          console.log('✅ VendorResources: Processing application counts data:', results.applicationCounts.data);
           this.resources = this.resources.map(resource => {
             const count = results.applicationCounts.data[resource._id!] || 0;
-            console.log(`✅ VendorResources: Resource ${resource._id} has ${count} applications`);
             return {
               ...resource,
               applicationCount: count
             };
           });
         } else {
-          console.warn('⚠️ VendorResources: Application counts response not successful or no data');
           // Set default application counts to 0
           this.resources = this.resources.map(resource => ({
             ...resource,
@@ -440,14 +403,11 @@ export class VendorResourcesComponent implements OnInit, OnChanges {
         
         // Update resources with matching requirements counts
         if (results.matchingRequirementsCounts.success && results.matchingRequirementsCounts.data) {
-          console.log('✅ VendorResources: Processing matching requirements counts data:', results.matchingRequirementsCounts.data);
-          
           // Handle array response format as shown in your example
           if (Array.isArray(results.matchingRequirementsCounts.data)) {
             this.resources = this.resources.map(resource => {
               const matchingData = results.matchingRequirementsCounts.data.find((item: any) => item.resourceId === resource._id);
               const count = matchingData ? matchingData.count : 0;
-              console.log(`✅ VendorResources: Resource ${resource._id} has ${count} matching requirements`);
               return {
                 ...resource,
                 matchingCount: count
@@ -458,12 +418,10 @@ export class VendorResourcesComponent implements OnInit, OnChanges {
             const countsMap: { [key: string]: number } = {};
             Object.keys(results.matchingRequirementsCounts.data).forEach(resourceId => {
               countsMap[resourceId] = results.matchingRequirementsCounts.data[resourceId];
-              console.log(`✅ VendorResources: Resource ${resourceId} has ${countsMap[resourceId]} matching requirements`);
             });
             
             this.resources = this.resources.map(resource => {
               const count = countsMap[resource._id!] || 0;
-              console.log(`✅ VendorResources: Resource ${resource._id} has ${count} matching requirements`);
               return {
                 ...resource,
                 matchingCount: count
@@ -471,7 +429,6 @@ export class VendorResourcesComponent implements OnInit, OnChanges {
             });
           }
         } else {
-          console.warn('⚠️ VendorResources: Matching requirements counts response not successful or no data');
           // Set default matching counts to 0
           this.resources = this.resources.map(resource => ({
             ...resource,
@@ -479,7 +436,6 @@ export class VendorResourcesComponent implements OnInit, OnChanges {
           }));
         }
         
-        console.log('✅ VendorResources: Resources updated with counts:', this.resources);
         this.refreshGridData();
       },
       error: (error) => {
@@ -499,22 +455,13 @@ export class VendorResourcesComponent implements OnInit, OnChanges {
     if (this.agGrid && this.agGrid.api) {
       // Force AG Grid to refresh all data
       this.agGrid.api.refreshCells({ force: true });
-      console.log('🔧 VendorResources: Grid data refreshed with new counts');
-    } else {
-      console.log('🔧 VendorResources: Grid not ready yet, will refresh when ready');
     }
   }
 
   onGridReady(params: any): void {
-    console.log('🔧 VendorResources: Grid ready, API captured');
-    console.log('🔧 VendorResources: Current resources data:', this.resources);
-    
     // Set initial data if resources are already available
     if (this.resources && this.resources.length > 0) {
-      console.log('🔧 VendorResources: Setting initial data in grid');
       this.refreshGridData();
-    } else {
-      console.log('🔧 VendorResources: No resources data available yet, will refresh when data loads');
     }
   }
 
@@ -544,7 +491,6 @@ export class VendorResourcesComponent implements OnInit, OnChanges {
     
     this.vendorService.updateResourceStatus(resource._id!, newStatus).subscribe({
       next: (response) => {
-        console.log('✅ VendorResources: Resource status updated:', response);
         this.loadResources(); // Reload data
       },
       error: (error) => {
@@ -610,25 +556,16 @@ export class VendorResourcesComponent implements OnInit, OnChanges {
   }
 
   onOpenResourceModal(): void {
-    console.log('🔄 VendorResources: Opening resource modal');
     this.resourceToEdit = null; // Clear any existing resource to edit
     this.showResourceModal = true;
   }
 
   onEditResource(resource: Resource): void {
-    console.log('🔄 VendorResources: Editing resource:', resource._id);
     this.resourceToEdit = resource;
     this.showResourceModal = true;
-    console.log('🔄 VendorResources: Modal state after setting:', { showResourceModal: this.showResourceModal, resourceToEdit: this.resourceToEdit });
-    
-    // Force change detection
-    setTimeout(() => {
-      console.log('🔄 VendorResources: Modal state after timeout:', { showResourceModal: this.showResourceModal, resourceToEdit: this.resourceToEdit });
-    }, 100);
   }
 
   onCloseResourceModal(): void {
-    console.log('🔄 VendorResources: Closing resource modal');
     this.showResourceModal = false;
     this.resourceToEdit = null;
     // Refresh resources data after modal is closed
@@ -640,21 +577,13 @@ export class VendorResourcesComponent implements OnInit, OnChanges {
   }
 
   downloadAttachment(resource: Resource): void {
-    console.log('🔄 VendorResources: Starting download for resource:', resource._id);
-    console.log('🔄 VendorResources: Attachment data:', resource.attachment);
-    
     if (!resource.attachment || !resource.attachment.fileId) {
       console.error('❌ VendorResources: No attachment found for resource:', resource._id);
       return;
     }
 
-    console.log('🔄 VendorResources: Downloading file with ID:', resource.attachment.fileId);
-    console.log('🔄 VendorResources: File name:', resource.attachment.originalName);
-
     this.apiService.downloadFile(resource.attachment.fileId).subscribe(
       (response: Blob) => {
-        console.log('✅ VendorResources: File download successful, blob size:', response.size);
-        
         const link = document.createElement('a');
         link.href = URL.createObjectURL(response);
         link.download = resource.attachment!.originalName;
@@ -664,8 +593,6 @@ export class VendorResourcesComponent implements OnInit, OnChanges {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
-        console.log('✅ VendorResources: Download link clicked for file:', resource.attachment!.originalName);
       },
       (error) => {
         console.error('❌ VendorResources: Error downloading file:', error);
@@ -674,7 +601,6 @@ export class VendorResourcesComponent implements OnInit, OnChanges {
   }
 
   onApplicationCountClick(resourceId: string): void {
-    console.log('🔧 VendorResources: Application count clicked for resource:', resourceId);
     // Navigate to applications page with filter
     this.router.navigate(['/vendor/applications'], { 
       queryParams: { resourceId } 
@@ -682,7 +608,6 @@ export class VendorResourcesComponent implements OnInit, OnChanges {
   }
 
   onMatchingCountClick(resourceId: string): void {
-    console.log('🔧 VendorResources: Matching count clicked for resource:', resourceId);
     // Navigate to matching requirements page
     this.router.navigate(['/vendor/matching-requirements'], { 
       queryParams: { resourceId } 

@@ -84,61 +84,35 @@ export class EditSkillModalComponent implements OnInit {
   skillForm: FormGroup;
 
   constructor(private fb: FormBuilder, private cdr: ChangeDetectorRef) {
-    debugger; // Debugger statement to pause execution
-    console.log('=== EDIT SKILL MODAL CONSTRUCTOR DEBUG ===');
-    console.log('EditSkillModalComponent constructor called');
     this.skillForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       description: ['', [Validators.required, Validators.maxLength(500)]],
       isActive: [true]
     });
-    console.log('Form created:', this.skillForm);
-    console.log('=== END EDIT SKILL MODAL CONSTRUCTOR DEBUG ===');
   }
 
   ngOnInit(): void {
-    debugger; // Debugger statement to pause execution
-    console.log('=== EDIT SKILL MODAL NGONINIT DEBUG ===');
-    console.log('EditSkillModal ngOnInit called');
-    console.log('Skill input:', this.skill);
-    
     if (this.skill) {
-      console.log('Patching form with skill data:', this.skill);
       this.skillForm.patchValue({
         name: this.skill.name,
         description: this.skill.description,
         isActive: this.skill.isActive
       });
-      console.log('Form patched with values:', this.skillForm.value);
-    } else {
-      console.log('No skill provided to modal');
     }
     
     this.cdr.detectChanges();
-    console.log('Modal ngOnInit change detection triggered');
-    console.log('=== END EDIT SKILL MODAL NGONINIT DEBUG ===');
   }
 
   onSubmit(): void {
-    debugger; // Debugger statement
-    console.log('=== EDIT SKILL MODAL SUBMIT DEBUG ===');
-    console.log('Form valid:', this.skillForm.valid);
-    console.log('Form values:', this.skillForm.value);
-    console.log('Form errors:', this.skillForm.errors);
-    
     if (this.skillForm.valid) {
-      console.log('Emitting save event with data:', this.skillForm.value);
       this.save.emit(this.skillForm.value);
     } else {
-      console.log('Form is invalid, not emitting save event');
       // Mark all fields as touched to show validation errors
       Object.keys(this.skillForm.controls).forEach(key => {
         const control = this.skillForm.get(key);
         control?.markAsTouched();
       });
     }
-    
-    console.log('=== END EDIT SKILL MODAL SUBMIT DEBUG ===');
   }
 
   onCancel(): void {

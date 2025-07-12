@@ -256,7 +256,6 @@ export class VendorRequirementsComponent implements OnInit, OnChanges, OnDestroy
   }
 
   ngOnInit(): void {
-    console.log('🔧 VendorRequirementsComponent: ngOnInit called');
     this.loadAvailableSkills();
     this.loadRequirements();
     
@@ -266,11 +265,9 @@ export class VendorRequirementsComponent implements OnInit, OnChanges, OnDestroy
 
   ngOnChanges(changes: SimpleChanges): void {
     // This will be called whenever the properties change
-    console.log('🔧 VendorRequirements: Requirements data changed:', this.requirements);
   }
 
   ngOnDestroy(): void {
-    console.log('🔄 VendorRequirements: Component being destroyed');
     document.removeEventListener('click', this.handleClickOutside);
     
     // Clean up component reference
@@ -290,10 +287,8 @@ export class VendorRequirementsComponent implements OnInit, OnChanges, OnDestroy
   }
 
   private loadAvailableSkills(): void {
-    console.log('🔧 VendorRequirements: Loading available skills...');
     this.apiService.getActiveSkills().subscribe({
       next: (response) => {
-        console.log('✅ VendorRequirements: Skills loaded:', response);
         this.availableSkills = response.data || [];
       },
       error: (error) => {
@@ -303,7 +298,6 @@ export class VendorRequirementsComponent implements OnInit, OnChanges, OnDestroy
   }
 
   loadRequirements(): void {
-    console.log('🔄 VendorRequirements: Loading requirements...');
     this.isLoading = true;
     this.paginationState.isLoading = true;
 
@@ -322,7 +316,6 @@ export class VendorRequirementsComponent implements OnInit, OnChanges, OnDestroy
 
     this.apiService.getRequirements(params).subscribe({
       next: (response) => {
-        console.log('✅ VendorRequirements: Requirements loaded successfully:', response);
         this.requirements = response.data || [];
         this.paginationState = {
           ...this.paginationState,
@@ -431,16 +424,6 @@ export class VendorRequirementsComponent implements OnInit, OnChanges, OnDestroy
   }
 
   private emitSearchChange(): void {
-    console.log('🔧 VendorRequirements: Emitting search change with filters:', {
-      searchTerm: this.searchTerm,
-      selectedSkillIds: this.selectedSkillIds,
-      skillLogic: this.skillLogic,
-      minBudget: this.minBudget,
-      maxBudget: this.maxBudget,
-      minDuration: this.minDuration,
-      maxDuration: this.maxDuration
-    });
-    
     this.loadRequirements();
   }
 
@@ -459,7 +442,6 @@ export class VendorRequirementsComponent implements OnInit, OnChanges, OnDestroy
     const sortModel = event.api.getColumnState().filter(col => col.sort);
     if (sortModel.length > 0) {
       const sort = sortModel[0];
-      console.log('🔧 VendorRequirements: Sort changed:', sort);
       // TODO: Implement sorting logic
     }
   }
@@ -497,35 +479,15 @@ export class VendorRequirementsComponent implements OnInit, OnChanges, OnDestroy
   }
 
   onApplyRequirement(requirementId: string): void {
-   
-    console.log('🔧 VendorRequirements: Applying to requirement:', requirementId);
-    console.log('🔧 VendorRequirements: Current URL before navigation:', this.router.url);
-    
-    // Navigate to apply-requirement-page route with requirementId as query parameter
-    const targetUrl = `/vendor/apply-requirement-page?requirementId=${requirementId}`;
-    console.log('🔧 VendorRequirements: Target URL:', targetUrl);
-    
-   
     this.router.navigate(['/vendor/apply-requirement-page'], { 
       queryParams: { requirementId: requirementId } 
-    }).then(() => {
-    
-      console.log('🔧 VendorRequirements: Navigation completed to apply-requirement-page');
-      console.log('🔧 VendorRequirements: Final URL after navigation:', this.router.url);
     }).catch(error => {
-     
       console.error('🔧 VendorRequirements: Navigation error:', error);
-      console.error('🔧 VendorRequirements: Error details:', {
-        message: error.message,
-        stack: error.stack,
-        name: error.name
-      });
     });
   }
 
   onNavigateToRequirement(requirementId: string): void {
     this.router.navigate(['/vendor/requirements', requirementId])
-      .then(() => console.log('✅ Navigated to requirement details:', this.router.url))
       .catch(error => console.error('❌ Navigation error:', error));
   }
 

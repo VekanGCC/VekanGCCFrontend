@@ -257,7 +257,6 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
   Math = Math;
 
   ngOnInit(): void {
-    console.log('🔧 ClientResourcesComponent: ngOnInit called');
     this.loadAvailableSkills();
     this.loadResources();
     this.setupClickOutsideHandler();
@@ -286,22 +285,19 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
   }
 
   private loadAvailableSkills(): void {
-    console.log('🔄 ClientResources: Loading available skills...');
     this.apiService.getActiveSkills().subscribe({
       next: (response) => {
         if (response.success && response.data) {
           this.availableSkills = response.data;
-          console.log('✅ ClientResources: Skills loaded:', this.availableSkills.length);
         }
       },
       error: (error) => {
-        console.error('❌ ClientResources: Error loading skills:', error);
+        // Handle error silently or show user-friendly message
       }
     });
   }
 
   private loadResources(): void {
-    console.log('🔄 ClientResources: Loading resources...');
     this.isLoading = true;
     this.paginationState.isLoading = true;
 
@@ -345,7 +341,6 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
 
     this.apiService.getResources(params).subscribe({
       next: (response) => {
-        console.log('✅ ClientResources: Resources loaded:', response);
         if (response.success && response.data) {
           this.resources = response.data;
           
@@ -368,7 +363,6 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
         this.changeDetectorRef.detectChanges();
       },
       error: (error) => {
-        console.error('❌ ClientResources: Error loading resources:', error);
         this.resources = [];
         this.isLoading = false;
         this.paginationState.isLoading = false;
@@ -499,13 +493,11 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     const sortModel = event.api.getColumnState().filter(col => col.sort);
     if (sortModel.length > 0) {
       const sort = sortModel[0];
-      console.log('🔄 ClientResources: Sort changed:', sort);
       // You can implement sorting logic here if needed
     }
   }
 
   onApplyResource(resourceId: string): void {
-    console.log('🔄 ClientResources: Applying resource:', resourceId);
     // Navigate to apply resources page with the selected resource
     this.router.navigate(['/client/apply-resources'], { 
       queryParams: { resourceIds: resourceId } 
@@ -543,7 +535,7 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
   }
 
   onGridReady(params: any): void {
-    console.log('🔧 ClientResources: Grid ready');
+    // Grid is ready
   }
 
   onCellClicked(params: any): void {
@@ -553,19 +545,20 @@ export class ClientResourcesComponent implements OnInit, OnDestroy {
     }
     
     // Handle other column clicks if needed
-    console.log('🔧 ClientResources: Cell clicked:', params);
   }
 
   onPageChange(page: number): void {
-    console.log('🔄 ClientResources: Page changed to:', page);
     this.paginationState.currentPage = page;
     this.loadResources();
   }
 
   onNavigateToResource(resourceId: string): void {
-    console.log('🔧 ClientResources: Navigating to resource details:', resourceId);
     this.router.navigate(['/client/resources', resourceId])
-      .then(() => console.log('✅ Navigated to resource details:', this.router.url))
-      .catch(error => console.error('❌ Navigation error:', error));
+      .then(() => {
+        // Navigation successful
+      })
+      .catch(error => {
+        // Handle navigation error
+      });
   }
 }

@@ -38,10 +38,6 @@ export class SkillsManagementComponent {
   constructor(private cdr: ChangeDetectorRef) {}
 
   onEditSkill(skill: AdminSkill): void {
-    debugger; // Debugger statement
-    console.log('=== SKILLS MANAGEMENT EDIT SKILL DEBUG ===');
-    console.log('Edit skill called with:', skill);
-    
     // Convert AdminSkill to Skill format
     this.selectedSkillForEdit = {
       _id: skill._id,
@@ -55,35 +51,23 @@ export class SkillsManagementComponent {
     
     this.showEditSkillModal = true;
     
-    console.log('selectedSkillForEdit set to:', this.selectedSkillForEdit);
-    console.log('showEditSkillModal set to:', this.showEditSkillModal);
-    
     this.cdr.detectChanges();
     
     // Force change detection after a small delay
     setTimeout(() => {
       this.cdr.detectChanges();
-      console.log('Final modal state - showEditSkillModal:', this.showEditSkillModal);
     }, 100);
-    
-    console.log('=== END SKILLS MANAGEMENT EDIT SKILL DEBUG ===');
   }
 
 
 
   closeEditSkillModal(): void {
-    console.log('=== CLOSING EDIT SKILL MODAL ===');
-    console.log('showEditSkillModal before close:', this.showEditSkillModal);
     this.showEditSkillModal = false;
     this.selectedSkillForEdit = null;
     this.cdr.detectChanges();
-    console.log('showEditSkillModal after close:', this.showEditSkillModal);
-    console.log('=== EDIT SKILL MODAL CLOSED ===');
   }
 
   onEditSkillSave(updatedSkillData: Partial<Skill>): void {
-    console.log('Skill updated in Skills Management:', updatedSkillData);
-    
     // Convert back to AdminSkill format for the parent component
     if (this.selectedSkillForEdit) {
       const updatedAdminSkill: Partial<AdminSkill> = {
@@ -108,7 +92,6 @@ export class SkillsManagementComponent {
 
   onSearch(): void {
     // This method will be called when search term changes
-    // For now, we'll just log the search term
-    console.log('Search term:', this.searchTerm);
+    // Implementation can be added here as needed
   }
 } 

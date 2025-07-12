@@ -88,20 +88,15 @@ export class VendorService {
 
   // Get vendor resources with pagination
   getResources(params?: PaginationParams): Observable<PaginatedResponse<any>> {
-   
-    console.log('🔧 VendorService: getResources called with params:', params);
-    console.log('🔧 VendorService: Full URL will be:', `${environment.apiUrl}/resources`);
     const options = { 
       headers: this.getAuthHeaders(),
       params: params ? this.buildHttpParams(params) : undefined 
     };
-    console.log('🔧 VendorService: Request options:', options);
     return this.http.get<PaginatedResponse<any>>(`${environment.apiUrl}/resources`, options);
   }
 
   // Get requirement by ID
   getRequirement(requirementId: string): Observable<any> {
-    console.log('🔧 VendorService: getRequirement called with ID:', requirementId);
     return this.http.get(`${environment.apiUrl}/requirements/${requirementId}`, { 
       headers: this.getAuthHeaders() 
     });
@@ -179,8 +174,6 @@ export class VendorService {
       }
     }
     
-    console.log('🔄 VendorService: Updating application status with enhanced data:', payload);
-    
     return this.http.put(`${environment.apiUrl}/applications/${applicationId}/status`, payload, { headers: this.getAuthHeaders() });
   }
 
@@ -188,10 +181,9 @@ export class VendorService {
   getApplicationHistory(applicationId: string): Observable<any> {
     return this.http.get(`${environment.apiUrl}/applications/${applicationId}/history`, { headers: this.getAuthHeaders() }).pipe(
       tap((response: any) => {
-        console.log('🔧 VendorService: Application history response:', response);
+        // Application history response handling
       }),
       catchError(error => {
-        console.error('🔧 VendorService: Error in getApplicationHistory:', error);
         throw error;
       })
     );
@@ -215,18 +207,14 @@ export class VendorService {
 
   // Get matching requirements counts for multiple resources (batch)
   getMatchingRequirementsCountsBatch(resourceIds: string[]): Observable<any> {
-    console.log('🔄 VendorService: getMatchingRequirementsCountsBatch called with resourceIds:', resourceIds);
-    console.log('🔄 VendorService: Making POST request to:', `${environment.apiUrl}/resources/matching-requirements/batch`);
-    
     return this.http.post(`${environment.apiUrl}/resources/matching-requirements/batch`, 
       { resourceIds }, 
       { headers: this.getAuthHeaders() }
     ).pipe(
       tap((response: any) => {
-        console.log('✅ VendorService: getMatchingRequirementsCountsBatch response:', response);
+        // Batch matching requirements response handling
       }),
       catchError(error => {
-        console.error('❌ VendorService: Error in getMatchingRequirementsCountsBatch:', error);
         throw error;
       })
     );
@@ -243,10 +231,9 @@ export class VendorService {
       params 
     }).pipe(
       tap((response: any) => {
-        console.log('🔧 VendorService: Matching requirements details response:', response);
+        // Matching requirements details response handling
       }),
       catchError(error => {
-        console.error('🔧 VendorService: Error in getMatchingRequirementsDetails:', error);
         throw error;
       })
     );

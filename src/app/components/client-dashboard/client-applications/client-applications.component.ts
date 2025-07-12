@@ -243,7 +243,6 @@ export class ClientApplicationsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log('🔧 ClientApplicationsComponent: ngOnInit called');
     this.initializeFilters();
     this.checkQueryParams();
   }
@@ -285,7 +284,6 @@ export class ClientApplicationsComponent implements OnInit, OnDestroy {
     this.route.queryParams.subscribe(params => {
       if (params['requirementId']) {
         this.currentFilter = { requirementId: params['requirementId'] };
-        console.log('🔧 ClientApplications: Filtering by requirement:', params['requirementId']);
       } else {
         this.currentFilter = {};
       }
@@ -294,7 +292,6 @@ export class ClientApplicationsComponent implements OnInit, OnDestroy {
   }
 
   private loadApplications(): void {
-    console.log('🔄 ClientApplications: Loading applications...');
     this.isLoading = true;
     this.paginationState.isLoading = true;
 
@@ -339,12 +336,8 @@ export class ClientApplicationsComponent implements OnInit, OnDestroy {
         params.search = this.currentFilters.searchTerm;
       }
 
-      console.log('🔄 ClientApplications: Loading applications with filters:', this.currentFilters);
-      console.log('🔄 ClientApplications: API params:', params);
-
       this.clientService.getApplications(params).subscribe({
         next: (response) => {
-          console.log('✅ ClientApplications: Applications loaded:', response);
           if (response.success && response.data) {
             this.applications = response.data;
             
@@ -368,7 +361,6 @@ export class ClientApplicationsComponent implements OnInit, OnDestroy {
           this.changeDetectorRef.detectChanges();
         },
         error: (error) => {
-          console.error('❌ ClientApplications: Error loading applications:', error);
           this.applications = [];
           this.isLoading = false;
           this.paginationState.isLoading = false;
@@ -382,7 +374,6 @@ export class ClientApplicationsComponent implements OnInit, OnDestroy {
     if (this.agGrid && this.agGrid.api) {
       // Force AG Grid to refresh all data
       this.agGrid.api.refreshCells({ force: true });
-      console.log('🔧 ClientApplicationsComponent: Grid data refreshed');
     }
   }
 
@@ -390,7 +381,6 @@ export class ClientApplicationsComponent implements OnInit, OnDestroy {
     const sortModel = event.api.getColumnState().filter(col => col.sort);
     if (sortModel && sortModel.length > 0) {
       const sort = sortModel[0];
-      console.log('🔧 ClientApplicationsComponent: Sort changed:', sort);
       
       // Map AG Grid field names to backend field names
       const fieldMapping: { [key: string]: string } = {
@@ -406,12 +396,10 @@ export class ClientApplicationsComponent implements OnInit, OnDestroy {
       const sortOrder = sort.sort as 'asc' | 'desc';
       
       // You can implement sorting logic here if needed
-      console.log('🔄 ClientApplications: Sort by:', sortBy, 'Order:', sortOrder);
     }
   }
 
   onGridReady(event: any): void {
-    console.log('🔧 ClientApplicationsComponent: Grid ready');
     // Store reference to grid API for later use
     this.agGrid = event;
   }
@@ -523,8 +511,6 @@ export class ClientApplicationsComponent implements OnInit, OnDestroy {
   }
 
   onStatusChange(applicationId: string, newStatus: string): void {
-    console.log('🔧 ClientApplicationsComponent: Status change requested:', applicationId, newStatus);
-    
     // Update local state immediately for responsive UI
     const applicationIndex = this.applications.findIndex(app => app._id === applicationId);
     if (applicationIndex !== -1) {
@@ -537,12 +523,10 @@ export class ClientApplicationsComponent implements OnInit, OnDestroy {
     // Make API call to update status
     this.clientService.updateApplicationStatus(applicationId, newStatus).subscribe({
       next: (response) => {
-        console.log('✅ ClientApplications: Application status updated successfully:', response);
         // Refresh the grid to show updated data
         this.refreshGridData();
       },
       error: (error) => {
-        console.error('❌ ClientApplications: Error updating application status:', error);
         // Revert local change if API call failed
         if (applicationIndex !== -1) {
           this.applications[applicationIndex].status = this.applications.find(app => app._id === applicationId)?.status || 'applied';
@@ -553,12 +537,10 @@ export class ClientApplicationsComponent implements OnInit, OnDestroy {
   }
 
   onViewHistory(applicationId: string): void {
-    console.log('🔧 ClientApplicationsComponent: View history clicked for application:', applicationId);
     this.clientApplicationsService.viewApplicationHistory(applicationId);
   }
 
   onViewDetails(application: Application): void {
-    console.log('🔧 ClientApplicationsComponent: View details clicked for application:', application._id);
     this.clientApplicationsService.viewApplicationDetails(application);
   }
 
@@ -598,7 +580,6 @@ export class ClientApplicationsComponent implements OnInit, OnDestroy {
   }
 
   onPageChange(page: number): void {
-    console.log('🔄 ClientApplications: Page changed to:', page);
     this.paginationState.currentPage = page;
     this.loadApplications();
   }
@@ -613,7 +594,6 @@ export class ClientApplicationsComponent implements OnInit, OnDestroy {
   }
 
   clearFilter(): void {
-    console.log('🔄 ClientApplications: Clearing filter');
     this.currentFilter = {};
     this.router.navigate([], { 
       queryParams: {}, 
